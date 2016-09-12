@@ -1,7 +1,9 @@
-package com.dzs.marketing;
+package com.dzs.marketing.ui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.dzs.marketing.R;
 
 public class SplashActivity extends AppCompatActivity {
 

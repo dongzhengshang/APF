@@ -52,7 +52,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     }
 
     public static ViewHolder get(Context context, int layout, ViewGroup viewGroup) {
-        return new ViewHolder(context, View.inflate(context, layout, viewGroup), -1);
+        return new ViewHolder(context, LayoutInflater.from(context).inflate(layout, viewGroup), -1);
     }
 
     public static ViewHolder get(Context context, View view) {
@@ -501,7 +501,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         return position;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings ("unchecked")
     protected <T extends View> T retrieveView(int viewId) {
         View view = views.get(viewId);
         if (view == null) {
