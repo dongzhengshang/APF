@@ -76,6 +76,7 @@ public class FileUtils {
         return file;
     }
 
+
     /**
      * 获取SD卡APP目录下指定文件夹的绝对路径
      *
@@ -85,6 +86,24 @@ public class FileUtils {
      */
     public static String getAppSavePath(String folderName) throws NullPointerException {
         return getAppSaveFolder(folderName).getAbsolutePath();
+    }
+
+    /**
+     * 在SD卡APP目录指定文件夹下创建文件
+     *
+     * @param folderName 文件目录名称
+     * @param fileName   文件名称
+     * @return
+     */
+    public static File getSaveFile(String folderName, String fileName) {
+        File file = new File(getAppSavePath(folderName) + File.separator + fileName);
+        try {
+            boolean createType = file.createNewFile();
+            return createType ? file : null;
+        } catch (IOException e) {
+            LogUtils.exception(e);
+            return null;
+        }
     }
 
     /**

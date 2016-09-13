@@ -1,17 +1,27 @@
 package com.dzs.projectframe.base;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.ViewUtils;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.dzs.projectframe.adapter.ViewHolder;
 import com.dzs.projectframe.utils.AsyncTaskUtils;
+import com.dzs.projectframe.utils.DiskLruCacheHelpUtils;
+import com.dzs.projectframe.utils.FileUtils;
+import com.dzs.projectframe.utils.LogUtils;
 import com.dzs.projectframe.utils.SharedPreferUtils;
 import com.dzs.projectframe.utils.StackUtils;
+import com.dzs.projectframe.utils.TostUtils;
+
+import java.io.File;
 
 /**
  * @author DZS dzsdevelop@163.com
@@ -19,7 +29,7 @@ import com.dzs.projectframe.utils.StackUtils;
  * @date 2016/8/19.
  */
 public abstract class ProjectActivity extends FragmentActivity implements View.OnClickListener, AsyncTaskUtils.OnNetReturnListener {
-    protected ViewUtils viewUtils;
+    protected ViewHolder viewUtils;
     protected Resources resources;
     protected SharedPreferUtils sharedPreferUtils;
 
@@ -36,7 +46,25 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
         super.onCreate(savedInstanceState, persistentState);
         StackUtils.getInstanse().addActivity(this);
         setTextAbout();
+        resources = ProjectContext.resources;
+        sharedPreferUtils = ProjectContext.sharedPreferUtils;
+        viewUtils = ViewHolder.get(this, setContent());
+        setContentView(viewUtils.getView());
+        initView();
+        initAnimation();
+        initData();
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DiskLruCacheHelpUtils.getInstanse().flush();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        StackUtils.getInstanse().finishActivity(this);
     }
 
     /**
@@ -54,5 +82,56 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
      */
     public void setFullScream() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+    //------------------相机操作相关------------------------
+    public static final int SYS_INTENT_REQUEST = 0XFF01;//系统相册
+    public static final int CAMERA_INTENT_REQUEST = 0XFF02;//调用系统相机
+    public static final int IMAGE_CUT = 0XFF03;//裁剪
+    public Uri photoUri = Uri.fromFile(FileUtils.getSaveFile("TempImage", "tempPhoto.jpeg"));
+    public File file = FileUtils.getSaveFile("TempImage", "temp.jpeg");
+    public Uri imageUri = Uri.fromFile(file);
+    public String imagePath = file.getAbsolutePath();
+
+    //调用系统相册
+    public void systemPhoto() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_PICK);
+        startActivityForResult(intent, SYS_INTENT_REQUEST);
+    }
+
+    //调用系统相机
+    public void cameraPhoto() {
+        try {
+            if (!FileUtils.checkSDcard()) {
+                TostUtils.showOneToast("SD卡不可用!");
+                return;
+            }
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+            startActivityForResult(intent, CAMERA_INTENT_REQUEST);
+        } catch (Exception e) {
+            TostUtils.showOneToast("系统相机调取失败");
+            LogUtils.exception(e);
+        }
+    }
+
+    //图片剪切
+    public void cropImageUri(Uri uri, int aspectX, int aspectY, int outputX, int outputY, int requestCode) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", aspectX);
+        intent.putExtra("aspectY", aspectY);
+        intent.putExtra("outputX", outputX);
+        intent.putExtra("outputY", outputY);
+        intent.putExtra("scale", true);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        intent.putExtra("return-data", false);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("noFaceDetection", true);
+        startActivityForResult(intent, requestCode);
+
     }
 }
