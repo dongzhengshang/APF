@@ -23,6 +23,17 @@ public class Conif {
     // 网络访问次数
     public static int RETRY_TIME = 3;
 
+    public enum HttpResult {
+        Success(200, "请求成功"), Faile(201, "网络连接失败"), NetNotConnect(202, "网络连接失败,请检查网络连接"),
+        ParseFaile(203, "数据解析失败,请重试");
+        private int code;
+        private String message;
+
+        HttpResult(int code, String message) {
+            this.code = code;
+            this.message = message;
+        }
+    }
 
     public static String getUserAgent() {
         PackageInfo info = SystemUtils.getPackageInfo(ProjectContext.appContext);

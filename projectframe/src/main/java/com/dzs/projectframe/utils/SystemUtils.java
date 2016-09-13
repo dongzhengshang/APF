@@ -104,20 +104,20 @@ public class SystemUtils {
     @SuppressLint ("NewApi")
     public static StringBuilder getPhoneDriverInfo() {
         StringBuilder su = new StringBuilder();
-        su.append("产品名称: " + android.os.Build.PRODUCT);
-        su.append("\nCPU型号: " + android.os.Build.SUPPORTED_ABIS);
-        su.append("\n标签: " + android.os.Build.TAGS);
-        su.append("\n手机型号: " + android.os.Build.MODEL);
-        su.append("\nSDK版本: " + android.os.Build.VERSION.SDK_INT);
-        su.append("\n系统版本: " + android.os.Build.VERSION.RELEASE);
-        su.append("\n设备驱动: " + android.os.Build.DEVICE);
-        su.append("\n显示: " + android.os.Build.DISPLAY);
-        su.append("\n品牌: " + android.os.Build.BRAND);
-        su.append("\n主板: " + android.os.Build.BOARD);
-        su.append("\n指纹: " + android.os.Build.FINGERPRINT);
-        su.append("\nID: " + android.os.Build.ID);
-        su.append("\n制造商: " + android.os.Build.MANUFACTURER);
-        su.append("\n用户组: " + android.os.Build.USER);
+        su.append("产品名称: ").append(android.os.Build.PRODUCT);
+        su.append("\nCPU型号: ").append(android.os.Build.SUPPORTED_ABIS);
+        su.append("\n标签: ").append(android.os.Build.TAGS);
+        su.append("\n手机型号: ").append(android.os.Build.MODEL);
+        su.append("\nSDK版本: ").append(android.os.Build.VERSION.SDK_INT);
+        su.append("\n系统版本: ").append(android.os.Build.VERSION.RELEASE);
+        su.append("\n设备驱动: ").append(android.os.Build.DEVICE);
+        su.append("\n显示: ").append(android.os.Build.DISPLAY);
+        su.append("\n品牌: ").append(android.os.Build.BRAND);
+        su.append("\n主板: ").append(android.os.Build.BOARD);
+        su.append("\n指纹: ").append(android.os.Build.FINGERPRINT);
+        su.append("\nID: ").append(android.os.Build.ID);
+        su.append("\n制造商: ").append(android.os.Build.MANUFACTURER);
+        su.append("\n用户组: ").append(android.os.Build.USER);
         return su;
     }
 
@@ -131,9 +131,9 @@ public class SystemUtils {
         TelephonyManager Tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         StringBuilder su = new StringBuilder();
         su.append(String.format("设备id: %s", Tm.getDeviceId()));
-        su.append("\n用户id: " + Tm.getSubscriberId());// 没插SIM取不到
-        su.append("\nICCID: " + Tm.getSimSerialNumber());// 没插SIM取不到
-        su.append("\nMSISDN: " + Tm.getLine1Number());// 有的SIM卡取不到
+        su.append("\n用户id: ").append(Tm.getSubscriberId());// 没插SIM取不到
+        su.append("\nICCID: ").append(Tm.getSimSerialNumber());// 没插SIM取不到
+        su.append("\nMSISDN: ").append(Tm.getLine1Number());// 有的SIM卡取不到
         return su;
     }
 

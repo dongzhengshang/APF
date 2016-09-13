@@ -9,42 +9,35 @@ import com.dzs.projectframe.interf.OnDataReturnListener;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 
-public class AsyncTaskUtils extends AsyncTask<Object, Integer, Map<String, Object>> {
+public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
 
     private String taskId;
-    private int type;
+    private HttpUtils.HttpType httpType;
     private boolean reflsh;//强制刷新
     private boolean saveCache;//存储缓存
-    public static final int HTTP_GET = 0;
-    public static final int HTTP_POST = 1;
-    public static final int HTTP_POST_UPDATEIMAGE = 2;
-    public static final int HTTP_POST_FORMS = 3;
     private ArrayList<OnDataReturnListener> dataReturnListeners = new ArrayList<OnDataReturnListener>();
 
-    public AsyncTaskUtils(String taskId, int type, boolean saveCache, boolean reflsh, OnDataReturnListener... dataReturnListener) {
+    public AsyncTaskUtils(String taskId, HttpUtils.HttpType httpType, boolean saveCache, boolean reflsh, OnDataReturnListener... dataReturnListener) {
         this.taskId = taskId;
-        this.type = type;
+        this.httpType = httpType;
         this.reflsh = reflsh;
         this.saveCache = saveCache;
-        for (OnDataReturnListener onDataReturnListener : dataReturnListener) {
-            dataReturnListeners.add(onDataReturnListener);
-        }
+        Collections.addAll(dataReturnListeners, dataReturnListener);
     }
 
-    public AsyncTaskUtils(String taskId, int type, boolean saveCache, boolean reflsh) {
+    public AsyncTaskUtils(String taskId, HttpUtils.HttpType httpType, boolean saveCache, boolean reflsh) {
         this.taskId = taskId;
-        this.type = type;
+        this.httpType = httpType;
         this.reflsh = reflsh;
         this.saveCache = saveCache;
     }
 
     public void addDataReturnListener(OnDataReturnListener... dataReturnListener) {
-        for (OnDataReturnListener onDataReturnListener : dataReturnListener) {
-            dataReturnListeners.add(onDataReturnListener);
-        }
+        Collections.addAll(dataReturnListeners, dataReturnListener);
     }
 
     public void removeDataReturnListener(OnDataReturnListener dataReturnListener) {
@@ -57,82 +50,55 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, Map<String, Objec
     }
 
     @Override
-    protected Map<String, Object> doInBackground(Object... params) {
+    @SuppressWarnings ("unchecked")
+    protected LibEntity doInBackground(Object... params) {
         LibEntity libEntity = null;
         Map<String, Object> data = null;
         String result = "";
         String cacheKey = "";
-        switch (type) {
-            case HTTP_GET:
+        switch (httpType) {
+            case Get:
+                String url = null;
                 try {
-                    String url = StringUtils.mapToUrl(params[0].toString(),  params[1]);
-                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), params[1]);
-                    libEntity = HttpUtils.httpurlconnGet(url, saveCache, reflsh, cacheKey);
+                    url = StringUtils.mapToUrl(params[0].toString(), (Map<String, Object>) params[1]);
+                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[1], (String[]) params[2]);
+                    libEntity = HttpUtils.httpURLConnect_Get(url, saveCache, reflsh, cacheKey);
                 } catch (UnsupportedEncodingException e) {
                     LogUtils.exception(e);
                 }
                 break;
-            case HTTP_POST:
+            case Json:
                 try {
-                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[1]);
-                    libEntity = HttpUtils.HttpUrlConn_postforms(params[0].toString(),
-                            (Map<String, Object>) params[1], saveCache, reflsh, cacheKey);
+                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[1], (String[]) params[2]);
+                    libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (Map<String, Object>) params[1], saveCache, reflsh, cacheKey, HttpUtils.HttpType.Json);
                 } catch (UnsupportedEncodingException e) {
                     LogUtils.exception(e);
                 }
                 break;
-            case HTTP_POST_FORMS:
+            case Form:
                 try {
-                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[1]);
-                    libEntity = HttpUtils.HttpUrlConn_postforms(params[0].toString(),
-                            (Map<String, Object>) params[1], saveCache, reflsh, cacheKey);
+                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[1], (String[]) params[2]);
+                    libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (Map<String, Object>) params[1], saveCache, reflsh, cacheKey, HttpUtils.HttpType.Form);
                 } catch (UnsupportedEncodingException e) {
                     LogUtils.exception(e);
                 }
                 break;
-            case HTTP_POST_UPDATEIMAGE:
-                String url = params[0].toString();
-                Map<String, Object> map = (Map<String, Object>) params[1];
-                Upload[] images = (Upload[]) params[2];
-                result = HttpUtils.HttpUrlConn_Upload(url, map, images);
+            case Upload:
+                result = HttpUtils.HttpUrlConn_Upload(params[0].toString(), (Map<String, Object>) params[1], (Upload[]) params[2]);
                 break;
         }
-        if (libEntity != null && libEntity.getData() != null) {
-            result = new String(libEntity.getData());
-            try {
-                data = JsonUtils.getMap(result);
-                if (libEntity.isError() && libEntity.getErrorMessage() != null) {
-                    data.putAll(ResultUtils.addMessageMap(libEntity.getErrorCode(), libEntity.getErrorMessage()));
-                }
-            } catch (Exception e) {
-                LogUtils.exception(e);
-                data = ResultUtils.getErrorMap(Conif.NET_STATUS_FAIL, "数据解析失败");
-            }
-        } else if (libEntity != null) {
-            if (libEntity.isError()) {
-                data = ResultUtils.getErrorMap(Conif.NETWORK_NOTCONNECT_ERRORCode, libEntity.getErrorMessage());
-            }
-        } else {
-            if (StringUtils.isEmpty(result)) {
-                data = ResultUtils.getErrorMap(Conif.NET_STATUS_FAIL, "网络异常");
-            } else {
-                try {
-                    data = JsonUtils.getMap(result);
-                } catch (Exception e) {
-                    LogUtils.exception(e);
-                    data = ResultUtils.getErrorMap(Conif.NET_STATUS_FAIL, "数据解析失败");
-                }
-            }
-        }
-        return data;
+        return libEntity;
     }
 
     @Override
-    protected void onPostExecute(Map<String, Object> result) {
+    protected void onPostExecute(LibEntity result) {
         super.onPostExecute(result);
         for (OnDataReturnListener on : dataReturnListeners) {
-            on.onDateReturn(taskId, result);
+            on.onDateReturn(taskId, result.getHttpResult(), result.);
         }
     }
 
+    public interface OnDataReturnListener {
+        void onDateReturn(String id, Conif.HttpResult httpResult, Map<String, Object> result);
+    }
 }

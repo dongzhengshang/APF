@@ -1,6 +1,9 @@
 package com.dzs.projectframe.base.Bean;
 
+import com.dzs.projectframe.Conif;
+
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 数据Bean基类
@@ -17,7 +20,8 @@ public class LibEntity implements Serializable {
     private byte[] data;// 数据
     private long saveDate; // 缓存数据的时间
     private long shelfLife; // 有效期,System.currentTimeMillis()
-    private String ErrorCode;//异常码
+    private Conif.HttpResult httpResult;//请求结果
+    private Map<String, Object> mapData;//数据(map格式)
 
     /**
      * 判断是否过期
@@ -68,12 +72,18 @@ public class LibEntity implements Serializable {
         this.baseId = baseId;
     }
 
-    public String getErrorCode() {
-        return ErrorCode;
+    public Conif.HttpResult getHttpResult() {
+        return httpResult;
+    }
+    public void setHttpResult(Conif.HttpResult httpResult) {
+        this.httpResult = httpResult;
     }
 
-    public void setErrorCode(String errorCode) {
-        ErrorCode = errorCode;
+    public Map<String, Object> getMapData() {
+        return mapData;
     }
 
+    public void setMapData(Map<String, Object> mapData) {
+        this.mapData = mapData;
+    }
 }

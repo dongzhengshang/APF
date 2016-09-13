@@ -6,6 +6,7 @@ import com.dzs.projectframe.base.Bean.LibEntity;
 import com.dzs.projectframe.base.Bean.Upload;
 import com.dzs.projectframe.base.ProjectContext;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -38,9 +39,6 @@ public class HttpUtils {
     private static String BOUNDARY = UUID.randomUUID().toString();
     private static String twoHyphens = "--";
     private static String lineEnd = System.getProperty("line.separator");
-
-    public static String NetWorkNotConnectErrorCode = "100";//网络未连接
-    public static String NetWorkConnectErrorCode = "101";//网络连接错误
 
     public static HttpURLConnection getHttpUrlConnect(String urlString, String method) throws IOException {
         String userAgent = Conif.getUserAgent();
@@ -90,7 +88,7 @@ public class HttpUtils {
         if (!SystemUtils.checkNetConttent(ProjectContext.appContext)) {
             libEntity = getCatch(cachkey, true);
             libEntity = libEntity == null ? new LibEntity() : libEntity;
-            libEntity.setErrorCode(NetWorkNotConnectErrorCode);
+            libEntity.setHttpResult(Conif.HttpResult.NetNotConnect);
             return libEntity;
         }
         // 如果没有开启强制刷新,先读取缓存
@@ -117,11 +115,16 @@ public class HttpUtils {
                 }
                 is = connection.getInputStream();
                 libEntity = new LibEntity();
+                libEntity.setMapData(JsonUtils.getMap(FileUtils.input2String(is)));
                 libEntity.setCachKey(cachkey);
-                libEntity.setData(FileUtils.input2byte(is));
-                LogUtils.info("Network-URL(GET)返回值：" + new String(libEntity.getData()));
                 libEntity.setShelfLife(System.currentTimeMillis() + Conif.getCacheTime());
+                libEntity.setHttpResult(Conif.HttpResult.Success);
+                LogUtils.info("Network-URL(GET)返回值：" + new String(libEntity.getData()));
                 if (saveCache) DiskLruCacheHelpUtils.getInstanse().putCatch(cachkey, libEntity, true);
+                break;
+            } catch (JSONException e) {
+                LogUtils.exception(e);
+                libEntity.setHttpResult(Conif.HttpResult.ParseFaile);
                 break;
             } catch (Exception e) {
                 time++;
@@ -144,7 +147,7 @@ public class HttpUtils {
         } while (time < RETRY_TIME);
         if (libEntity == null) {
             libEntity = getCatch(cachkey, true) == null ? new LibEntity() : libEntity;
-            libEntity.setErrorCode(NetWorkConnectErrorCode);
+            libEntity.setHttpResult(Conif.HttpResult.Faile);
         }
         return libEntity;
     }
@@ -159,7 +162,7 @@ public class HttpUtils {
      * @return LibEntity
      * @throws UnsupportedEncodingException
      */
-    public static LibEntity HttpUrlConn_postforms(String url, Map<String, Object> params, boolean saveCache, boolean reflsh, String cachkey) {
+    public static LibEntity httpURLConnect_Post(String url, Map<String, Object> params, boolean saveCache, boolean reflsh, String cachkey, HttpType httpType) {
         int time = 0;
         LibEntity libEntity = null;
         InputStream is = null;
@@ -167,7 +170,7 @@ public class HttpUtils {
         if (!SystemUtils.checkNetConttent(ProjectContext.appContext)) {
             libEntity = getCatch(cachkey, true);
             libEntity = libEntity == null ? new LibEntity() : libEntity;
-            libEntity.setErrorCode(NetWorkNotConnectErrorCode);
+            libEntity.setHttpResult(Conif.HttpResult.NetNotConnect);
             return libEntity;
         }
         // 如果没有开启强制刷新,先读取缓存
@@ -181,7 +184,16 @@ public class HttpUtils {
                 LogUtils.info("Network-URL(POST_FORMS-GET地址)：" + StringUtils.mapToUrl(url, params));
                 connection = getHttpUrlConnect(url, "POST");
                 DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
-                addFormField(params.entrySet(), dataOutputStream);
+                switch (httpType) {
+                    case Json:
+                        addJsonField(params, dataOutputStream);
+                        break;
+                    case Form:
+                        addFormField(params.entrySet(), dataOutputStream);
+                        break;
+                    default:
+                        break;
+                }
                 // 数据结束标志
                 dataOutputStream.writeBytes(twoHyphens + BOUNDARY + twoHyphens + lineEnd);
                 dataOutputStream.flush();
@@ -193,14 +205,19 @@ public class HttpUtils {
                 }
                 is = connection.getInputStream();
                 libEntity = new LibEntity();
+                libEntity.setMapData(JsonUtils.getMap(FileUtils.input2String(is)));
                 libEntity.setCachKey(cachkey);
-                libEntity.setData(FileUtils.input2byte(is));
-                LogUtils.info("Network-URL(POST_FORMS)返回值：" + new String(libEntity.getData()));
                 libEntity.setShelfLife(System.currentTimeMillis() + Conif.getCacheTime());
+                libEntity.setHttpResult(Conif.HttpResult.Success);
+                LogUtils.info("Network-URL(POST_FORMS)返回值：" + new String(libEntity.getData()));
                 if (saveCache) {
                     DiskLruCacheHelpUtils.getInstanse().putCatch(cachkey, libEntity, true);
                 }
                 dataOutputStream.close();
+                break;
+            } catch (JSONException e) {
+                LogUtils.exception(e);
+                libEntity.setHttpResult(Conif.HttpResult.ParseFaile);
                 break;
             } catch (Exception e) {
                 time++;
@@ -208,6 +225,7 @@ public class HttpUtils {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e1) {
+                        LogUtils.exception(e);
                     }
                     continue;
                 }
@@ -222,7 +240,7 @@ public class HttpUtils {
         } while (time < RETRY_TIME);
         if (libEntity == null) {
             libEntity = getCatch(cachkey, true) == null ? new LibEntity() : libEntity;
-            libEntity.setErrorCode(NetWorkConnectErrorCode);
+            libEntity.setHttpResult(Conif.HttpResult.Faile);
         }
         return libEntity;
     }
@@ -332,5 +350,9 @@ public class HttpUtils {
         JSONObject json = new JSONObject(params);
         sb.append(json.toString()).append(lineEnd);
         output.write(new String(sb.toString().getBytes(), UTF_8).getBytes());
+    }
+
+    public enum HttpType {
+        Get, Json, Form, Upload
     }
 }

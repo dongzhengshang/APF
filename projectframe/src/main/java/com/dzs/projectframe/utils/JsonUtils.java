@@ -1,6 +1,7 @@
 package com.dzs.projectframe.utils;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class JsonUtils {
      * @return map
      * @throws Exception
      */
-    public static Map<String, Object> getMap(String jsonStr) throws Exception {
+    public static Map<String, Object> getMap(String jsonStr) throws JSONException {
         Map<String, Object> result = new HashMap<>();
         if (!StringUtils.isEmpty(jsonStr)) {
             JSONObject json = new JSONObject(jsonStr);
@@ -78,7 +79,7 @@ public class JsonUtils {
      * @return List
      * @throws Exception
      */
-    public static List<Map<String, Object>> getMapList(String jsonStr) throws Exception {
+    public static List<Map<String, Object>> getMapList(String jsonStr) throws JSONException {
         List<Map<String, Object>> list = new ArrayList<>();
         JSONArray ja = new JSONArray(jsonStr);
         for (int j = 0; j < ja.length(); j++) {
