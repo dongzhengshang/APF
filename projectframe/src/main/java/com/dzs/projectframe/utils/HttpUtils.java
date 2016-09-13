@@ -25,9 +25,9 @@ import java.util.UUID;
 
 
 /**
+ * http工具类
  * @author DZS dzsdevelop@163.com
- * @version V1.0
- * @Description: (http工具类)
+ * @version V2.0
  * @date 2015-12-23 上午9:55:16
  */
 public class HttpUtils {
@@ -160,9 +160,8 @@ public class HttpUtils {
      * @param saveCache 是否进行缓存
      * @param reflsh    是否进行强制刷新
      * @return LibEntity
-     * @throws UnsupportedEncodingException
      */
-    public static LibEntity httpURLConnect_Post(String url, Map<String, Object> params, boolean saveCache, boolean reflsh, String cachkey, HttpType httpType) {
+    public static LibEntity httpURLConnect_Post(String url, Map<String, Object> params,Upload[] files, boolean saveCache, boolean reflsh, String cachkey, HttpType httpType) {
         int time = 0;
         LibEntity libEntity = null;
         InputStream is = null;
@@ -193,6 +192,9 @@ public class HttpUtils {
                         break;
                     default:
                         break;
+                }
+                if (files != null) {
+                    addImageContent(files, dataOutputStream);
                 }
                 // 数据结束标志
                 dataOutputStream.writeBytes(twoHyphens + BOUNDARY + twoHyphens + lineEnd);
@@ -245,54 +247,6 @@ public class HttpUtils {
         return libEntity;
     }
 
-    /**
-     * 文件上传
-     *
-     * @param url    地址
-     * @param params 表单数据
-     * @param files  图片
-     * @return String
-     */
-    public static String HttpUrlConn_Upload(String url, Map<String, Object> params, Upload[] files) {
-        HttpURLConnection connection = null;
-        String responsebody = "";
-        BufferedReader buffer;
-        try {
-            LogUtils.info("Network-URL(POST)：%s", url);
-            connection = getHttpUrlConnect(url, "POST");
-            DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
-            // 添加图片
-            if (files != null) {
-                addImageContent(files, dataOutputStream);
-            }
-            if (params != null) {
-                addFormField(params.entrySet(), dataOutputStream);
-            }
-            // 数据结束标志
-            dataOutputStream.writeBytes(twoHyphens + BOUNDARY + twoHyphens + lineEnd);
-            dataOutputStream.flush();
-            int statueCode = connection.getResponseCode();
-            if (statueCode != HttpURLConnection.HTTP_OK) {
-                LogUtils.info("错误码：" + statueCode);
-            }
-            buffer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String inputLine = "";
-            while ((inputLine = buffer.readLine()) != null) {
-                responsebody += inputLine;
-            }
-            LogUtils.info("Network-Result(POST)：%s", responsebody);
-            dataOutputStream.close();
-            buffer.close();
-        } catch (Exception e) {
-            LogUtils.exception(e);
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-                connection = null;
-            }
-        }
-        return responsebody;
-    }
 
     /**
      * 添加图片/文件

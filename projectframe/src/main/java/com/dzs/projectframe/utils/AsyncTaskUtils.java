@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import com.dzs.projectframe.Conif;
 import com.dzs.projectframe.base.Bean.LibEntity;
 import com.dzs.projectframe.base.Bean.Upload;
-import com.dzs.projectframe.interf.OnDataReturnListener;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -19,9 +18,9 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
     private HttpUtils.HttpType httpType;
     private boolean reflsh;//强制刷新
     private boolean saveCache;//存储缓存
-    private ArrayList<OnDataReturnListener> dataReturnListeners = new ArrayList<OnDataReturnListener>();
+    private ArrayList<OnNetReturnListener> dataReturnListeners = new ArrayList<OnNetReturnListener>();
 
-    public AsyncTaskUtils(String taskId, HttpUtils.HttpType httpType, boolean saveCache, boolean reflsh, OnDataReturnListener... dataReturnListener) {
+    public AsyncTaskUtils(String taskId, HttpUtils.HttpType httpType, boolean saveCache, boolean reflsh, OnNetReturnListener... dataReturnListener) {
         this.taskId = taskId;
         this.httpType = httpType;
         this.reflsh = reflsh;
@@ -36,11 +35,11 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
         this.saveCache = saveCache;
     }
 
-    public void addDataReturnListener(OnDataReturnListener... dataReturnListener) {
+    public void addDataReturnListener(OnNetReturnListener... dataReturnListener) {
         Collections.addAll(dataReturnListeners, dataReturnListener);
     }
 
-    public void removeDataReturnListener(OnDataReturnListener dataReturnListener) {
+    public void removeDataReturnListener(OnNetReturnListener dataReturnListener) {
         dataReturnListeners.remove(dataReturnListener);
     }
 
@@ -53,14 +52,11 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
     @SuppressWarnings ("unchecked")
     protected LibEntity doInBackground(Object... params) {
         LibEntity libEntity = null;
-        Map<String, Object> data = null;
-        String result = "";
         String cacheKey = "";
         switch (httpType) {
             case Get:
-                String url = null;
                 try {
-                    url = StringUtils.mapToUrl(params[0].toString(), (Map<String, Object>) params[1]);
+                    String url =  StringUtils.mapToUrl(params[0].toString(), (Map<String, Object>) params[1]);
                     cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[1], (String[]) params[2]);
                     libEntity = HttpUtils.httpURLConnect_Get(url, saveCache, reflsh, cacheKey);
                 } catch (UnsupportedEncodingException e) {
@@ -70,7 +66,7 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
             case Json:
                 try {
                     cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[1], (String[]) params[2]);
-                    libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (Map<String, Object>) params[1], saveCache, reflsh, cacheKey, HttpUtils.HttpType.Json);
+                    libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (Map<String, Object>) params[1], (Upload[]) params[3], saveCache, reflsh, cacheKey, HttpUtils.HttpType.Json);
                 } catch (UnsupportedEncodingException e) {
                     LogUtils.exception(e);
                 }
@@ -78,13 +74,10 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
             case Form:
                 try {
                     cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[1], (String[]) params[2]);
-                    libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (Map<String, Object>) params[1], saveCache, reflsh, cacheKey, HttpUtils.HttpType.Form);
+                    libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (Map<String, Object>) params[1],(Upload[]) params[3], saveCache, reflsh, cacheKey, HttpUtils.HttpType.Form);
                 } catch (UnsupportedEncodingException e) {
                     LogUtils.exception(e);
                 }
-                break;
-            case Upload:
-                result = HttpUtils.HttpUrlConn_Upload(params[0].toString(), (Map<String, Object>) params[1], (Upload[]) params[2]);
                 break;
         }
         return libEntity;
@@ -93,12 +86,12 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
     @Override
     protected void onPostExecute(LibEntity result) {
         super.onPostExecute(result);
-        for (OnDataReturnListener on : dataReturnListeners) {
-            on.onDateReturn(taskId, result.getHttpResult(), result.);
+        for (OnNetReturnListener on : dataReturnListeners) {
+            on.onDateReturn(taskId, result.getHttpResult(), result.getMapData());
         }
     }
 
-    public interface OnDataReturnListener {
+    public interface OnNetReturnListener {
         void onDateReturn(String id, Conif.HttpResult httpResult, Map<String, Object> result);
     }
 }

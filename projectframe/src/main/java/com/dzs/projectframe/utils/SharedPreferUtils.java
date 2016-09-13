@@ -12,7 +12,7 @@ import java.util.Map;
  * SharedPreferences工具类
  *
  * @author DZS dzsdevelop@163.com
- * @version 1.1
+ * @version 1.2
  * @date 2015-3-23 下午5:58:36
  */
 
@@ -25,6 +25,7 @@ public class SharedPreferUtils {
     private SharedPreferUtils(Context context) {
         prefs = context.getSharedPreferences(Conif.SHAREDPREFER_USERINFO, Context.MODE_PRIVATE);
         editor = prefs.edit();
+        editor.apply();
     }
 
     /**
@@ -55,6 +56,10 @@ public class SharedPreferUtils {
         editor.putString(key, value);
         return editor.commit();
     }
+    public void putString2(String key, String value) {
+        editor.putString(key, value);
+        editor.apply();
+    }
 
     /**
      * 获取字符串
@@ -77,6 +82,10 @@ public class SharedPreferUtils {
         editor.putInt(key, value);
         return editor.commit();
     }
+    public void putInt2(String key, int value) {
+        editor.putInt(key, value);
+        editor.apply();
+    }
 
     /**
      * 获取int类型
@@ -98,6 +107,10 @@ public class SharedPreferUtils {
     public boolean putBoolean(String key, boolean value) {
         editor.putBoolean(key, value);
         return editor.commit();
+    }
+    public void putBoolean2(String key, boolean value) {
+        editor.putBoolean(key, value);
+        editor.apply();
     }
 
     /**
@@ -124,6 +137,16 @@ public class SharedPreferUtils {
             }
         }
         editor.commit();
+    }
+    public void saveMap2(Map<String, Object> map) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getValue() == null) {
+                editor.putString(entry.getKey(), null);
+            } else {
+                editor.putString(entry.getKey(), entry.getValue().toString());
+            }
+        }
+        editor.apply();
     }
 
 

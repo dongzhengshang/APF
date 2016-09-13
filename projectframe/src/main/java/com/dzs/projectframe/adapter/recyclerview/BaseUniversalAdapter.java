@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * RecyclerView 适配器
  * @author DZS dzsdevelop@163.com
  * @version V1.0
  * @date 2016/8/19.

@@ -39,3 +39,7 @@ Thumbs.db
 
 #NDK
 obj/
+libs/
+src/androidTest/
+src/main/res/drawable/
+src/test/
