@@ -16,6 +16,10 @@ import java.util.Map;
  */
 public abstract class BaseActivity extends ProjectActivity {
 
+    @Override
+    protected void initAnimation() {
+
+    }
 
     @Override
     public void onClick(View v) {

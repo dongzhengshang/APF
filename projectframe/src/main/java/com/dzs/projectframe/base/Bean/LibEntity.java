@@ -15,7 +15,7 @@ import java.util.Map;
 public class LibEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private String baseId;
+    private String taskId;
     private String cachKey;// 缓存键值
     private byte[] data;// 数据
     private long saveDate; // 缓存数据的时间
@@ -64,17 +64,10 @@ public class LibEntity implements Serializable {
         this.shelfLife = shelfLife;
     }
 
-    public String getBaseId() {
-        return baseId;
-    }
-
-    public void setBaseId(String baseId) {
-        this.baseId = baseId;
-    }
-
     public Conif.HttpResult getHttpResult() {
         return httpResult;
     }
+
     public void setHttpResult(Conif.HttpResult httpResult) {
         this.httpResult = httpResult;
     }
@@ -85,5 +78,13 @@ public class LibEntity implements Serializable {
 
     public void setMapData(Map<String, Object> mapData) {
         this.mapData = mapData;
+    }
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
     }
 }

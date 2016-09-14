@@ -34,13 +34,9 @@ public abstract class ProjectFragment extends Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (getUserVisibleHint()) {
-            isVisible = true;
-            loadDataVisiable();
-        } else {
-            isVisible = false;
-            loadDataInVisiable();
-        }
+        isVisible = isVisibleToUser;
+        if (isVisibleToUser) loadDataVisiable();
+        else loadDataInVisiable();
     }
 
     @Override

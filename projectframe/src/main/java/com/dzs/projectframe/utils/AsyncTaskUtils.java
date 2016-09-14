@@ -56,7 +56,7 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
         switch (httpType) {
             case Get:
                 try {
-                    String url =  StringUtils.mapToUrl(params[0].toString(), (Map<String, Object>) params[1]);
+                    String url = StringUtils.mapToUrl(params[0].toString(), (Map<String, Object>) params[1]);
                     cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[1], (String[]) params[2]);
                     libEntity = HttpUtils.httpURLConnect_Get(url, saveCache, reflsh, cacheKey);
                 } catch (UnsupportedEncodingException e) {
@@ -74,7 +74,7 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
             case Form:
                 try {
                     cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[1], (String[]) params[2]);
-                    libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (Map<String, Object>) params[1],(Upload[]) params[3], saveCache, reflsh, cacheKey, HttpUtils.HttpType.Form);
+                    libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (Map<String, Object>) params[1], (Upload[]) params[3], saveCache, reflsh, cacheKey, HttpUtils.HttpType.Form);
                 } catch (UnsupportedEncodingException e) {
                     LogUtils.exception(e);
                 }
@@ -87,11 +87,12 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
     protected void onPostExecute(LibEntity result) {
         super.onPostExecute(result);
         for (OnNetReturnListener on : dataReturnListeners) {
-            on.onDateReturn(taskId, result.getHttpResult(), result.getMapData());
+            result.setTaskId(taskId);
+            on.onDateReturn(result);
         }
     }
 
     public interface OnNetReturnListener {
-        void onDateReturn(String id, Conif.HttpResult httpResult, Map<String, Object> result);
+        void onDateReturn(LibEntity libEntity);
     }
 }
