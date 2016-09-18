@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Marketing</string>
+    <string name="splash_jump">%d跳过</string>
+
 </resources>

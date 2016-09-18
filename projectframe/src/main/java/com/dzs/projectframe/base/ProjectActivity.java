@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.WindowManager;
@@ -43,14 +44,14 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     protected abstract void initData();
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         StackUtils.getInstanse().addActivity(this);
         setTextAbout();
-        resources = ProjectContext.resources;
-        sharedPreferUtils = ProjectContext.sharedPreferUtils;
         viewUtils = ViewHolder.get(this, setContent());
         setContentView(viewUtils.getView());
+        resources = ProjectContext.resources;
+        sharedPreferUtils = ProjectContext.sharedPreferUtils;
         initView();
         initAnimation();
         initData();
