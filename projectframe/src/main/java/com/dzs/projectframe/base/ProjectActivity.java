@@ -1,5 +1,6 @@
 package com.dzs.projectframe.base;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -78,23 +79,47 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     }
 
     /**
+     * 跳转到某一Activity
+     *
+     * @param activity activity
+     * @param isFinish 是否销毁当前界面
+     */
+    protected void Intent(Class activity, boolean isFinish) {
+        Intent(activity, null, isFinish);
+    }
+
+    /**
+     * 跳转到某一Activity
+     *
+     * @param activity activity
+     * @param data     数据Bean,需要实现Serializable接口
+     * @param isFinish 是否销毁当前界面
+     */
+    protected void Intent(Class activity, Class data, boolean isFinish) {
+        Intent intent = new Intent(this, activity);
+        if (data != null) intent.putExtra(activity.getName(), data);
+        startActivity(intent);
+        if (isFinish) finish();
+    }
+
+    /**
      * 设置全屏
      */
-    public void setFullScream() {
+    protected void setFullScream() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     //------------------相机操作相关------------------------
-    public static final int SYS_INTENT_REQUEST = 0XFF01;//系统相册
-    public static final int CAMERA_INTENT_REQUEST = 0XFF02;//调用系统相机
-    public static final int IMAGE_CUT = 0XFF03;//裁剪
-    public Uri photoUri = Uri.fromFile(FileUtils.getSaveFile("TempImage", "tempPhoto.jpeg"));
-    public File file = FileUtils.getSaveFile("TempImage", "temp.jpeg");
-    public Uri imageUri = Uri.fromFile(file);
-    public String imagePath = file.getAbsolutePath();
+    protected static final int SYS_INTENT_REQUEST = 0XFF01;//系统相册
+    protected static final int CAMERA_INTENT_REQUEST = 0XFF02;//调用系统相机
+    protected static final int IMAGE_CUT = 0XFF03;//裁剪
+    protected Uri photoUri = Uri.fromFile(FileUtils.getSaveFile("TempImage", "tempPhoto.jpeg"));
+    protected File file = FileUtils.getSaveFile("TempImage", "temp.jpeg");
+    protected Uri imageUri = Uri.fromFile(file);
+    protected String imagePath = file.getAbsolutePath();
 
     //调用系统相册
-    public void systemPhoto() {
+    protected void systemPhoto() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_PICK);
@@ -102,7 +127,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     }
 
     //调用系统相机
-    public void cameraPhoto() {
+    protected void cameraPhoto() {
         try {
             if (!FileUtils.checkSDcard()) {
                 TostUtils.showOneToast("SD卡不可用!");
@@ -118,7 +143,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     }
 
     //图片剪切
-    public void cropImageUri(Uri uri, int aspectX, int aspectY, int outputX, int outputY, int requestCode) {
+    protected void cropImageUri(Uri uri, int aspectX, int aspectY, int outputX, int outputY, int requestCode) {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
         intent.putExtra("crop", "true");

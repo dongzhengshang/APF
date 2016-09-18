@@ -3,6 +3,7 @@ package com.dzs.marketing.base;
 import android.view.View;
 
 import com.dzs.projectframe.Conif;
+import com.dzs.projectframe.base.Bean.LibEntity;
 import com.dzs.projectframe.base.ProjectActivity;
 
 import java.util.Map;
@@ -27,7 +28,7 @@ public abstract class BaseActivity extends ProjectActivity {
     }
 
     @Override
-    public void onDateReturn(String id, Conif.HttpResult httpResult, Map<String, Object> result) {
+    public void onDateReturn(LibEntity libEntity) {
 
     }
 }

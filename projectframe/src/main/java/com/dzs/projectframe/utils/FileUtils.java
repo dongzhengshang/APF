@@ -98,12 +98,11 @@ public class FileUtils {
     public static File getSaveFile(String folderName, String fileName) {
         File file = new File(getAppSavePath(folderName) + File.separator + fileName);
         try {
-            boolean createType = file.createNewFile();
-            return createType ? file : null;
+            file.createNewFile();
         } catch (IOException e) {
             LogUtils.exception(e);
-            return null;
         }
+        return file;
     }
 
     /**
