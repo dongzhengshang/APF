@@ -48,10 +48,17 @@ public class UserControl {
         return getLoginState();
     }
 
-    public void login(String userName, String passward) {
-        
+    //用户注册
+    public void register() {
+
     }
 
+    //用户登录
+    public void login(String userName, String passward) {
+
+    }
+
+    //用户退出
     public void logout() {
 
     }

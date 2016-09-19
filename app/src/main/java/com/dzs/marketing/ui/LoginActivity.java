@@ -1,5 +1,6 @@
 package com.dzs.marketing.ui;
 
+import com.dzs.marketing.R;
 import com.dzs.marketing.base.BaseActivity;
 
 /**
@@ -12,7 +13,7 @@ import com.dzs.marketing.base.BaseActivity;
 public class LoginActivity extends BaseActivity {
     @Override
     protected int setContent() {
-        return 0;
+        return R.layout.activity_login;
     }
 
     @Override

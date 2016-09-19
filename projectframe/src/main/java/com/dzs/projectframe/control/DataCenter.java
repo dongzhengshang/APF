@@ -24,7 +24,7 @@ public class DataCenter {
      * @param httpType 访问方式
      * @param saveCache 是否需要进行缓存
      * @param reflsh  是否需要进行强制刷新
-     * @param netReturnListeners 回掉
+     * @param netReturnListeners 回调
      */
     protected void getData(String taskId, String url, Map<String, Object> params,String[] keys, Upload[] uploads, HttpUtils.HttpType httpType,boolean saveCache,boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
         AsyncTaskUtils ansyTaskUtils = new AsyncTaskUtils(taskId, httpType, saveCache, reflsh,netReturnListeners);
