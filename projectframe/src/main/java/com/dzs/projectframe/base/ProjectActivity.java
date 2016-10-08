@@ -1,15 +1,12 @@
 package com.dzs.projectframe.base;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.WindowManager;
@@ -114,10 +111,12 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     protected static final int SYS_INTENT_REQUEST = 0XFF01;//系统相册
     protected static final int CAMERA_INTENT_REQUEST = 0XFF02;//调用系统相机
     protected static final int IMAGE_CUT = 0XFF03;//裁剪
-    protected Uri photoUri = Uri.fromFile(FileUtils.getSaveFile("TempImage", "tempPhoto.jpeg"));
-    protected File file = FileUtils.getSaveFile("TempImage", "temp.jpeg");
-    protected Uri imageUri = Uri.fromFile(file);
-    protected String imagePath = file.getAbsolutePath();
+    protected File tempPhotoImageFile = FileUtils.getSaveFile("TempImage", "tempPhoto.jpeg");
+    protected Uri photoUri = tempPhotoImageFile == null ? null : Uri.fromFile(tempPhotoImageFile);
+    protected String photoPath = tempPhotoImageFile == null ? "" : tempPhotoImageFile.getAbsolutePath();
+    protected File tempCropImageFile = FileUtils.getSaveFile("TempImage", "tempCrop.jpeg");
+    protected Uri cropUri = tempCropImageFile == null ? null : Uri.fromFile(tempCropImageFile);
+    protected String cropPath = tempCropImageFile == null ? "" : tempCropImageFile.getAbsolutePath();
 
     //调用系统相册
     protected void systemPhoto() {
@@ -153,7 +152,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
         intent.putExtra("outputX", outputX);
         intent.putExtra("outputY", outputY);
         intent.putExtra("scale", true);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);
         intent.putExtra("return-data", false);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true);
