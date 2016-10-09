@@ -1,5 +1,6 @@
 package com.dzs.projectframe.widget;
 
+import android.annotation.SuppressLint;
 import android.os.CountDownTimer;
 import android.widget.TextView;
 
@@ -21,6 +22,7 @@ public class MyCountDownTimer extends CountDownTimer {
         super(millisInFuture, countDownInterval);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onTick(long millisUntilFinished) {
         button.setEnabled(false);

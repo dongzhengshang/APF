@@ -19,16 +19,18 @@ public class Upload {
 
     private String formName;// type="file"表单字段所对应的name属性值
 
-    private String contentType = "image/jpeg"; // 内容类型。不同的图片类型对应不同的值，具体请参考Multimedia
+    private String contentType; // 内容类型。不同的图片类型对应不同的值，具体请参考Multimedia
 
 
-    public Upload(String fileName, String formName) throws FileNotFoundException {
-        this(fileName, formName, null);
+    public static void uploadImage(String fileName, String formName) throws FileNotFoundException {
+        new Upload(fileName, formName, "image/jpeg");
     }
 
-    public Upload(byte[] data, String formName) {
+    public Upload(byte[] data, String fileName, String formName, String contentType) {
         this.data = data;
+        this.fileName = fileName;
         this.formName = formName;
+        this.contentType = contentType;
     }
 
     public Upload(String filePath, String formName, String contentType) throws FileNotFoundException {

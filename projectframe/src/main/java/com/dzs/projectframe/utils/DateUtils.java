@@ -1,5 +1,7 @@
 package com.dzs.projectframe.utils;
 
+import android.annotation.SuppressLint;
+
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -13,6 +15,7 @@ import java.util.TimeZone;
  * @version V1.0
  * @date 2015-12-23 上午9:53:41
  */
+@SuppressLint("SimpleDateFormat")
 public class DateUtils {
 
     private final static long yearLevelValue = 365 * 24 * 60 * 60 * 1000;
@@ -21,8 +24,6 @@ public class DateUtils {
     private final static long hourLevelValue = 60 * 60 * 1000;
     private final static long minuteLevelValue = 60 * 1000;
     private final static long secondLevelValue = 1000;
-
-
     private static final String DATEFORMAT_WITHMINUTS = "yyyy-MM-dd HH:mm:ss";
     private static final String DATEFORMAT = "yyyy-MM-dd";
 
@@ -30,74 +31,49 @@ public class DateUtils {
     private final static String[] constellationArr = new String[]{"摩羯座", "水瓶座", "双鱼座", "白羊座",
             "金牛座", "双子座", "巨蟹座", "狮子座", "处女座", "天秤座", "天蝎座", "射手座", "摩羯座"};
 
-    public enum TimeType {TODAY, WEEK, LONGTIME}
-
 
     /**
-     * 计算星座
+     * 根据月份和日期计算星座
      *
-     * @param month 月
-     * @param day   天
-     * @return String
+     * @param month 月份
+     * @param day   日期
+     * @return
      */
     public static String getConstellation(int month, int day) {
         return day < dayArr[month - 1] ? constellationArr[month - 1] : constellationArr[month];
     }
 
+    /**
+     * 获取时间戳
+     *
+     * @return
+     */
     public static String getTimeStamp() {
-        return String.valueOf(new Timestamp(System.currentTimeMillis()));//
+        return String.valueOf(new Timestamp(System.currentTimeMillis()));
     }
 
-    private final static ThreadLocal<SimpleDateFormat> dataFormat_Minuts = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat(DATEFORMAT_WITHMINUTS);
-        }
-    };
-    private final static ThreadLocal<SimpleDateFormat> dataFormat = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat(DATEFORMAT);
-        }
-    };
-
     /**
-     * 获取系统时间
+     * 获取当前系统时间,以固定格式返回
      *
-     * @param format 格式
+     * @param format 固定格式
      */
-    public static String getDataTime(String format) {
-        SimpleDateFormat df = new SimpleDateFormat(format);
-        return df.format(new Date());
-    }
-
-
-    /**
-     * 将日期以  yyyy-MM-dd HH:mm格式输出
-     */
-    public static String getTime(Date date) {
-        if (date == null) {
-            return "";
-        }
-        return dataFormat_Minuts.get().format(date);
+    public static String getCurrentSystemTime(String format) {
+        if (StringUtils.isEmpty(format)) throw new IllegalArgumentException();
+        return new SimpleDateFormat(format).format(new Date());
     }
 
     /**
-     * 将日期以  yyyy-MM-dd 格式输出
+     * 获取今天零点时间的毫秒数
      *
-     * @param longTime 时间字符串（System.currentTimeMillis()格式）
+     * @return long
      */
-    public static String formatTime(String longTime) {
-        if (StringUtils.isEmpty(longTime))
-            return "";
-        return formatTime(Long.parseLong(longTime));
-    }
-
-    /**
-     * 将日期以yyyy-MM-dd 格式输出
-     */
-    public static String formatTime(long longTime) {
-        return dataFormat.get().format(longTime);
+    public static long getTodayStart() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTimeInMillis();
     }
 
     /**
@@ -115,7 +91,8 @@ public class DateUtils {
      * 将时间以固定格式输出
      *
      * @param date       时间
-     * @param dateFormat 日期格式     * @return String
+     * @param dateFormat 日期格式
+     * @return String
      */
     public static String formatTime(Date date, String dateFormat) {
         return new SimpleDateFormat(dateFormat).format(date);
@@ -159,89 +136,6 @@ public class DateUtils {
             return "0" + hours + ":" + format.format(mss);
         } else {
             return hours + ":" + format.format(mss);
-        }
-    }
-
-    /**
-     * 将时间以00:00:00格式输出
-     *
-     * @param mss 剩余毫秒数
-     * @return 天：时：分
-     */
-    public static String formatDuring2(long mss) {
-        String day, hour, minute, second;
-        if (mss <= 0) {
-            return "00:00:00";
-        }
-        int days = (int) (mss / dayLevelValue);
-        int hours = (int) ((mss - days * dayLevelValue) / hourLevelValue);
-        int minutes = (int) ((mss - (days * dayLevelValue) - (hours * hourLevelValue)) / minuteLevelValue);
-        int seconds = (int) ((mss - (days * dayLevelValue) - (hours * hourLevelValue) - (minutes * minuteLevelValue)) / secondLevelValue);
-        if (days >= 0 && days < 10) {
-            day = "0" + days;
-        } else {
-            day = "" + days;
-        }
-        if (hours >= 0 && hours < 10) {
-            hour = "0" + hours;
-        } else {
-            hour = "" + hours;
-        }
-        if (minutes >= 0 && minutes < 10) {
-            minute = "0" + minutes;
-        } else {
-            minute = "" + minutes;
-        }
-        if (seconds >= 0 && seconds < 10) {
-            second = "0" + seconds;
-        } else {
-            second = "" + seconds;
-        }
-        return day + ":" + hour + ":" + minute;
-    }
-
-    /**
-     * 获取今天零点时间的毫秒数
-     *
-     * @return long
-     */
-    public static long getTodayStart() {
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTimeInMillis();
-    }
-
-    /**
-     * 获取时间差
-     */
-    public static TimeType getMyTime(long time) {
-        TimeType describe;
-        int shiJianCha = (int) (getTodayStart() - time);
-        if (time >= getTodayStart()) {
-            describe = TimeType.TODAY;
-        } else if (shiJianCha > 0 && shiJianCha < dayLevelValue * 7) {//昨天到七天之间
-            describe = TimeType.WEEK;
-        } else {
-            describe = TimeType.LONGTIME;
-        }
-        return describe;
-    }
-
-    /**
-     * 获取时间
-     *
-     * @param time 时间（long）
-     * @return
-     */
-    public static String getTime(long time) {
-        int shiJianCha = (int) (getTodayStart() - time);
-        if (time >= getTodayStart()) {
-            return "今天";
-        } else {
-            return dataFormat.get().format(time);
         }
     }
 

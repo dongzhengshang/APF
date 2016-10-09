@@ -37,12 +37,10 @@ public class Conif {
 
     public static String getUserAgent() {
         PackageInfo info = SystemUtils.getPackageInfo(ProjectContext.appContext);
-        StringBuilder ua = new StringBuilder("DZSDevelop-Android");
-        ua.append('/').append(info.versionName).append('_').append(info.versionCode);// App版本
-        ua.append("/Android");// 手机系统平台
-        ua.append("/").append(android.os.Build.MODEL); // 手机型号
-        ua.append("/").append(android.os.Build.VERSION.RELEASE);// 手机系统版本
-        return ua.toString();
+        return "DZSDevelop-Android" + "/Android"
+                + "/" + android.os.Build.MODEL//手机型号
+                + "/" + android.os.Build.VERSION.RELEASE//手机系统版本
+                + "/" + info.versionName + "_v" + info.versionCode;//App版本
     }
 
     //-------------缓存时间--------------------------//
@@ -53,7 +51,7 @@ public class Conif {
         int state = SystemUtils.getNetworkType(ProjectContext.appContext);
         if (state == 0) {
             return (long) 0;
-        } else if (state == SystemUtils.NETTYPE_WIFI) {
+        } else if (state == SystemUtils.WIFI) {
             return WIFI_CACHE_TIME;
         } else {
             return NET_CACHE_TIME;

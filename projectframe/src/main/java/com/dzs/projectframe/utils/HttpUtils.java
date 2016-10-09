@@ -26,6 +26,7 @@ import java.util.UUID;
 
 /**
  * http工具类
+ *
  * @author DZS dzsdevelop@163.com
  * @version V2.0
  * @date 2015-12-23 上午9:55:16
@@ -120,7 +121,8 @@ public class HttpUtils {
                 libEntity.setShelfLife(System.currentTimeMillis() + Conif.getCacheTime());
                 libEntity.setHttpResult(Conif.HttpResult.Success);
                 LogUtils.info("Network-URL(GET)返回值：" + new String(libEntity.getData()));
-                if (saveCache) DiskLruCacheHelpUtils.getInstanse().putCatch(cachkey, libEntity, true);
+                if (saveCache)
+                    DiskLruCacheHelpUtils.getInstanse().putCatch(cachkey, libEntity, true);
                 break;
             } catch (JSONException e) {
                 LogUtils.exception(e);
@@ -161,7 +163,7 @@ public class HttpUtils {
      * @param reflsh    是否进行强制刷新
      * @return LibEntity
      */
-    public static LibEntity httpURLConnect_Post(String url, Map<String, Object> params,Upload[] files, boolean saveCache, boolean reflsh, String cachkey, HttpType httpType) {
+    public static LibEntity httpURLConnect_Post(String url, Map<String, Object> params, Upload[] files, boolean saveCache, boolean reflsh, String cachkey, HttpType httpType) {
         int time = 0;
         LibEntity libEntity = null;
         InputStream is = null;
@@ -307,6 +309,6 @@ public class HttpUtils {
     }
 
     public enum HttpType {
-        Get, Json, Form, Upload
+        Get, Json, Form
     }
 }

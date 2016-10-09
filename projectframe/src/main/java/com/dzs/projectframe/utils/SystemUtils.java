@@ -18,6 +18,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Parcelable;
 import android.telephony.TelephonyManager;
 
@@ -37,9 +38,6 @@ import java.util.UUID;
  */
 public class SystemUtils {
 
-    public static final int NETTYPE_WIFI = 0x01;
-    public static final int NETTYPE_CMWAP = 0x02;
-    public static final int NETTYPE_CMNET = 0x03;
     public static final int NETWORK_UNKNOWN = 0;
     public static final int MOBILE_2G = 1;
     public static final int MOBILE_3G = 2;
@@ -101,40 +99,37 @@ public class SystemUtils {
      *
      * @return StringBuilder
      */
-    @SuppressLint ("NewApi")
-    public static StringBuilder getPhoneDriverInfo() {
-        StringBuilder su = new StringBuilder();
-        su.append("产品名称: ").append(android.os.Build.PRODUCT);
-        su.append("\nCPU型号: ").append(android.os.Build.SUPPORTED_ABIS);
-        su.append("\n标签: ").append(android.os.Build.TAGS);
-        su.append("\n手机型号: ").append(android.os.Build.MODEL);
-        su.append("\nSDK版本: ").append(android.os.Build.VERSION.SDK_INT);
-        su.append("\n系统版本: ").append(android.os.Build.VERSION.RELEASE);
-        su.append("\n设备驱动: ").append(android.os.Build.DEVICE);
-        su.append("\n显示: ").append(android.os.Build.DISPLAY);
-        su.append("\n品牌: ").append(android.os.Build.BRAND);
-        su.append("\n主板: ").append(android.os.Build.BOARD);
-        su.append("\n指纹: ").append(android.os.Build.FINGERPRINT);
-        su.append("\nID: ").append(android.os.Build.ID);
-        su.append("\n制造商: ").append(android.os.Build.MANUFACTURER);
-        su.append("\n用户组: ").append(android.os.Build.USER);
-        return su;
+    @SuppressLint("NewApi")
+    public static String getPhoneDriverInfo() {
+        return "产品名称: " + Build.PRODUCT
+                + ("\nCPU型号: ") + (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? Build.SUPPORTED_ABIS : Build.CPU_ABI)
+                + ("\n标签: ") + (Build.TAGS)
+                + ("\n手机型号: ") + (Build.MODEL)
+                + ("\nSDK版本: ") + (Build.VERSION.SDK_INT)
+                + ("\n系统版本: ") + (Build.VERSION.RELEASE)
+                + ("\n设备驱动: ") + (Build.DEVICE)
+                + ("\n显示: ") + (Build.DISPLAY)
+                + ("\n品牌: ") + (Build.BRAND)
+                + ("\n主板: ") + (Build.BOARD)
+                + ("\n指纹: ") + (Build.FINGERPRINT)
+                + ("\nID: ") + (Build.ID)
+                + ("\n制造商: ") + (Build.MANUFACTURER)
+                + ("\n用户组: ") + (Build.USER);
     }
 
     /**
      * 获取手机卡的一些信息
      *
      * @param context context
-     * @return StringBuilder
+     * @return String
      */
-    public static StringBuilder getPhoneInfo(Context context) {
+    @SuppressLint("HardwareIds")
+    public static String getPhoneInfo(Context context) {
         TelephonyManager Tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        StringBuilder su = new StringBuilder();
-        su.append(String.format("设备id: %s", Tm.getDeviceId()));
-        su.append("\n用户id: ").append(Tm.getSubscriberId());// 没插SIM取不到
-        su.append("\nICCID: ").append(Tm.getSimSerialNumber());// 没插SIM取不到
-        su.append("\nMSISDN: ").append(Tm.getLine1Number());// 有的SIM卡取不到
-        return su;
+        return String.format("设备id: %s", Tm.getDeviceId())
+                + ("\n用户id: ") + (Tm.getSubscriberId())// 没插SIM取不到
+                + ("\nICCID: ") + (Tm.getSimSerialNumber())// 没插SIM取不到
+                + ("\nMSISDN: ") + (Tm.getLine1Number());// 有的SIM卡取不到
     }
 
     /**

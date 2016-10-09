@@ -71,7 +71,7 @@ public class BitmapUtils {
      * @param reqHeight
      * @return
      */
-    @SuppressWarnings ("deprecation")
+    @SuppressWarnings("deprecation")
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -95,7 +95,7 @@ public class BitmapUtils {
      * @param reqHeight
      * @return
      */
-    @SuppressWarnings ("deprecation")
+    @SuppressWarnings("deprecation")
     public static Bitmap decodeSampledBitmapFromStream(InputStream is, int reqWidth, int reqHeight) {
 
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -120,7 +120,7 @@ public class BitmapUtils {
      * @param reqHeight
      * @return
      */
-    @SuppressWarnings ("deprecation")
+    @SuppressWarnings("deprecation")
     public static Bitmap decodeSampledBitmapFromDescriptor(
             FileDescriptor fileDescriptor, int reqWidth, int reqHeight) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -139,33 +139,20 @@ public class BitmapUtils {
 
     /**
      * 根据指定压缩比例压缩从数组中获取到的图片
-     *
-     * @param data
-     * @param offset
-     * @param length
-     * @param reqWidth
-     * @param reqHeight
-     * @return
      */
-    @SuppressWarnings ("deprecation")
+    @SuppressWarnings("deprecation")
     public static Bitmap decodeSampledBitmapFromByteArray(byte[] data, int offset, int length, int reqWidth, int reqHeight) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         options.inPurgeable = true;
         BitmapFactory.decodeByteArray(data, offset, length, options);
-        options.inSampleSize = calculateInSampleSize(options, reqWidth,
-                reqHeight);
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeByteArray(data, offset, length, options);
     }
 
     /**
      * 根据图片宽高计算压缩比例
-     *
-     * @param options
-     * @param reqWidth
-     * @param reqHeight
-     * @return
      */
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
