@@ -100,21 +100,21 @@ public class SystemUtils {
      * @return StringBuilder
      */
     @SuppressLint("NewApi")
-    public static String getPhoneDriverInfo() {
-        return "产品名称: " + Build.PRODUCT
-                + ("\nCPU型号: ") + (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? Build.SUPPORTED_ABIS : Build.CPU_ABI)
-                + ("\n标签: ") + (Build.TAGS)
-                + ("\n手机型号: ") + (Build.MODEL)
-                + ("\nSDK版本: ") + (Build.VERSION.SDK_INT)
-                + ("\n系统版本: ") + (Build.VERSION.RELEASE)
-                + ("\n设备驱动: ") + (Build.DEVICE)
-                + ("\n显示: ") + (Build.DISPLAY)
-                + ("\n品牌: ") + (Build.BRAND)
-                + ("\n主板: ") + (Build.BOARD)
-                + ("\n指纹: ") + (Build.FINGERPRINT)
-                + ("\nID: ") + (Build.ID)
-                + ("\n制造商: ") + (Build.MANUFACTURER)
-                + ("\n用户组: ") + (Build.USER);
+    public static StringBuilder getPhoneDriverInfo() {
+        return new StringBuilder("产品名称: ").append(Build.PRODUCT)
+                .append("\nCPU型号: ").append(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? Build.SUPPORTED_ABIS : Build.CPU_ABI)
+                .append("\n标签: ").append(Build.TAGS)
+                .append("\n手机型号: ").append(Build.MODEL)
+                .append("\nSDK版本: ").append(Build.VERSION.SDK_INT)
+                .append("\n系统版本: ").append(Build.VERSION.RELEASE)
+                .append("\n设备驱动: ").append(Build.DEVICE)
+                .append("\n显示: ").append(Build.DISPLAY)
+                .append("\n品牌: ").append(Build.BRAND)
+                .append("\n主板: ").append(Build.BOARD)
+                .append("\n指纹: ").append(Build.FINGERPRINT)
+                .append("\nID: ").append(Build.ID)
+                .append("\n制造商: ").append(Build.MANUFACTURER)
+                .append("\n用户组: ").append(Build.USER);
     }
 
     /**
@@ -124,12 +124,12 @@ public class SystemUtils {
      * @return String
      */
     @SuppressLint("HardwareIds")
-    public static String getPhoneInfo(Context context) {
+    public static StringBuilder getPhoneInfo(Context context) {
         TelephonyManager Tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        return String.format("设备id: %s", Tm.getDeviceId())
-                + ("\n用户id: ") + (Tm.getSubscriberId())// 没插SIM取不到
-                + ("\nICCID: ") + (Tm.getSimSerialNumber())// 没插SIM取不到
-                + ("\nMSISDN: ") + (Tm.getLine1Number());// 有的SIM卡取不到
+        return new StringBuilder(String.format("设备id: %s", Tm.getDeviceId()))
+                .append("\n用户id: ").append(Tm.getSubscriberId())// 没插SIM取不到
+                .append("\nICCID: ").append(Tm.getSimSerialNumber())// 没插SIM取不到
+                .append("\nMSISDN: ").append(Tm.getLine1Number());// 有的SIM卡取不到
     }
 
     /**

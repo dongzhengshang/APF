@@ -35,12 +35,12 @@ public class Conif {
         }
     }
 
-    public static String getUserAgent() {
+    public static StringBuilder getUserAgent() {
         PackageInfo info = SystemUtils.getPackageInfo(ProjectContext.appContext);
-        return "DZSDevelop-Android" + "/Android"
-                + "/" + android.os.Build.MODEL//手机型号
-                + "/" + android.os.Build.VERSION.RELEASE//手机系统版本
-                + "/" + info.versionName + "_v" + info.versionCode;//App版本
+        return new StringBuilder("DZSDevelop_Android")
+                .append("/").append(android.os.Build.MODEL)//手机型号
+                .append("/").append(android.os.Build.VERSION.RELEASE)//手机系统版本
+                .append("/").append(info.versionName).append("_V").append(info.versionCode);//App版本
     }
 
     //-------------缓存时间--------------------------//
