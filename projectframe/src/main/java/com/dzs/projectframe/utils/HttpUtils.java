@@ -9,14 +9,9 @@ import com.dzs.projectframe.base.ProjectContext;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
@@ -42,7 +37,6 @@ public class HttpUtils {
     private static String lineEnd = System.getProperty("line.separator");
 
     public static HttpURLConnection getHttpUrlConnect(String urlString, String method) throws IOException {
-        String userAgent = Conif.getUserAgent();
         HttpURLConnection connection = null;
         URL url = new URL(urlString);
         connection = (HttpURLConnection) url.openConnection();
@@ -53,7 +47,7 @@ public class HttpUtils {
         connection.setConnectTimeout(TIMEOUT_CONNECTION);
         connection.setReadTimeout(TIMEOUT_READ);
         connection.setRequestProperty("Accept-Charset", UTF_8);
-        connection.setRequestProperty("User-Agent", userAgent);
+        connection.setRequestProperty("User-Agent", Conif.getUserAgent().toString());
         connection.setRequestProperty("Connection", "Keep-Alive");
         connection.setRequestProperty("Accept", "application/json");
         connection.setRequestProperty("Content-Type", "multipart/form-data" + "; boundary=" + BOUNDARY);
