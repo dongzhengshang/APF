@@ -8,15 +8,6 @@
 # Java class files
 *.class
 
-# generated files
-bin/
-gen/
-out/
-build/
-
-# Local configuration file (sdk path, etc)
-local.properties
-
 # Windows thumbnail db
 Thumbs.db
 
@@ -29,17 +20,7 @@ Thumbs.db
 
 # Android Studio
 *.iml
-.idea
-
-# Local IDEA workspace
-.idea/workspace.xml
-
-# Gradle cache
-.gradle
-
-#NDK
-obj/
-libs/
-src/androidTest/
-src/main/res/drawable/
-src/test/
+local.properties
+/build
+/.idea
+/.gradle

@@ -107,6 +107,17 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
+     * Will get the text of a TextView.
+     *
+     * @param viewId The view id.
+     * @return CharSequence.
+     */
+    public CharSequence getText(int viewId) {
+        TextView view = retrieveView(viewId);
+        return view.getText();
+    }
+
+    /**
      * Will set the image of an ImageView from a resource id.
      *
      * @param viewId     The view id.
@@ -501,7 +512,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         return position;
     }
 
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     protected <T extends View> T retrieveView(int viewId) {
         View view = views.get(viewId);
         if (view == null) {

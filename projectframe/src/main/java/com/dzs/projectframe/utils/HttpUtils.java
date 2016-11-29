@@ -110,11 +110,12 @@ public class HttpUtils {
                 }
                 is = connection.getInputStream();
                 libEntity = new LibEntity();
-                libEntity.setMapData(JsonUtils.getMap(FileUtils.input2String(is)));
+                String resultString = FileUtils.input2String(is);
+                libEntity.setMapData(JsonUtils.getMap(resultString));
                 libEntity.setCachKey(cachkey);
                 libEntity.setShelfLife(System.currentTimeMillis() + Conif.getCacheTime());
                 libEntity.setHttpResult(Conif.HttpResult.Success);
-                LogUtils.info("Network-URL(GET)返回值：" + new String(libEntity.getData()));
+                LogUtils.info("Network-URL(GET)返回值：" + resultString);
                 if (saveCache)
                     DiskLruCacheHelpUtils.getInstanse().putCatch(cachkey, libEntity, true);
                 break;
@@ -203,11 +204,12 @@ public class HttpUtils {
                 }
                 is = connection.getInputStream();
                 libEntity = new LibEntity();
-                libEntity.setMapData(JsonUtils.getMap(FileUtils.input2String(is)));
+                String resultString = FileUtils.input2String(is);
+                libEntity.setMapData(JsonUtils.getMap(resultString));
                 libEntity.setCachKey(cachkey);
                 libEntity.setShelfLife(System.currentTimeMillis() + Conif.getCacheTime());
                 libEntity.setHttpResult(Conif.HttpResult.Success);
-                LogUtils.info("Network-URL(POST_FORMS)返回值：" + new String(libEntity.getData()));
+                LogUtils.info("Network-URL(POST_FORMS)返回值：" + resultString);
                 if (saveCache) {
                     DiskLruCacheHelpUtils.getInstanse().putCatch(cachkey, libEntity, true);
                 }

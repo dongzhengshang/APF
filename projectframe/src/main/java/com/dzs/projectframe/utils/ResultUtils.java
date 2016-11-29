@@ -22,6 +22,19 @@ public class ResultUtils {
     }
 
     /**
+     * 从结果中获取 Map
+     *
+     * @param result map
+     * @param key    键
+     * @return ArrayList
+     */
+    public static Map<?, ?> getMapFromResult(Map<?, ?> result, String key) {
+        Object object = getObject(result, key);
+        if (object instanceof Map) return Map.class.cast(object);
+        return null;
+    }
+
+    /**
      * 从结果中获取集合
      *
      * @param result map
