@@ -56,6 +56,7 @@ public class SharedPreferUtils {
         editor.putString(key, value);
         return editor.commit();
     }
+
     public void putString2(String key, String value) {
         editor.putString(key, value);
         editor.apply();
@@ -82,6 +83,7 @@ public class SharedPreferUtils {
         editor.putInt(key, value);
         return editor.commit();
     }
+
     public void putInt2(String key, int value) {
         editor.putInt(key, value);
         editor.apply();
@@ -108,6 +110,7 @@ public class SharedPreferUtils {
         editor.putBoolean(key, value);
         return editor.commit();
     }
+
     public void putBoolean2(String key, boolean value) {
         editor.putBoolean(key, value);
         editor.apply();
@@ -124,26 +127,50 @@ public class SharedPreferUtils {
     }
 
     /**
-     * 保存map集合
+     * 保存map集合(同步方法)
      *
      * @param map
      */
-    public void saveMap(Map<String, Object> map) {
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            if (entry.getValue() == null) {
-                editor.putString(entry.getKey(), null);
-            } else {
-                editor.putString(entry.getKey(), entry.getValue().toString());
+    public boolean saveMapByCommit(Map<?, ?> map) {
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            Object o = entry.getValue();
+            if (o == null) {
+                editor.putString(entry.getKey().toString(), null);
+            } else if (o instanceof Integer) {
+                editor.putInt(entry.getKey().toString(), (Integer) o);
+            } else if (o instanceof String) {
+                editor.putString(entry.getKey().toString(), (String) o);
+            } else if (o instanceof Boolean) {
+                editor.putBoolean(entry.getKey().toString(), (Boolean) o);
+            } else if (o instanceof Long) {
+                editor.putLong(entry.getKey().toString(), (Long) o);
+            } else if (o instanceof Float) {
+                editor.putFloat(entry.getKey().toString(), (Float) o);
             }
         }
-        editor.commit();
+        return editor.commit();
     }
-    public void saveMap2(Map<String, Object> map) {
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            if (entry.getValue() == null) {
-                editor.putString(entry.getKey(), null);
-            } else {
-                editor.putString(entry.getKey(), entry.getValue().toString());
+
+    /**
+     * 异步保存map集合,不关心是否保存成功
+     *
+     * @param map
+     */
+    public void saveMap(Map<?, ?> map) {
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            Object o = entry.getValue();
+            if (o == null) {
+                editor.putString(entry.getKey().toString(), null);
+            } else if (o instanceof Integer) {
+                editor.putInt(entry.getKey().toString(), (Integer) o);
+            } else if (o instanceof String) {
+                editor.putString(entry.getKey().toString(), (String) o);
+            } else if (o instanceof Boolean) {
+                editor.putBoolean(entry.getKey().toString(), (Boolean) o);
+            } else if (o instanceof Long) {
+                editor.putLong(entry.getKey().toString(), (Long) o);
+            } else if (o instanceof Float) {
+                editor.putFloat(entry.getKey().toString(), (Float) o);
             }
         }
         editor.apply();
