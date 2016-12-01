@@ -42,7 +42,7 @@ public abstract class ProjectFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (view == null) {
-            viewUtils = ViewHolder.get(getContext(), setFragmentLayout(), container);
+            viewUtils = ViewHolder.get(getContext(), setFragmentLayout());
             view = viewUtils.getView();
         }
         // 缓存的View需要判断是否已经被加载过parent，如果有需要移除parent。否则会出现此View已经有parent的错误
