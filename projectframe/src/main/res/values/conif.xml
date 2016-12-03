@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="NET_CACHE_TIME">2</integer>
+    <integer name="WIFI_CACHE_TIME">1</integer>
+    <integer name="TIMEOUT_CONNECTION">3000</integer>
+    <integer name="TIMEOUT_READ">5000</integer>
+    <integer name="RETRY_TIME">3</integer>
+    <string name="NetConnectSuccess">网络连接成功</string>
+    <string name="NetConnectFail">网络连接失败</string>
+    <string name="NetNotConnectFail">网络连接失败,请检查网络连接</string>
+    <string name="NetParseFail">网络连接失败,请检查网络连接</string>
+</resources>

@@ -1,9 +1,6 @@
 package com.dzs.marketing.control;
 
-import com.dzs.projectframe.Conif;
-import com.dzs.projectframe.control.DataCenter;
-
-import java.util.Map;
+import com.dzs.projectframe.control.ProjectControl;
 
 /**
  * 网络数据中心
@@ -12,7 +9,7 @@ import java.util.Map;
  * @version V1.0
  * @date 2016/9/14.
  */
-public class DataControl extends DataCenter {
+public class DataControl extends ProjectControl {
     public static DataControl dataControl;
 
     private DataControl() {
