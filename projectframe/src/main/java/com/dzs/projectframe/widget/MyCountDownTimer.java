@@ -22,11 +22,11 @@ public class MyCountDownTimer extends CountDownTimer {
         super(millisInFuture, countDownInterval);
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void onTick(long millisUntilFinished) {
         button.setEnabled(false);
-        button.setText((millisUntilFinished / 1000) + "s");
+        String content = String.valueOf(millisUntilFinished / 1000);
+        button.setText(content);
     }
 
     @Override

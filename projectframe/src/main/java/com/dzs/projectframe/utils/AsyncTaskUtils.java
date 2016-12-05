@@ -6,6 +6,7 @@ import com.dzs.projectframe.Conif;
 import com.dzs.projectframe.base.Bean.LibEntity;
 import com.dzs.projectframe.base.Bean.Upload;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,32 +50,34 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
     }
 
     @Override
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     protected LibEntity doInBackground(Object... params) {
         LibEntity libEntity = null;
         String cacheKey = "";
         switch (httpType) {
             case Get:
                 try {
-                    String url = StringUtils.mapToUrl(params[0].toString(), (Map<String, Object>) params[1]);
-                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[1], (String[]) params[2]);
-                    libEntity = HttpUtils.httpURLConnect_Get(url, saveCache, reflsh, cacheKey);
+                    String url = StringUtils.mapToUrl(params[0].toString(), (Map<String, Object>) params[2]);
+                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]);
+                    libEntity = HttpUtils.httpURLConnect_Get(url, (InputStream) params[1], saveCache, reflsh, cacheKey);
                 } catch (UnsupportedEncodingException e) {
                     LogUtils.exception(e);
                 }
                 break;
             case Json:
                 try {
-                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[1], (String[]) params[2]);
-                    libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (Map<String, Object>) params[1], (Upload[]) params[3], saveCache, reflsh, cacheKey, HttpUtils.HttpType.Json);
+                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]);
+                    libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (InputStream) params[1], (Map<String, Object>) params[2], (Upload[]) params[4],
+                            saveCache, reflsh, cacheKey, HttpUtils.HttpType.Json);
                 } catch (UnsupportedEncodingException e) {
                     LogUtils.exception(e);
                 }
                 break;
             case Form:
                 try {
-                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[1], (String[]) params[2]);
-                    libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (Map<String, Object>) params[1], (Upload[]) params[3], saveCache, reflsh, cacheKey, HttpUtils.HttpType.Form);
+                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]);
+                    libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (InputStream) params[1], (Map<String, Object>) params[2], (Upload[]) params[4],
+                            saveCache, reflsh, cacheKey, HttpUtils.HttpType.Form);
                 } catch (UnsupportedEncodingException e) {
                     LogUtils.exception(e);
                 }

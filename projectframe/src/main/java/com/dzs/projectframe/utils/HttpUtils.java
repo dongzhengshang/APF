@@ -14,9 +14,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 
 /**
@@ -37,13 +51,31 @@ public class HttpUtils {
     private static String lineEnd = System.getProperty("line.separator");
 
     public static HttpURLConnection getHttpUrlConnect(String urlString, String method) throws IOException {
-        HttpURLConnection connection = null;
+        HttpURLConnection connection;
         URL url = new URL(urlString);
         connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod(method);
+        setConnect(connection, method);
+        connection.connect();
+        return connection;
+    }
+
+    public static HttpsURLConnection getHttpsUrlConnect(String urlString, String method, InputStream inputStream) throws Exception {
+        HttpsURLConnection connection;
+        URL url = new URL(urlString);
+        if (inputStream == null) initSSLAll();
+        connection = (HttpsURLConnection) url.openConnection();
+        connection.setRequestMethod(method);
+        setConnect(connection, method);
+        connection.connect();
+        if (inputStream != null) initSSL(connection, inputStream);
+        return connection;
+    }
+
+    public static void setConnect(URLConnection connection, String method) throws IOException {
         connection.setDoInput(true);
         connection.setDoOutput(method.equals("POST"));
         connection.setUseCaches(false);
-        connection.setRequestMethod(method);
         connection.setConnectTimeout(TIMEOUT_CONNECTION);
         connection.setReadTimeout(TIMEOUT_READ);
         connection.setRequestProperty("Accept-Charset", UTF_8);
@@ -51,8 +83,6 @@ public class HttpUtils {
         connection.setRequestProperty("Connection", "Keep-Alive");
         connection.setRequestProperty("Accept", "application/json");
         connection.setRequestProperty("Content-Type", "multipart/form-data" + "; boundary=" + BOUNDARY);
-        connection.connect();
-        return connection;
     }
 
     /**
@@ -70,16 +100,18 @@ public class HttpUtils {
     /**
      * get请求
      *
-     * @param url       url地址
-     * @param saveCache 是否进行缓存
-     * @param reflsh    是否强制刷新（为true后不读取缓存）
+     * @param url         url地址
+     * @param inputStream 证书
+     * @param saveCache   是否进行缓存
+     * @param reflsh      是否强制刷新（为true后不读取缓存）
      * @return libentity
      */
-    public static LibEntity httpURLConnect_Get(String url, boolean saveCache, boolean reflsh, String cachkey) {
+    public static LibEntity httpURLConnect_Get(String url, InputStream inputStream, boolean saveCache, boolean reflsh, String cachkey) {
         int time = 0;
         LibEntity libEntity = null;
         InputStream is = null;
         HttpURLConnection connection = null;
+        HttpsURLConnection httpsURLConnection = null;
         if (!SystemUtils.checkNetConttent(ProjectContext.appContext)) {
             libEntity = getCatch(cachkey, true);
             libEntity = libEntity == null ? new LibEntity() : libEntity;
@@ -90,42 +122,17 @@ public class HttpUtils {
         if (!reflsh && getCatch(cachkey, false) != null) {
             return getCatch(cachkey, false);
         }
+        boolean isHttps = url.startsWith("https");
         //进行三次访问网络
         do {
             try {
                 LogUtils.info("Network-URL(GET)：" + url);
-                connection = getHttpUrlConnect(url, "GET");
-                int statueCode = connection.getResponseCode();
+                connection = isHttps ? null : getHttpUrlConnect(url, "GET");
+                httpsURLConnection = isHttps ? getHttpsUrlConnect(url, "GET", inputStream) : null;
+                int statueCode = isHttps ? httpsURLConnection.getResponseCode() : connection.getResponseCode();
+                LogUtils.info("Network-URL(GET)返回状态值：" + statueCode);
                 if (statueCode != HttpURLConnection.HTTP_OK) {
-                    LogUtils.info("Network-URL(GET)返回状态值：" + statueCode);
                     time++;
-                    if (time < RETRY_TIME) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e1) {
-                            LogUtils.exception(e1);
-                        }
-                        continue;
-                    }
-                }
-                is = connection.getInputStream();
-                libEntity = new LibEntity();
-                String resultString = FileUtils.input2String(is);
-                libEntity.setMapData(JsonUtils.getMap(resultString));
-                libEntity.setCachKey(cachkey);
-                libEntity.setShelfLife(System.currentTimeMillis() + Conif.getCacheTime());
-                libEntity.setOperationResult(Conif.OperationResult.SUCCESS);
-                LogUtils.info("Network-URL(GET)返回值：" + resultString);
-                if (saveCache)
-                    DiskLruCacheHelpUtils.getInstanse().putCatch(cachkey, libEntity, true);
-                break;
-            } catch (JSONException e) {
-                LogUtils.exception(e);
-                libEntity.setOperationResult(Conif.OperationResult.PARSE_FAILE);
-                break;
-            } catch (Exception e) {
-                time++;
-                if (time < RETRY_TIME) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e1) {
@@ -133,11 +140,37 @@ public class HttpUtils {
                     }
                     continue;
                 }
+                is = isHttps ? httpsURLConnection.getInputStream() : connection.getInputStream();
+                libEntity = new LibEntity();
+                String resultString = FileUtils.input2String(is);
+                libEntity.setMapData(JsonUtils.getMap(resultString));
+                libEntity.setCachKey(cachkey);
+                libEntity.setShelfLife(System.currentTimeMillis() + Conif.getCacheTime());
+                libEntity.setOperationResult(Conif.OperationResult.SUCCESS);
+                LogUtils.info("Network-URL(GET)返回值：" + resultString);
+                if (saveCache) DiskLruCacheHelpUtils.getInstanse().putCatch(cachkey, libEntity, true);
+                break;
+            } catch (JSONException e) {
                 LogUtils.exception(e);
+                libEntity = new LibEntity();
+                libEntity.setOperationResult(Conif.OperationResult.PARSE_FAIL);
+                break;
+            } catch (Exception e) {
+                LogUtils.exception(e);
+                time++;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                    LogUtils.exception(e1);
+                }
             } finally {
                 if (connection != null) {
                     connection.disconnect();
                     connection = null;
+                }
+                if (httpsURLConnection != null) {
+                    httpsURLConnection.disconnect();
+                    httpsURLConnection = null;
                 }
                 FileUtils.closeIO(is);
             }
@@ -158,11 +191,12 @@ public class HttpUtils {
      * @param reflsh    是否进行强制刷新
      * @return LibEntity
      */
-    public static LibEntity httpURLConnect_Post(String url, Map<String, Object> params, Upload[] files, boolean saveCache, boolean reflsh, String cachkey, HttpType httpType) {
+    public static LibEntity httpURLConnect_Post(String url, InputStream inputStream, Map<String, Object> params, Upload[] files, boolean saveCache, boolean reflsh, String cachkey, HttpType httpType) {
         int time = 0;
         LibEntity libEntity = null;
         InputStream is = null;
         HttpURLConnection connection = null;
+        HttpsURLConnection httpsURLConnection = null;
         if (!SystemUtils.checkNetConttent(ProjectContext.appContext)) {
             libEntity = getCatch(cachkey, true);
             libEntity = libEntity == null ? new LibEntity() : libEntity;
@@ -170,15 +204,15 @@ public class HttpUtils {
             return libEntity;
         }
         // 如果没有开启强制刷新,先读取缓存
-        if (!reflsh && getCatch(cachkey, false) != null) {
-            return getCatch(cachkey, false);
-        }
+        if (!reflsh && getCatch(cachkey, false) != null) return getCatch(cachkey, false);
+        boolean isHttps = url.startsWith("https");
         //进行三次访问网络
         do {
             try {
                 LogUtils.info("Network-URL(POST_FORMS)：" + url);
                 LogUtils.info("Network-URL(POST_FORMS-GET地址)：" + StringUtils.mapToUrl(url, params));
-                connection = getHttpUrlConnect(url, "POST");
+                connection = isHttps ? null : getHttpUrlConnect(url, "POST");
+                httpsURLConnection = isHttps ? getHttpsUrlConnect(url, "POST", inputStream) : null;
                 DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
                 switch (httpType) {
                     case Json:
@@ -190,19 +224,22 @@ public class HttpUtils {
                     default:
                         break;
                 }
-                if (files != null) {
-                    addImageContent(files, dataOutputStream);
-                }
+                if (files != null) addImageContent(files, dataOutputStream);
                 // 数据结束标志
                 dataOutputStream.writeBytes(twoHyphens + BOUNDARY + twoHyphens + lineEnd);
                 dataOutputStream.flush();
-                int statueCode = connection.getResponseCode();
+                int statueCode = isHttps ? httpsURLConnection.getResponseCode() : connection.getResponseCode();
+                LogUtils.info("Network-URL(POST_FORMS)返回状态值：" + statueCode);
                 if (statueCode != HttpURLConnection.HTTP_OK) {
-                    LogUtils.info("Network-URL(POST_FORMS)返回状态值：" + statueCode);
                     time++;
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e1) {
+                        LogUtils.exception(e1);
+                    }
                     continue;
                 }
-                is = connection.getInputStream();
+                is = isHttps ? httpsURLConnection.getInputStream() : connection.getInputStream();
                 libEntity = new LibEntity();
                 String resultString = FileUtils.input2String(is);
                 libEntity.setMapData(JsonUtils.getMap(resultString));
@@ -217,23 +254,25 @@ public class HttpUtils {
                 break;
             } catch (JSONException e) {
                 LogUtils.exception(e);
-                libEntity.setOperationResult(Conif.OperationResult.PARSE_FAILE);
+                libEntity = new LibEntity();
+                libEntity.setOperationResult(Conif.OperationResult.PARSE_FAIL);
                 break;
             } catch (Exception e) {
-                time++;
-                if (time < RETRY_TIME) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e1) {
-                        LogUtils.exception(e);
-                    }
-                    continue;
-                }
                 LogUtils.exception(e);
+                time++;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                    LogUtils.exception(e1);
+                }
             } finally {
                 if (connection != null) {
                     connection.disconnect();
                     connection = null;
+                }
+                if (httpsURLConnection != null) {
+                    httpsURLConnection.disconnect();
+                    httpsURLConnection = null;
                 }
                 FileUtils.closeIO(is);
             }
@@ -306,5 +345,45 @@ public class HttpUtils {
 
     public enum HttpType {
         Get, Json, Form
+    }
+
+    private static void initSSL(HttpsURLConnection httpsURLConnection, InputStream inputStream) throws Exception {
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        Certificate ca = cf.generateCertificate(inputStream);
+        KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keystore.load(null, null);
+        keystore.setCertificateEntry("ca", ca);
+        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+        tmf.init(keystore);
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(null, tmf.getTrustManagers(), null);
+        httpsURLConnection.setSSLSocketFactory(context.getSocketFactory());
+    }
+
+    private static void initSSLAll() throws Exception {
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(null, new TrustManager[]{new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        }}, null);
+        HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String arg0, SSLSession arg1) {
+                return true;
+            }
+        });
     }
 }

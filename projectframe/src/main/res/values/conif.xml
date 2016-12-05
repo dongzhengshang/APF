@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--手机网络缓存时间 2分钟-->
     <integer name="NET_CACHE_TIME">2</integer>
+    <!--WiFI网络缓存时间 1分钟-->
     <integer name="WIFI_CACHE_TIME">1</integer>
+    <!--连接超时时间-->
     <integer name="TIMEOUT_CONNECTION">3000</integer>
+    <!--读取超时时间-->
     <integer name="TIMEOUT_READ">5000</integer>
+    <!--网络访问失败时,重连次数-->
     <integer name="RETRY_TIME">3</integer>
     <string name="NetConnectSuccess">网络连接成功</string>
     <string name="NetConnectFail">网络连接失败</string>
     <string name="NetNotConnectFail">网络连接失败,请检查网络连接</string>
-    <string name="NetParseFail">网络连接失败,请检查网络连接</string>
+    <string name="NetParseFail">数据解析失败,请重试</string>
 </resources>
