@@ -7,13 +7,13 @@ import android.widget.Toast;
 import com.dzs.projectframe.base.ProjectContext;
 
 /**
- * Tost工具类
+ * Toast工具类
  *
  * @author DZS dzsdevelop@163.com
  * @version V1.1
  * @date 2015-12-23 上午9:53:00
  */
-public class TostUtils {
+public class ToastUtils {
     private static String oldMsg;
     private static Toast toast = null;
     private static long lastTime = 0;

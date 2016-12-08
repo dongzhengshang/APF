@@ -18,7 +18,7 @@ import com.dzs.projectframe.utils.FileUtils;
 import com.dzs.projectframe.utils.LogUtils;
 import com.dzs.projectframe.utils.SharedPreferUtils;
 import com.dzs.projectframe.utils.StackUtils;
-import com.dzs.projectframe.utils.TostUtils;
+import com.dzs.projectframe.utils.ToastUtils;
 
 import java.io.File;
 
@@ -130,14 +130,14 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     protected void cameraPhoto() {
         try {
             if (!FileUtils.checkSDcard()) {
-                TostUtils.showOneToast("SD卡不可用!");
+                ToastUtils.showOneToast("SD卡不可用!");
                 return;
             }
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
             startActivityForResult(intent, CAMERA_INTENT_REQUEST);
         } catch (Exception e) {
-            TostUtils.showOneToast("系统相机调取失败");
+            ToastUtils.showOneToast("系统相机调取失败");
             LogUtils.exception(e);
         }
     }
