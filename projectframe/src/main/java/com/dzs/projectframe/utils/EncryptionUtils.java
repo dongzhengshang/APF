@@ -21,7 +21,7 @@ public class EncryptionUtils {
     private static final String MD5 = "MD5";
 
     /**
-     * MD5加密16位加密
+     * MD5 32位加密
      *
      * @param data 加密字符串
      * @return String
@@ -32,9 +32,9 @@ public class EncryptionUtils {
 
     /**
      * @param data       被密数据
-     * @param is32Encode 是否是32位加密
+     * @param is16Encode 是否是16位加密
      */
-    public static String MD5encode(String data, boolean is32Encode) {
+    public static String MD5encode(String data, boolean is16Encode) {
         String result = "";
         try {
             MessageDigest md = MessageDigest.getInstance(MD5);
@@ -48,10 +48,10 @@ public class EncryptionUtils {
                 if (i < 16) sb.append("0");
                 sb.append(Integer.toHexString(i));
             }
-            if (is32Encode) {
-                result = sb.toString().substring(8, 24);// 32位加密
+            if (is16Encode) {
+                result = sb.toString().substring(8, 24);// 16位加密
             } else {
-                result = sb.toString();// 16位加密
+                result = sb.toString();// 32位加密
             }
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
