@@ -25,20 +25,27 @@ public class Conif {
 
     private static String appenduserAgent = "";
 
-    public enum OperationResult {
-        SUCCESS(ProjectContext.resources.getString(R.string.NetConnectSuccess)),
-        FAIL(ProjectContext.resources.getString(R.string.NetConnectFail)),
+    public enum OperationResultType {
+        NET_CONNECT_SUCCESS(ProjectContext.resources.getString(R.string.NetConnectSuccess)),
+        NET_CONNECT_FAIL(ProjectContext.resources.getString(R.string.NetConnectFail)),
         NET_NOT_CONNECT(ProjectContext.resources.getString(R.string.NetNotConnectFail)),
-        PARSE_FAIL(ProjectContext.resources.getString(R.string.NetParseFail));
+        PARSE_FAIL(ProjectContext.resources.getString(R.string.NetParseFail)),
+        SUCCESS(""),
+        FAIL("");
         private String message;
 
-        OperationResult(String message) {
+        OperationResultType(String message) {
             this.message = message;
         }
 
-        public void setMessage(String message) {
+        public OperationResultType setMessage(String message) {
             this.message = message;
+            return this;
         }
+    }
+
+    public interface OperationResult {
+        void onResult(OperationResultType type);
     }
 
     public static StringBuilder getUserAgent() {

@@ -10,8 +10,12 @@
     <integer name="TIMEOUT_READ">5000</integer>
     <!--网络访问失败时,重连次数-->
     <integer name="RETRY_TIME">3</integer>
+    <!--网络访问提示-->
     <string name="NetConnectSuccess">网络连接成功</string>
     <string name="NetConnectFail">网络连接失败</string>
     <string name="NetNotConnectFail">网络连接失败,请检查网络连接</string>
     <string name="NetParseFail">数据解析失败,请重试</string>
+
+    <string name="SDError">SD卡不可用</string>
+    <string name="OpenCameraError">系统相机调取失败</string>
 </resources>

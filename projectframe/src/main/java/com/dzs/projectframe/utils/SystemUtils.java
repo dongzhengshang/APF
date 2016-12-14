@@ -233,6 +233,18 @@ public class SystemUtils {
     }
 
     /**
+     * 打开应用详情
+     *
+     * @param activity activity
+     */
+    public static void openApplicationInfo(Activity activity) {
+        Uri packUri = Uri.parse("package:" + activity.getPackageName());
+        Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packUri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);
+    }
+
+    /**
      * 回到主界面，让程序后台运行
      *
      * @param context Context
