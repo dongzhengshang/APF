@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.WindowManager;
@@ -111,7 +112,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
 
     //--------------------------权限管理-需要重写onRequestPermissionsResult----------------------------
     //判断是否授权,批量处理
-    protected boolean isPermissionGranted(int questCode, String... permArray) {
+    public boolean isPermissionGranted(int questCode, String... permArray) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
@@ -144,14 +145,26 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
 
     //调用系统相册
     protected void systemPhoto() {
+        systemPhoto(null);
+    }
+
+    public void systemPhoto(Fragment fragment) {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_PICK);
+        if (fragment != null) {
+            fragment.startActivityForResult(intent, SYS_INTENT_REQUEST);
+            return;
+        }
         startActivityForResult(intent, SYS_INTENT_REQUEST);
     }
 
     //调用系统相机
     protected void cameraPhoto(Conif.OperationResult result) {
+        cameraPhoto(null, result);
+    }
+
+    public void cameraPhoto(Fragment fragment, Conif.OperationResult result) {
         try {
             if (!FileUtils.checkSDcard()) {
                 result.onResult(Conif.OperationResultType.FAIL.setMessage(ProjectContext.appContext.getString(R.string.SDError)));
@@ -159,6 +172,10 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
             }
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+            if (fragment != null) {
+                fragment.startActivityForResult(intent, CAMERA_INTENT_REQUEST);
+                return;
+            }
             startActivityForResult(intent, CAMERA_INTENT_REQUEST);
         } catch (Exception e) {
             result.onResult(Conif.OperationResultType.FAIL.setMessage(ProjectContext.appContext.getString(R.string.OpenCameraError)));
@@ -168,6 +185,10 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
 
     //图片剪切
     protected void cropImageUri(Uri uri, int aspectX, int aspectY, int outputX, int outputY, int requestCode) {
+        cropImageUri(null, uri, aspectX, aspectY, outputX, outputY, requestCode);
+    }
+
+    public void cropImageUri(Fragment fragment, Uri uri, int aspectX, int aspectY, int outputX, int outputY, int requestCode) {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
         intent.putExtra("crop", "true");
@@ -180,6 +201,10 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
         intent.putExtra("return-data", false);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true);
+        if (fragment != null) {
+            fragment.startActivityForResult(intent, requestCode);
+            return;
+        }
         startActivityForResult(intent, requestCode);
     }
 }
