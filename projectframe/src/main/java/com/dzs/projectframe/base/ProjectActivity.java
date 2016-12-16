@@ -8,7 +8,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.WindowManager;
@@ -39,6 +41,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     protected ViewHolder viewUtils;
     protected Resources resources;
     protected SharedPreferUtils sharedPreferUtils;
+    protected PowerManager.WakeLock wakeLock;
 
     protected abstract int setContent();
 
@@ -84,56 +87,31 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
         res.updateConfiguration(config, res.getDisplayMetrics());
     }
 
-    //跳转到某一Activity
-    protected void Intent(Class activity) {
-        Intent(activity, null, false);
-    }
-
-    /**
-     * 跳转到某一Activity
-     *
-     * @param activity activity
-     * @param isFinish 是否销毁当前界面
-     */
-    protected void Intent(Class activity, boolean isFinish) {
-        Intent(activity, null, isFinish);
-    }
-
-    /**
-     * 跳转到某一Activity
-     *
-     * @param activity activity
-     * @param data     数据Bean,需要实现Serializable接口
-     * @param isFinish 是否销毁当前界面
-     */
-    protected void Intent(Class activity, Class data, boolean isFinish) {
-        Intent intent = new Intent(this, activity);
-        if (data != null) intent.putExtra(activity.getName(), data);
-        startActivity(intent);
-        if (isFinish) finish();
-    }
-
     //设置全屏
     protected void setFullScream() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
-    //--------------------------权限管理-------------------------------------------
-    //判断是否授权
-    protected boolean isPermissionGranted(String permissionName, int questCode) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
+    //屏幕常亮
+    protected void acquireWakeLock() {
+        if (wakeLock == null) {
+            PowerManager powerManager = (PowerManager) (getSystemService(POWER_SERVICE));
+            wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "ProjectActivity");
+            wakeLock.acquire();
         }
-        //判断是否需要请求允许权限
-        if (checkSelfPermission(permissionName) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{permissionName}, questCode);
-            return false;
-        }
-        return true;
     }
 
+    //释放
+    protected void releaseWakeLock() {
+        if (wakeLock != null && wakeLock.isHeld()) {
+            wakeLock.release();
+            wakeLock = null;
+        }
+    }
+
+    //--------------------------权限管理-需要重写onRequestPermissionsResult----------------------------
     //判断是否授权,批量处理
-    protected boolean isPermissionsAllGranted(String[] permArray, int questCode) {
+    protected boolean isPermissionGranted(int questCode, String... permArray) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
