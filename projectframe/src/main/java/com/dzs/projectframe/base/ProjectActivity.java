@@ -144,7 +144,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     protected String cropPath = tempCropImageFile == null ? "" : tempCropImageFile.getAbsolutePath();
 
     //调用系统相册
-    protected void systemPhoto() {
+    public void systemPhoto() {
         systemPhoto(null);
     }
 
@@ -160,10 +160,11 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     }
 
     //调用系统相机
-    protected void cameraPhoto(Conif.OperationResult result) {
+    public void cameraPhoto(Conif.OperationResult result) {
         cameraPhoto(null, result);
     }
 
+    //调用系统相机，fragment调用
     public void cameraPhoto(Fragment fragment, Conif.OperationResult result) {
         try {
             if (!FileUtils.checkSDcard()) {
@@ -184,10 +185,11 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     }
 
     //图片剪切
-    protected void cropImageUri(Uri uri, int aspectX, int aspectY, int outputX, int outputY, int requestCode) {
+    public void cropImageUri(Uri uri, int aspectX, int aspectY, int outputX, int outputY, int requestCode) {
         cropImageUri(null, uri, aspectX, aspectY, outputX, outputY, requestCode);
     }
 
+    //调用系统相机，fragment调用
     public void cropImageUri(Fragment fragment, Uri uri, int aspectX, int aspectY, int outputX, int outputY, int requestCode) {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
