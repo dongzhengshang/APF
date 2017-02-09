@@ -5,6 +5,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -61,19 +63,17 @@ public class EncryptionUtils {
     }
 
     //创建AES密钥
-    public static SecretKeySpec createAESKey(String password) {
-        byte[] data = null;
-        if (password == null) password = "";
-        StringBuilder sb = new StringBuilder(32);
-        sb.append(password);
-        while (sb.length() < 32) sb.append("0");
-        if (sb.length() > 32) sb.setLength(32);
+    public static String createAESKey() {
         try {
-            data = sb.toString().getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
+            KeyGenerator kg = KeyGenerator.getInstance(AES);
+            kg.init(128);
+            SecretKey sk = kg.generateKey();
+            byte[] b = sk.getEncoded();
+            return byte2hex(b);
+        } catch (NoSuchAlgorithmException e) {
             LogUtils.exception(e);
         }
-        return new SecretKeySpec(data, AES);
+        return "";
     }
 
     public static byte[] encrypt(byte[] content, String key, String iv) {
@@ -105,8 +105,7 @@ public class EncryptionUtils {
             e.printStackTrace();
         }
         data = encrypt(data, key, iv);
-        String result = byte2hex(data);
-        return result;
+        return byte2hex(data);
     }
 
     //解密
@@ -118,8 +117,7 @@ public class EncryptionUtils {
             e.printStackTrace();
         }
         data = decrypt(data, key, iv);
-        if (data == null)
-            return null;
+        if (data == null) return null;
         String result = null;
         try {
             result = new String(data, UTF_8);

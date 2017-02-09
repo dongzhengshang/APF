@@ -38,12 +38,22 @@ import java.util.UUID;
  */
 public class SystemUtils {
 
-    public static final int NETWORK_UNKNOWN = 0;
-    public static final int MOBILE_2G = 1;
-    public static final int MOBILE_3G = 2;
-    public static final int MOBILE_4G = 3;
-    public static final int WIFI = 5;
-    public static final int NoNetConnection = 6;
+    public enum NetWorkType {
+        NETWORK_UNKNOWN(0, "未知网络"),
+        MOBILE_2G(1, "2G移动网络"),
+        MOBILE_3G(2, "3G移动网络"),
+        MOBILE_4G(3, "4G移动网络"),
+        WIFI(5, "WIFI网络"),
+        NoNetConnection(6, "网络未连接");
+
+        public int type;
+        public String name;
+
+        NetWorkType(int type, String name) {
+            this.type = type;
+            this.name = name;
+        }
+    }
 
     /**
      * 获取手机IEMI码
@@ -152,71 +162,38 @@ public class SystemUtils {
     }
 
     /**
-     * 返回当前是否为2/3/4G移动网络
-     *
-     * @param context context
-     * @return String
-     */
-    public static String getNetWorkTypeName(Context context) {
-        String typeName = null;
-        switch (getNetworkType(context)) {
-            case MOBILE_2G:
-                typeName = "2G移动网络";
-                break;
-            case MOBILE_3G:
-                typeName = "3G移动网络";
-                break;
-            case MOBILE_4G:
-                typeName = "4G移动网络";
-                break;
-
-            default:
-                break;
-        }
-        return typeName;
-    }
-
-    /**
      * 获取当前网络类型
      *
      * @param context Context
      * @return int
      */
-    public static int getNetworkType(Context context) {
-        int strNetworkType = 0;
+    public static NetWorkType getNetworkType(Context context) {
+        NetWorkType netWorkType = NetWorkType.NETWORK_UNKNOWN;
         NetworkInfo networkInfo = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
             if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-                strNetworkType = SystemUtils.WIFI;
+                netWorkType = NetWorkType.WIFI;
             } else if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
-                int networkType = networkInfo.getSubtype();
+                int networkTypeNum = networkInfo.getSubtype();
                 try {
                     Class<?> threadClazz = Class.forName("android.telephony.TelephonyManager");
                     Method method = threadClazz.getMethod("getNetworkClass", int.class);
-                    int invoke = (Integer) method.invoke(null, networkType);
-                    switch (invoke) {
-                        case 1:
-                            strNetworkType = SystemUtils.MOBILE_2G;
+                    int invoke = (Integer) method.invoke(null, networkTypeNum);
+                    for (NetWorkType temp_netWorkType : NetWorkType.values()) {
+                        if (temp_netWorkType.type == invoke) {
+                            netWorkType = temp_netWorkType;
                             break;
-                        case 2:
-                            strNetworkType = SystemUtils.MOBILE_3G;
-                            break;
-                        case 3:
-                            strNetworkType = SystemUtils.MOBILE_4G;
-                            break;
-                        default:
-                            strNetworkType = SystemUtils.NETWORK_UNKNOWN;
-                            break;
+                        }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LogUtils.exception(e);
                 }
             }
 
         } else {
-            strNetworkType = SystemUtils.NoNetConnection;
+            netWorkType = NetWorkType.NoNetConnection;
         }
-        return strNetworkType;
+        return netWorkType;
     }
 
     /**

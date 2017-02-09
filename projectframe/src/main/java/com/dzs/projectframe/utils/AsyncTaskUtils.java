@@ -18,14 +18,15 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
     private String taskId;
     private HttpUtils.HttpType httpType;
     private boolean reflsh;//强制刷新
-    private boolean saveCache;//存储缓存
-    private ArrayList<OnNetReturnListener> dataReturnListeners = new ArrayList<OnNetReturnListener>();
+    private boolean saveCache;//是否进行数据缓存
+    private ArrayList<OnNetReturnListener> dataReturnListeners;
 
     public AsyncTaskUtils(String taskId, HttpUtils.HttpType httpType, boolean saveCache, boolean reflsh, OnNetReturnListener... dataReturnListener) {
         this.taskId = taskId;
         this.httpType = httpType;
         this.reflsh = reflsh;
         this.saveCache = saveCache;
+        dataReturnListeners = new ArrayList<>();
         Collections.addAll(dataReturnListeners, dataReturnListener);
     }
 
@@ -34,6 +35,7 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
         this.httpType = httpType;
         this.reflsh = reflsh;
         this.saveCache = saveCache;
+        dataReturnListeners = new ArrayList<>();
     }
 
     public void addDataReturnListener(OnNetReturnListener... dataReturnListener) {
@@ -53,35 +55,29 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
     @SuppressWarnings("unchecked")
     protected LibEntity doInBackground(Object... params) {
         LibEntity libEntity = null;
-        String cacheKey = "";
-        switch (httpType) {
-            case Get:
-                try {
+        String cacheKey;
+        try {
+            switch (httpType) {
+                case Get:
                     String url = StringUtils.mapToUrl(params[0].toString(), (Map<String, Object>) params[2]);
-                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]);
+                    cacheKey = saveCache ? StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]) : "";
                     libEntity = HttpUtils.httpURLConnect_Get(url, (InputStream) params[1], saveCache, reflsh, cacheKey);
-                } catch (UnsupportedEncodingException e) {
-                    LogUtils.exception(e);
-                }
-                break;
-            case Json:
-                try {
-                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]);
+                    break;
+                case Json:
+                    cacheKey = saveCache ? StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]) : "";
                     libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (InputStream) params[1], (Map<String, Object>) params[2], (Upload[]) params[4],
                             saveCache, reflsh, cacheKey, HttpUtils.HttpType.Json);
-                } catch (UnsupportedEncodingException e) {
-                    LogUtils.exception(e);
-                }
-                break;
-            case Form:
-                try {
-                    cacheKey = StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]);
+                    break;
+                case Form:
+                    cacheKey = saveCache ? StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]) : "";
                     libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (InputStream) params[1], (Map<String, Object>) params[2], (Upload[]) params[4],
                             saveCache, reflsh, cacheKey, HttpUtils.HttpType.Form);
-                } catch (UnsupportedEncodingException e) {
-                    LogUtils.exception(e);
-                }
-                break;
+                    break;
+            }
+        } catch (UnsupportedEncodingException e) {
+            libEntity = new LibEntity();
+            libEntity.setOperationResultType(Conif.OperationResultType.FAIL);
+            LogUtils.error("参数转换错误");
         }
         return libEntity;
     }

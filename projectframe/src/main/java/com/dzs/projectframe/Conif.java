@@ -67,13 +67,8 @@ public class Conif {
     private static Long NET_CACHE_TIME = (long) (ProjectContext.resources.getInteger(R.integer.NET_CACHE_TIME) * 60 * 1000);//缓存时间
 
     public static Long getCacheTime() {
-        int state = SystemUtils.getNetworkType(ProjectContext.appContext);
-        if (state == 0) {
-            return (long) 0;
-        } else if (state == SystemUtils.WIFI) {
-            return WIFI_CACHE_TIME;
-        } else {
-            return NET_CACHE_TIME;
-        }
+        SystemUtils.NetWorkType networkType = SystemUtils.getNetworkType(ProjectContext.appContext);
+        if (networkType.type == SystemUtils.NetWorkType.WIFI.type) return WIFI_CACHE_TIME;
+        return NET_CACHE_TIME;
     }
 }

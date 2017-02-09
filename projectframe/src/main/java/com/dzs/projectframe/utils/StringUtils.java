@@ -111,16 +111,7 @@ public class StringUtils {
      * @throws UnsupportedEncodingException
      */
     public static String mapToUrl(String url, Map<String, Object> parmas) throws UnsupportedEncodingException {
-        StringBuffer getUrl = new StringBuffer(url);
-        if (parmas != null && !parmas.isEmpty()) {
-            getUrl.append("?");
-            for (Map.Entry<String, Object> parm : parmas.entrySet()) {
-                getUrl.append(parm.getKey()).append("=").append(URLEncoder.encode(parm.getValue() == null ? "" : parm.getValue().toString(), UTF_8));
-                getUrl.append("&");
-            }
-            getUrl.deleteCharAt(getUrl.length() - 1);
-        }
-        return getUrl.toString();
+        return mapToCachUrl(url, parmas, null);
     }
 
     /**
@@ -133,7 +124,7 @@ public class StringUtils {
      * @throws UnsupportedEncodingException
      */
     public static String mapToCachUrl(String url, Map<String, Object> parmas, String... variableKey) throws UnsupportedEncodingException {
-        StringBuffer getUrl = new StringBuffer(url);
+        StringBuilder getUrl = new StringBuilder(url);
         if (parmas != null && !parmas.isEmpty()) {
             getUrl.append("?");
             for (Map.Entry<String, Object> parm : parmas.entrySet()) {

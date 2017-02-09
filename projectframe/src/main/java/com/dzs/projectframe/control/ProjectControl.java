@@ -34,36 +34,24 @@ public class ProjectControl {
         ansyTaskUtils.execute(url, params, keys, uploads);
     }
 
-    protected void getDataByGet(String taskId, String url, Map<String, Object> params, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
-        getData(taskId, url, null, params, null, null, HttpUtils.HttpType.Get, false, true, netReturnListeners);
-    }
-
-    protected void getDataByGet(String taskId, String url, InputStream inputStream, Map<String, Object> params, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
-        getData(taskId, url, inputStream, params, null, null, HttpUtils.HttpType.Get, false, true, netReturnListeners);
+    protected void getDataByGet(String taskId, String url, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
+        getDataByGet(taskId, url, null, params, keys, saveCache, reflsh, netReturnListeners);
     }
 
     protected void getDataByGet(String taskId, String url, InputStream inputStream, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
         getData(taskId, url, inputStream, params, keys, null, HttpUtils.HttpType.Get, saveCache, reflsh, netReturnListeners);
     }
 
-    protected void getDataByJson(String taskId, String url, Map<String, Object> params, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
-        getData(taskId, url, null, params, null, null, HttpUtils.HttpType.Json, false, true, netReturnListeners);
-    }
-
-    protected void getDataByJson(String taskId, String url, InputStream inputStream, Map<String, Object> params, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
-        getData(taskId, url, inputStream, params, null, null, HttpUtils.HttpType.Json, false, true, netReturnListeners);
+    protected void getDataByJson(String taskId, String url, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
+        getDataByJson(taskId, url, null, params, keys, saveCache, reflsh, netReturnListeners);
     }
 
     protected void getDataByJson(String taskId, String url, InputStream inputStream, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
         getData(taskId, url, inputStream, params, keys, null, HttpUtils.HttpType.Json, saveCache, reflsh, netReturnListeners);
     }
 
-    protected void getDataByForm(String taskId, String url, Map<String, Object> params, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
-        getData(taskId, url, null, params, null, null, HttpUtils.HttpType.Form, false, true, netReturnListeners);
-    }
-
-    protected void getDataByForm(String taskId, String url, InputStream inputStream, Map<String, Object> params, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
-        getData(taskId, url, inputStream, params, null, null, HttpUtils.HttpType.Form, false, true, netReturnListeners);
+    protected void getDataByForm(String taskId, String url, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
+        getDataByForm(taskId, url, null, params, keys, saveCache, reflsh, netReturnListeners);
     }
 
     protected void getDataByForm(String taskId, String url, InputStream inputStream, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
@@ -71,7 +59,7 @@ public class ProjectControl {
     }
 
     protected void Upload(String taskId, String url, Map<String, Object> params, Upload[] uploads, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
-        getData(taskId, url, null, params, null, uploads, HttpUtils.HttpType.Form, false, true, netReturnListeners);
+        Upload(taskId, url, null, params, uploads, netReturnListeners);
     }
 
     protected void Upload(String taskId, String url, InputStream inputStream, Map<String, Object> params, Upload[] uploads, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {

@@ -42,7 +42,7 @@ import javax.net.ssl.X509TrustManager;
  */
 public class HttpUtils {
 
-    public static final String UTF_8 = "UTF-8";
+    private static final String UTF_8 = "UTF-8";
     private final static int TIMEOUT_CONNECTION = Conif.TIMEOUT_CONNECTION;
     private final static int TIMEOUT_READ = Conif.TIMEOUT_READ;
     private final static int RETRY_TIME = Conif.RETRY_TIME;
@@ -113,15 +113,12 @@ public class HttpUtils {
         HttpURLConnection connection = null;
         HttpsURLConnection httpsURLConnection = null;
         if (!SystemUtils.checkNetConttent(ProjectContext.appContext)) {
-            libEntity = getCatch(cachkey, true);
-            libEntity = libEntity == null ? new LibEntity() : libEntity;
+            libEntity = saveCache ? getCatch(cachkey, true) != null ? getCatch(cachkey, true) : new LibEntity() : new LibEntity();
             libEntity.setOperationResultType(Conif.OperationResultType.NET_NOT_CONNECT);
             return libEntity;
         }
         // 如果没有开启强制刷新,先读取缓存
-        if (!reflsh && getCatch(cachkey, false) != null) {
-            return getCatch(cachkey, false);
-        }
+        if (!reflsh && saveCache && getCatch(cachkey, false) != null) return getCatch(cachkey, false);
         boolean isHttps = url.startsWith("https");
         //进行三次访问网络
         do {
@@ -198,13 +195,12 @@ public class HttpUtils {
         HttpURLConnection connection = null;
         HttpsURLConnection httpsURLConnection = null;
         if (!SystemUtils.checkNetConttent(ProjectContext.appContext)) {
-            libEntity = getCatch(cachkey, true);
-            libEntity = libEntity == null ? new LibEntity() : libEntity;
+            libEntity = saveCache ? getCatch(cachkey, true) != null ? getCatch(cachkey, true) : new LibEntity() : new LibEntity();
             libEntity.setOperationResultType(Conif.OperationResultType.NET_NOT_CONNECT);
             return libEntity;
         }
         // 如果没有开启强制刷新,先读取缓存
-        if (!reflsh && getCatch(cachkey, false) != null) return getCatch(cachkey, false);
+        if (!reflsh && saveCache && getCatch(cachkey, false) != null) return getCatch(cachkey, false);
         boolean isHttps = url.startsWith("https");
         //进行三次访问网络
         do {
