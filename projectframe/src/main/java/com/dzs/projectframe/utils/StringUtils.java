@@ -111,7 +111,7 @@ public class StringUtils {
      * @throws UnsupportedEncodingException
      */
     public static String mapToUrl(String url, Map<String, Object> parmas) throws UnsupportedEncodingException {
-        return mapToCachUrl(url, parmas, null);
+        return mapToCachUrl(url, parmas);
     }
 
     /**
@@ -120,7 +120,6 @@ public class StringUtils {
      * @param url         URL
      * @param parmas      请求参数
      * @param variableKey 可变的键值(可以为空)
-     * @return String
      * @throws UnsupportedEncodingException
      */
     public static String mapToCachUrl(String url, Map<String, Object> parmas, String... variableKey) throws UnsupportedEncodingException {

@@ -13,7 +13,7 @@ import com.dzs.projectframe.utils.SystemUtils;
  * @date 2016/8/19.
  */
 public class Conif {
-    public static boolean IS_DEBUG = true;
+    public static boolean IS_DEBUG = BuildConfig.DEBUG;
     public static String APP_ROOT = ProjectContext.appContext.getPackageName();
     public static String SHAREDPREFER_USERINFO = "ApplicationData";
     // 连接超时

@@ -1,6 +1,5 @@
 package com.dzs.projectframe.widget;
 
-import android.annotation.SuppressLint;
 import android.os.CountDownTimer;
 import android.widget.TextView;
 
@@ -10,15 +9,15 @@ import android.widget.TextView;
  * @author DZS dzsdevelop@163.com
  * @date 2015-7-2 上午10:21:11
  */
-public class MyCountDownTimer extends CountDownTimer {
+public class CustomCountDownTimer extends CountDownTimer {
     private TextView button;
 
-    public MyCountDownTimer(long millisInFuture, long countDownInterval, TextView button) {
+    public CustomCountDownTimer(long millisInFuture, long countDownInterval, TextView button) {
         this(millisInFuture, countDownInterval);
         this.button = button;
     }
 
-    public MyCountDownTimer(long millisInFuture, long countDownInterval) {
+    public CustomCountDownTimer(long millisInFuture, long countDownInterval) {
         super(millisInFuture, countDownInterval);
     }
 
