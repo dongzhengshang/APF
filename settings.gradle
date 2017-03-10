@@ -1,1 +1,1 @@
-include ':app', ':projectframe'
+include ':app', ':ProjectFrame'

@@ -60,23 +60,23 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
             switch (httpType) {
                 case Get:
                     String url = StringUtils.mapToUrl(params[0].toString(), (Map<String, Object>) params[2]);
-                    cacheKey = saveCache ? StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]) : "";
+                    cacheKey = saveCache ? StringUtils.mapToCatchUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]) : "";
                     libEntity = HttpUtils.httpURLConnect_Get(url, (InputStream) params[1], saveCache, reflsh, cacheKey);
                     break;
                 case Json:
-                    cacheKey = saveCache ? StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]) : "";
+                    cacheKey = saveCache ? StringUtils.mapToCatchUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]) : "";
                     libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (InputStream) params[1], (Map<String, Object>) params[2], (Upload[]) params[4],
                             saveCache, reflsh, cacheKey, HttpUtils.HttpType.Json);
                     break;
                 case Form:
-                    cacheKey = saveCache ? StringUtils.mapToCachUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]) : "";
+                    cacheKey = saveCache ? StringUtils.mapToCatchUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]) : "";
                     libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (InputStream) params[1], (Map<String, Object>) params[2], (Upload[]) params[4],
                             saveCache, reflsh, cacheKey, HttpUtils.HttpType.Form);
                     break;
             }
         } catch (UnsupportedEncodingException e) {
             libEntity = new LibEntity();
-            libEntity.setOperationResultType(Conif.OperationResultType.FAIL);
+            libEntity.setNetResultType(Conif.NetResultType.NET_CONNECT_FAIL);
             LogUtils.error("参数转换错误");
         }
         return libEntity;

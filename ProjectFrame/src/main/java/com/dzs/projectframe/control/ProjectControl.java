@@ -31,7 +31,7 @@ public class ProjectControl {
      */
     private void getData(String taskId, String url, InputStream inputStream, Map<String, Object> params, String[] keys, Upload[] uploads, HttpUtils.HttpType httpType, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
         AsyncTaskUtils ansyTaskUtils = new AsyncTaskUtils(taskId, httpType, saveCache, reflsh, netReturnListeners);
-        ansyTaskUtils.execute(url, params, keys, uploads);
+        ansyTaskUtils.execute(url, inputStream,params, keys, uploads);
     }
 
     protected void getDataByGet(String taskId, String url, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {

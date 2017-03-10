@@ -49,14 +49,21 @@ public class StringUtils {
      * @return
      */
     public static boolean isEmpty(CharSequence input) {
-        if (input == null || input.length() == 0)
-            return true;
-
+        if (input == null || input.length() == 0) return true;
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
             if (c != ' ' && c != '\t' && c != '\r' && c != '\n') {
                 return false;
             }
+        }
+        return true;
+    }
+
+    /*判断字符串数组是否为空*/
+    public static boolean isEmpty(CharSequence... input) {
+        if (input == null || input.length == 0) return true;
+        for (CharSequence in : input) {
+            if (isEmpty(in)) return true;
         }
         return true;
     }
@@ -111,7 +118,7 @@ public class StringUtils {
      * @throws UnsupportedEncodingException
      */
     public static String mapToUrl(String url, Map<String, Object> parmas) throws UnsupportedEncodingException {
-        return mapToCachUrl(url, parmas);
+        return mapToCatchUrl(url, parmas);
     }
 
     /**
@@ -122,7 +129,7 @@ public class StringUtils {
      * @param variableKey 可变的键值(可以为空)
      * @throws UnsupportedEncodingException
      */
-    public static String mapToCachUrl(String url, Map<String, Object> parmas, String... variableKey) throws UnsupportedEncodingException {
+    public static String mapToCatchUrl(String url, Map<String, Object> parmas, String... variableKey) throws UnsupportedEncodingException {
         StringBuilder getUrl = new StringBuilder(url);
         if (parmas != null && !parmas.isEmpty()) {
             getUrl.append("?");
@@ -138,6 +145,24 @@ public class StringUtils {
             getUrl.deleteCharAt(getUrl.length() - 1);
         }
         return getUrl.toString();
+    }
+
+    /**
+     * 将map请求参数转换为get参数
+     *
+     * @param parameters
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    public static StringBuilder mapToParmeters(Map<String, Object> parameters) throws UnsupportedEncodingException {
+        if (parameters == null || parameters.isEmpty()) throw new NullPointerException("parameters can not be null");
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, Object> parm : parameters.entrySet()) {
+            sb.append(parm.getKey()).append("=").append(URLEncoder.encode(parm.getValue() == null ? "" : parm.getValue().toString(), UTF_8));
+            sb.append("&");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb;
     }
 
 }

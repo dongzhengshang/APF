@@ -3,10 +3,13 @@ package com.dzs.projectframe.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +29,9 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.dzs.projectframe.utils.SystemUtils;
+
+import java.util.List;
 
 /**
  * ViewHolder 帮助类
@@ -585,7 +591,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
      * @param requestCode 请求值,小于0为 startActivity
      * @param isFinish    是否销毁当前界面
      */
-    public void Intent(Activity from, Class to, Class data, int requestCode, boolean isFinish) {
+    public void intent(Activity from, Class to, Class data, int requestCode, boolean isFinish) {
         Intent intent = new Intent(from, to);
         if (data != null) intent.putExtra(to.getName(), data);
         if (requestCode < 0) {
@@ -596,15 +602,28 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         if (isFinish) from.finish();
     }
 
-    public void Intent(Activity from, Class to, Class data, boolean isFinish) {
-        Intent(from, to, data, -1, isFinish);
+    public void intent(Activity from, Class to, Class data, boolean isFinish) {
+        intent(from, to, data, -1, isFinish);
     }
 
-    public void Intent(Activity from, Class to) {
-        Intent(from, to, null, -1, false);
+    public void intent(Activity from, Class to, boolean isFinish) {
+        intent(from, to, null, -1, isFinish);
     }
 
-    public void Intent(Fragment fragment, Class activity, Class data, int requestCode, boolean isFinish) {
+    public void intent(Activity from, Class to) {
+        intent(from, to, null, -1, false);
+    }
+
+    /**
+     * 跳转到某一Activity
+     *
+     * @param fragment    当前Fragment
+     * @param activity    需要跳转到的界面
+     * @param data        数据Bean,需要实现Serializable接口
+     * @param requestCode 请求值,小于0为startActivity
+     * @param isFinish    是否销毁Activity
+     */
+    public void intent(Fragment fragment, Class activity, Class data, int requestCode, boolean isFinish) {
         Intent intent = new Intent(fragment.getActivity(), activity);
         if (data != null) intent.putExtra(activity.getName(), data);
         if (requestCode < 0) {
@@ -615,11 +634,76 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         if (isFinish) fragment.getActivity().finish();
     }
 
-    public void Intent(Fragment fragment, Class activity, Class data, boolean isFinish) {
-        Intent(fragment, activity, data, -1, isFinish);
+    public void intent(Fragment fragment, Class activity, Class data, boolean isFinish) {
+        intent(fragment, activity, data, -1, isFinish);
     }
 
-    public void Intent(Fragment fragment, Class activity) {
-        Intent(fragment, activity, null, -1, false);
+    public void intent(Fragment fragment, Class activity) {
+        intent(fragment, activity, null, -1, false);
+    }
+
+    /**
+     * 判断一个Scheme是否有效
+     *
+     * @param context 当前上下文
+     * @param scheme  Scheme
+     * @return boolean
+     */
+    public boolean schemeIsValid(@NonNull Context context, @NonNull String scheme) {
+        PackageManager packageManager = context.getPackageManager();
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(scheme));
+        List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
+        return !activities.isEmpty();
+    }
+
+    /**
+     * 界面跳转使用 URL Scheme
+     * <p>
+     * 使用方式
+     * <intent-filter>
+     * <!--协议部分，随便设置-->
+     * <data android:scheme="xl" android:host="goods" android:path="/goodsDetail" android:port="8888"/>
+     * <!--下面这几行也必须得设置-->
+     * <category android:name="android.intent.category.DEFAULT"/>
+     * <action android:name="android.intent.action.VIEW"/>
+     * <category android:name="android.intent.category.BROWSABLE"/>
+     * </intent-filter>
+     * <p>
+     * 参数获取
+     * Uri uri = getIntent().getData();
+     * if (uri != null) {
+     * // 完整的url信息
+     * String url = uri.toString();
+     * Log.e(TAG, "url: " + uri);
+     * // scheme部分
+     * String scheme = uri.getScheme();
+     * Log.e(TAG, "scheme: " + scheme);
+     * // host部分
+     * String host = uri.getHost();
+     * Log.e(TAG, "host: " + host);
+     * //port部分
+     * int port = uri.getPort();
+     * Log.e(TAG, "host: " + port);
+     * // 访问路劲
+     * String path = uri.getPath();
+     * Log.e(TAG, "path: " + path);
+     * List<String> pathSegments = uri.getPathSegments();
+     * // Query部分
+     * String query = uri.getQuery();
+     * Log.e(TAG, "query: " + query);
+     * //获取指定参数值
+     * String goodsId = uri.getQueryParameter("goodsId");
+     * Log.e(TAG, "goodsId: " + goodsId);
+     * }
+     * <p>
+     * H5调用
+     * <a href="xl://goods:8888/goodsDetail?goodsId=10011002">打开商品详情</a>
+     * </P>
+     *
+     * @param activity 当前Activity
+     * @param scheme   Scheme
+     */
+    public void intent(Activity activity, String scheme) {
+        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(scheme)));
     }
 }

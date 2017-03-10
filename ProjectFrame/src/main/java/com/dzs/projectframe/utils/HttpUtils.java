@@ -114,7 +114,7 @@ public class HttpUtils {
         HttpsURLConnection httpsURLConnection = null;
         if (!SystemUtils.checkNetConttent(ProjectContext.appContext)) {
             libEntity = saveCache ? getCatch(cachkey, true) != null ? getCatch(cachkey, true) : new LibEntity() : new LibEntity();
-            libEntity.setOperationResultType(Conif.OperationResultType.NET_NOT_CONNECT);
+            libEntity.setNetResultType(Conif.NetResultType.NET_NOT_CONNECT);
             return libEntity;
         }
         // 如果没有开启强制刷新,先读取缓存
@@ -143,14 +143,14 @@ public class HttpUtils {
                 libEntity.setMapData(JsonUtils.getMap(resultString));
                 libEntity.setCachKey(cachkey);
                 libEntity.setShelfLife(System.currentTimeMillis() + Conif.getCacheTime());
-                libEntity.setOperationResultType(Conif.OperationResultType.NET_CONNECT_SUCCESS);
+                libEntity.setNetResultType(Conif.NetResultType.NET_CONNECT_SUCCESS);
                 LogUtils.info("Network-URL(GET)返回值：" + resultString);
                 if (saveCache) DiskLruCacheHelpUtils.getInstanse().putCatch(cachkey, libEntity, true);
                 break;
             } catch (JSONException e) {
                 LogUtils.exception(e);
                 libEntity = new LibEntity();
-                libEntity.setOperationResultType(Conif.OperationResultType.PARSE_FAIL);
+                libEntity.setNetResultType(Conif.NetResultType.NET_PARSE_FAIL);
                 break;
             } catch (Exception e) {
                 LogUtils.exception(e);
@@ -174,7 +174,7 @@ public class HttpUtils {
         } while (time < RETRY_TIME);
         if (libEntity == null) {
             libEntity = getCatch(cachkey, true) == null ? new LibEntity() : libEntity;
-            libEntity.setOperationResultType(Conif.OperationResultType.NET_CONNECT_FAIL);
+            libEntity.setNetResultType(Conif.NetResultType.NET_CONNECT_FAIL);
         }
         return libEntity;
     }
@@ -196,7 +196,7 @@ public class HttpUtils {
         HttpsURLConnection httpsURLConnection = null;
         if (!SystemUtils.checkNetConttent(ProjectContext.appContext)) {
             libEntity = saveCache ? getCatch(cachkey, true) != null ? getCatch(cachkey, true) : new LibEntity() : new LibEntity();
-            libEntity.setOperationResultType(Conif.OperationResultType.NET_NOT_CONNECT);
+            libEntity.setNetResultType(Conif.NetResultType.NET_NOT_CONNECT);
             return libEntity;
         }
         // 如果没有开启强制刷新,先读取缓存
@@ -209,7 +209,7 @@ public class HttpUtils {
                 LogUtils.info("Network-URL(POST_FORMS-GET地址)：" + StringUtils.mapToUrl(url, params));
                 connection = isHttps ? null : getHttpUrlConnect(url, "POST");
                 httpsURLConnection = isHttps ? getHttpsUrlConnect(url, "POST", inputStream) : null;
-                DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
+                DataOutputStream dataOutputStream = new DataOutputStream(isHttps ? httpsURLConnection.getOutputStream() : connection.getOutputStream());
                 switch (httpType) {
                     case Json:
                         addJsonField(params, dataOutputStream);
@@ -241,7 +241,7 @@ public class HttpUtils {
                 libEntity.setMapData(JsonUtils.getMap(resultString));
                 libEntity.setCachKey(cachkey);
                 libEntity.setShelfLife(System.currentTimeMillis() + Conif.getCacheTime());
-                libEntity.setOperationResultType(Conif.OperationResultType.NET_CONNECT_SUCCESS);
+                libEntity.setNetResultType(Conif.NetResultType.NET_CONNECT_SUCCESS);
                 LogUtils.info("Network-URL(POST_FORMS)返回值：" + resultString);
                 if (saveCache) {
                     DiskLruCacheHelpUtils.getInstanse().putCatch(cachkey, libEntity, true);
@@ -251,7 +251,7 @@ public class HttpUtils {
             } catch (JSONException e) {
                 LogUtils.exception(e);
                 libEntity = new LibEntity();
-                libEntity.setOperationResultType(Conif.OperationResultType.PARSE_FAIL);
+                libEntity.setNetResultType(Conif.NetResultType.NET_PARSE_FAIL);
                 break;
             } catch (Exception e) {
                 LogUtils.exception(e);
@@ -275,7 +275,7 @@ public class HttpUtils {
         } while (time < RETRY_TIME);
         if (libEntity == null) {
             libEntity = getCatch(cachkey, true) == null ? new LibEntity() : libEntity;
-            libEntity.setOperationResultType(Conif.OperationResultType.NET_CONNECT_FAIL);
+            libEntity.setNetResultType(Conif.NetResultType.NET_CONNECT_FAIL);
         }
         return libEntity;
     }

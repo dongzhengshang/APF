@@ -12,7 +12,7 @@
     <integer name="RETRY_TIME">3</integer>
     <!--网络访问提示-->
     <string name="NetConnectSuccess">网络连接成功</string>
-    <string name="NetConnectFail">网络连接失败</string>
+    <string name="NetConnectFail">网络连接失败,请重试</string>
     <string name="NetNotConnectFail">网络连接失败,请检查网络连接</string>
     <string name="NetParseFail">数据解析失败,请重试</string>
 

@@ -2,7 +2,9 @@ package com.dzs.projectframe;
 
 import android.content.pm.PackageInfo;
 
+import com.dzs.projectframe.base.Bean.LibEntity;
 import com.dzs.projectframe.base.ProjectContext;
+import com.dzs.projectframe.utils.StringUtils;
 import com.dzs.projectframe.utils.SystemUtils;
 
 /**
@@ -13,7 +15,8 @@ import com.dzs.projectframe.utils.SystemUtils;
  * @date 2016/8/19.
  */
 public class Conif {
-    public static boolean IS_DEBUG = BuildConfig.DEBUG;
+    public static boolean IS_DEBUG = true;
+    //public static boolean IS_DEBUG = BuildConfig.DEBUG;
     public static String APP_ROOT = ProjectContext.appContext.getPackageName();
     public static String SHAREDPREFER_USERINFO = "ApplicationData";
     // 连接超时
@@ -23,19 +26,36 @@ public class Conif {
     // 网络访问次数
     public static int RETRY_TIME = ProjectContext.resources.getInteger(R.integer.RETRY_TIME);
 
-    private static String appenduserAgent = "";
+    private static String appendUserAgent = "";
+    private static StringBuilder userAgent;
 
-    public enum OperationResultType {
+    public enum NetResultType {
         NET_CONNECT_SUCCESS(ProjectContext.resources.getString(R.string.NetConnectSuccess)),
         NET_CONNECT_FAIL(ProjectContext.resources.getString(R.string.NetConnectFail)),
         NET_NOT_CONNECT(ProjectContext.resources.getString(R.string.NetNotConnectFail)),
-        PARSE_FAIL(ProjectContext.resources.getString(R.string.NetParseFail)),
-        SUCCESS(""),
-        FAIL("");
+        NET_PARSE_FAIL(ProjectContext.resources.getString(R.string.NetParseFail)),;
+        private String message;
+
+        NetResultType(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
+
+    /*操作结果枚举类*/
+    public enum OperationResultType {
+        SUCCESS(""), FAIL("");
         private String message;
 
         OperationResultType(String message) {
             this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
         }
 
         public OperationResultType setMessage(String message) {
@@ -48,18 +68,29 @@ public class Conif {
         void onResult(OperationResultType type);
     }
 
-    public static StringBuilder getUserAgent() {
-        PackageInfo info = SystemUtils.getPackageInfo(ProjectContext.appContext);
-        return new StringBuilder("DZSDevelop_Android")
-                .append("/").append(android.os.Build.MODEL)//手机型号
-                .append("/").append(android.os.Build.VERSION.RELEASE)//手机系统版本
-                .append("/").append(info.versionName).append("_V").append(info.versionCode)//App版本
-                .append(appenduserAgent);
+    public interface OperationResultWithData {
+        void onResult(OperationResultType type, LibEntity libEntity);
+    }
 
+    public static StringBuilder getUserAgent() {
+        if (StringUtils.isEmpty(userAgent)) {
+            PackageInfo info = SystemUtils.getPackageInfo(ProjectContext.appContext);
+            return new StringBuilder("DZSDevelop_Android")
+                    .append("/").append(android.os.Build.MODEL)//手机型号
+                    .append("/").append(android.os.Build.VERSION.RELEASE)//手机系统版本
+                    .append("/").append(info.versionName).append("_V").append(info.versionCode)//App版本
+                    .append(appendUserAgent);
+        } else {
+            return userAgent;
+        }
     }
 
     public static void addUserAgent(String userAgent) {
-        appenduserAgent = userAgent;
+        appendUserAgent = userAgent;
+    }
+
+    public static void setUserAgent(StringBuilder stringBuilder) {
+        userAgent = stringBuilder;
     }
 
     //-------------缓存时间--------------------------//

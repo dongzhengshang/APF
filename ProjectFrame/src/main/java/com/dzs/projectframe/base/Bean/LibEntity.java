@@ -20,7 +20,7 @@ public class LibEntity implements Serializable {
     private byte[] data;// 数据
     private long saveDate; // 缓存数据的时间
     private long shelfLife; // 有效期,System.currentTimeMillis()
-    private Conif.OperationResultType operationResultType;//请求结果
+    private Conif.NetResultType netResultType;//请求结果
     private Map<String, Object> mapData;//数据(map格式)
 
     /**
@@ -64,12 +64,12 @@ public class LibEntity implements Serializable {
         this.shelfLife = shelfLife;
     }
 
-    public Conif.OperationResultType getOperationResultType() {
-        return operationResultType;
+    public Conif.NetResultType getNetResultType() {
+        return netResultType;
     }
 
-    public void setOperationResultType(Conif.OperationResultType operationResultType) {
-        this.operationResultType = operationResultType;
+    public void setNetResultType(Conif.NetResultType netResultType) {
+        this.netResultType = netResultType;
     }
 
     public Map<String, Object> getMapData() {

@@ -1,6 +1,9 @@
 package com.dzs.projectframe.base;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -10,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -19,19 +21,17 @@ import android.view.WindowManager;
 import com.dzs.projectframe.Conif;
 import com.dzs.projectframe.R;
 import com.dzs.projectframe.adapter.ViewHolder;
+import com.dzs.projectframe.base.Bean.LibEntity;
 import com.dzs.projectframe.utils.AsyncTaskUtils;
 import com.dzs.projectframe.utils.DiskLruCacheHelpUtils;
 import com.dzs.projectframe.utils.FileUtils;
 import com.dzs.projectframe.utils.LogUtils;
 import com.dzs.projectframe.utils.SharedPreferUtils;
 import com.dzs.projectframe.utils.StackUtils;
-import com.dzs.projectframe.utils.ToastUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author DZS dzsdevelop@163.com
@@ -43,26 +43,41 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     protected Resources resources;
     protected SharedPreferUtils sharedPreferUtils;
     protected PowerManager.WakeLock wakeLock;
+    protected Receiver receiver;
 
-    protected abstract int setContent();
+    protected abstract int setContentById();
 
     protected abstract void initView();
 
-    protected abstract void initAnimation();
-
     protected abstract void initData();
+
+    protected View setContentByView() {
+        return null;
+    }
+
+    protected void setContentViewBefore() {
+
+    }
+
+    protected void onBroadcastReceiver(LibEntity libEntity) {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StackUtils.getInstanse().addActivity(this);
         setTextAbout();
-        viewUtils = ViewHolder.get(this, setContent());
+        setBroadcast();
+        setContentViewBefore();
+        int layoutId = setContentById();
+        View view = setContentByView();
+        if (layoutId <= 0 && view == null) throw new NullPointerException("layout can not be null.");
+        viewUtils = layoutId > 0 ? ViewHolder.get(this, layoutId) : ViewHolder.get(this, view);
         setContentView(viewUtils.getView());
         resources = ProjectContext.resources;
         sharedPreferUtils = ProjectContext.sharedPreferUtils;
         initView();
-        initAnimation();
         initData();
     }
 
@@ -75,6 +90,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(receiver);
         StackUtils.getInstanse().finishActivity(this);
     }
 
@@ -86,6 +102,16 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
         Configuration config = new Configuration();
         config.setToDefaults();
         res.updateConfiguration(config, res.getDisplayMetrics());
+    }
+
+    /**
+     * 设置广播
+     */
+    private void setBroadcast() {
+        receiver = new Receiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("ProjectActivity.BROADCAST");
+        registerReceiver(receiver, intentFilter);
     }
 
     //设置全屏
@@ -208,5 +234,24 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
             return;
         }
         startActivityForResult(intent, requestCode);
+    }
+
+    /**
+     * 发送广播
+     *
+     * @param libEntity libEntity
+     */
+    public void sendBroadcast(LibEntity libEntity) {
+        Intent intent = new Intent();
+        intent.putExtra(LibEntity.class.getName(), libEntity);
+        sendBroadcast(intent);
+    }
+
+    public class Receiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            LibEntity libEntity = (LibEntity) intent.getSerializableExtra(LibEntity.class.getName());
+            onBroadcastReceiver(libEntity);
+        }
     }
 }

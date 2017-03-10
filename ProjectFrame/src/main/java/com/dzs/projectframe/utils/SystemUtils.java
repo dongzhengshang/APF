@@ -141,6 +141,10 @@ public class SystemUtils {
                 .append("\nICCID: ").append(Tm.getSimSerialNumber())// 没插SIM取不到
                 .append("\nMSISDN: ").append(Tm.getLine1Number());// 有的SIM卡取不到
     }
+    
+    public static TelephonyManager getTelephonyManager(Context context) {
+        return (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+    }
 
     /**
      * 检查网络是否连接
