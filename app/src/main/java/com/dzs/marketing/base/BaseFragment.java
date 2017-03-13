@@ -10,13 +10,4 @@ import com.dzs.projectframe.base.ProjectFragment;
  * @date 2016/9/12.
  */
 public abstract class BaseFragment extends ProjectFragment {
-    @Override
-    protected void loadDataVisiable() {
-
-    }
-
-    @Override
-    protected void loadDataInVisiable() {
-
-    }
 }

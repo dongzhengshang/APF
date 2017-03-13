@@ -16,15 +16,21 @@ import com.dzs.projectframe.adapter.ViewHolder;
  * @date 2015-6-17 下午3:47:45
  */
 public abstract class ProjectFragment extends Fragment {
-    protected abstract int setFragmentLayout();
+    protected abstract int setLayoutById();
+
+    protected View setLayoutByView() {
+        return null;
+    }
 
     protected abstract void initView();
 
     protected abstract void initData();
 
-    protected abstract void loadDataVisiable();
+    protected void layoutVisiable() {
+    }
 
-    protected abstract void loadDataInVisiable();
+    protected void layoutInVisiable() {
+    }
 
     protected boolean isVisible = false;
     protected boolean isPrepared = false;
@@ -35,14 +41,17 @@ public abstract class ProjectFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         isVisible = isVisibleToUser;
-        if (isVisibleToUser) loadDataVisiable();
-        else loadDataInVisiable();
+        if (isVisibleToUser) layoutVisiable();
+        else layoutInVisiable();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (view == null) {
-            viewUtils = ViewHolder.get(getContext(), setFragmentLayout());
+            int layoutId = setLayoutById();
+            View layout = setLayoutByView();
+            if (layoutId <= 0 && layout == null) throw new NullPointerException("layout can not be null.");
+            viewUtils = layoutId > 0 ? ViewHolder.get(getContext(), layoutId) : ViewHolder.get(getContext(), layout);
             view = viewUtils.getView();
         }
         // 缓存的View需要判断是否已经被加载过parent，如果有需要移除parent。否则会出现此View已经有parent的错误
@@ -52,7 +61,7 @@ public abstract class ProjectFragment extends Fragment {
         }
         initView();
         isPrepared = true;
-        loadDataVisiable();
+        layoutVisiable();
         initData();
         return view;
     }
