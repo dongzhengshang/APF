@@ -141,7 +141,7 @@ public class SystemUtils {
                 .append("\nICCID: ").append(Tm.getSimSerialNumber())// 没插SIM取不到
                 .append("\nMSISDN: ").append(Tm.getLine1Number());// 有的SIM卡取不到
     }
-    
+
     public static TelephonyManager getTelephonyManager(Context context) {
         return (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
     }
@@ -211,6 +211,19 @@ public class SystemUtils {
         intent.setComponent(cm);
         intent.setAction("android.intent.action.VIEW");
         activity.startActivityForResult(intent, 0);
+    }
+
+    /**
+     * 打开系统图库
+     *
+     * @param activity            activity
+     * @param GALLERY_RESULT_CODE CODE
+     */
+    public static void openGallery(Activity activity, int GALLERY_RESULT_CODE) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        activity.startActivityForResult(Intent.createChooser(intent, "File Chooser"), GALLERY_RESULT_CODE);
     }
 
     /**

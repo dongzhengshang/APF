@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -502,6 +503,38 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         AdapterView view = retrieveView(viewId);
         view.setAdapter(adapter);
         return this;
+    }
+
+    /**
+     * Sets the TextView drawable
+     *
+     * @param viewId      The view id.
+     * @param leftResId   left image
+     * @param topResId    top image
+     * @param rightResId  right image
+     * @param bottomResId bottom image
+     */
+    public void setTextDraw(int viewId, int leftResId, int topResId, int rightResId, int bottomResId) {
+        TextView view = getView(viewId);
+        Drawable left = null, top = null, right = null, botttom = null;
+        if (leftResId > 0) {
+            left = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? context.getDrawable(leftResId) : context.getResources().getDrawable(leftResId);
+            if (left != null) left.setBounds(0, 0, left.getMinimumWidth(), left.getMinimumHeight());
+        }
+        if (topResId > 0) {
+            top = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? context.getDrawable(topResId) : context.getResources().getDrawable(topResId);
+            if (top != null) top.setBounds(0, 0, top.getMinimumWidth(), top.getMinimumHeight());
+        }
+        if (rightResId > 0) {
+            right = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? context.getDrawable(leftResId) : context.getResources().getDrawable(leftResId);
+            if (right != null) right.setBounds(0, 0, right.getMinimumWidth(), right.getMinimumHeight());
+        }
+        if (bottomResId > 0) {
+            botttom = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? context.getDrawable(leftResId) : context.getResources().getDrawable(leftResId);
+            if (botttom != null) botttom.setBounds(0, 0, botttom.getMinimumWidth(), botttom.getMinimumHeight());
+        }
+
+        view.setCompoundDrawables(left, top, right, botttom);
     }
 
     /**

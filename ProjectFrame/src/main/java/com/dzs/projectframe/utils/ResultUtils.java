@@ -2,6 +2,7 @@ package com.dzs.projectframe.utils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class ResultUtils {
     public static Map<?, ?> getMapFromResult(Map<?, ?> result, String key) {
         Object object = getObject(result, key);
         if (object instanceof Map) return Map.class.cast(object);
-        return null;
+        return new HashMap<>();
     }
 
     /**
@@ -80,7 +81,7 @@ public class ResultUtils {
         if (object != null) {
             return object.toString();
         }
-        return null;
+        return "";
     }
 
     /**
