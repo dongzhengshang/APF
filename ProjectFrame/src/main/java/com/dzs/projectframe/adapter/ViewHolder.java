@@ -221,6 +221,12 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    public ViewHolder setImageUrl(int viewId, String imageUrl, int drawableId) {
+        ImageView view = retrieveView(viewId);
+        Glide.with(context).load(imageUrl).error(drawableId).into(view);//.placeholder(drawableId)
+        return this;
+    }
+
 
     /**
      * Add an action to set the image of an image view. Can be called multiple times.
@@ -250,6 +256,32 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     public ViewHolder setVisible(int viewId, boolean visible) {
         View view = retrieveView(viewId);
         view.setVisibility(visible ? View.VISIBLE : View.GONE);
+        return this;
+    }
+
+    /**
+     * Set a view InVisible to INVISIBLE (true) or VISIBLE (false).
+     *
+     * @param viewId    The view id.
+     * @param invisible True for INVISIBLE, false for VISIBLE.
+     * @return The ViewHolder for chaining.
+     */
+    public ViewHolder setInVisible(int viewId, boolean invisible) {
+        View view = retrieveView(viewId);
+        view.setVisibility(invisible ? View.INVISIBLE : View.VISIBLE);
+        return this;
+    }
+
+    /**
+     * Set a view Enabled to true or false.
+     *
+     * @param viewId The view id.
+     * @param enable true or false.
+     * @return The ViewHolder for chaining.
+     */
+    public ViewHolder setEnabled(int viewId, boolean enable) {
+        View view = retrieveView(viewId);
+        view.setEnabled(enable);
         return this;
     }
 

@@ -23,7 +23,7 @@ import java.util.List;
 public abstract class BaseUniversalAdapter<T> extends BaseAdapter {
     protected final Context context;
     protected final int layoutResId;
-    protected final List<T> data;
+    protected List<T> data;
     protected boolean displayIndeterminateProgress = false;
     protected onChangeLoadMoreView changeLoadMoreView;
 
@@ -132,13 +132,14 @@ public abstract class BaseUniversalAdapter<T> extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public ArrayList<T> getAllData() {
+        return (ArrayList<T>) data;
+    }
+
     public boolean contains(T elem) {
         return data.contains(elem);
     }
 
-    /**
-     * Clear data list
-     */
     public void clear() {
         data.clear();
         notifyDataSetChanged();

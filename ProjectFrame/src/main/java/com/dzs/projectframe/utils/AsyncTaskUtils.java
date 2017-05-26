@@ -2,7 +2,7 @@ package com.dzs.projectframe.utils;
 
 import android.os.AsyncTask;
 
-import com.dzs.projectframe.Conif;
+import com.dzs.projectframe.Cfg;
 import com.dzs.projectframe.base.Bean.LibEntity;
 import com.dzs.projectframe.base.Bean.Upload;
 
@@ -27,15 +27,7 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
         this.reflsh = reflsh;
         this.saveCache = saveCache;
         dataReturnListeners = new ArrayList<>();
-        Collections.addAll(dataReturnListeners, dataReturnListener);
-    }
-
-    public AsyncTaskUtils(String taskId, HttpUtils.HttpType httpType, boolean saveCache, boolean reflsh) {
-        this.taskId = taskId;
-        this.httpType = httpType;
-        this.reflsh = reflsh;
-        this.saveCache = saveCache;
-        dataReturnListeners = new ArrayList<>();
+        if (dataReturnListener != null) Collections.addAll(dataReturnListeners, dataReturnListener);
     }
 
     public void addDataReturnListener(OnNetReturnListener... dataReturnListener) {
@@ -76,7 +68,7 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
             }
         } catch (UnsupportedEncodingException e) {
             libEntity = new LibEntity();
-            libEntity.setNetResultType(Conif.NetResultType.NET_CONNECT_FAIL);
+            libEntity.setNetResultType(Cfg.NetResultType.NET_CONNECT_FAIL);
             LogUtils.error("参数转换错误");
         }
         return libEntity;

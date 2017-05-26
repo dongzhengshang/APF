@@ -1,9 +1,9 @@
 package com.dzs.projectframe.base.Bean;
 
-import com.dzs.projectframe.Conif;
+import com.dzs.projectframe.Cfg;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.HashMap;
 
 /**
  * 数据Bean基类
@@ -13,15 +13,16 @@ import java.util.Map;
  * @date 2015-12-23 上午9:47:02
  */
 public class LibEntity implements Serializable {
-
     private static final long serialVersionUID = 1L;
     private String taskId;
     private String cachKey;// 缓存键值
-    private byte[] data;// 数据
     private long saveDate; // 缓存数据的时间
     private long shelfLife; // 有效期,System.currentTimeMillis()
-    private Conif.NetResultType netResultType;//请求结果
-    private Map<String, Object> mapData;//数据(map格式)
+    private Cfg.NetResultType netResultType;//请求结果
+    private String resultString;// 数据(json字符串格式)
+    private HashMap<String, Object> resultMap;//数据(map格式)
+    private boolean hasCach = false;//是否有缓存数据
+    private Object extendData;//扩展数据
 
     /**
      * 判断是否过期
@@ -40,12 +41,12 @@ public class LibEntity implements Serializable {
         this.cachKey = cachKey;
     }
 
-    public byte[] getData() {
-        return data;
+    public String getResultString() {
+        return resultString;
     }
 
-    public void setData(byte[] data) {
-        this.data = data;
+    public void setResultString(String resultString) {
+        this.resultString = resultString;
     }
 
     public long getSaveDate() {
@@ -64,20 +65,20 @@ public class LibEntity implements Serializable {
         this.shelfLife = shelfLife;
     }
 
-    public Conif.NetResultType getNetResultType() {
+    public Cfg.NetResultType getNetResultType() {
         return netResultType;
     }
 
-    public void setNetResultType(Conif.NetResultType netResultType) {
+    public void setNetResultType(Cfg.NetResultType netResultType) {
         this.netResultType = netResultType;
     }
 
-    public Map<String, Object> getMapData() {
-        return mapData;
+    public HashMap<String, Object> getResultMap() {
+        return resultMap;
     }
 
-    public void setMapData(Map<String, Object> mapData) {
-        this.mapData = mapData;
+    public void setResultMap(HashMap<String, Object> resultMap) {
+        this.resultMap = resultMap;
     }
 
     public String getTaskId() {
@@ -86,5 +87,21 @@ public class LibEntity implements Serializable {
 
     public void setTaskId(String taskId) {
         this.taskId = taskId;
+    }
+
+    public boolean isHasCach() {
+        return hasCach;
+    }
+
+    public void setHasCach(boolean hasCach) {
+        this.hasCach = hasCach;
+    }
+
+    public Object getExtendData() {
+        return extendData;
+    }
+
+    public void setExtendData(Object extendData) {
+        this.extendData = extendData;
     }
 }

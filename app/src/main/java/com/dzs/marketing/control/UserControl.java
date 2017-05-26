@@ -3,7 +3,6 @@ package com.dzs.marketing.control;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.dzs.marketing.ui.LoginActivity;
 
 /**
  * 用户
@@ -44,7 +43,7 @@ public class UserControl {
      * @return boolean
      */
     public boolean checkIsLogin(Activity activity) {
-        if (!getLoginState()) activity.startActivity(new Intent(activity, LoginActivity.class));
+        //if (!getLoginState()) activity.startActivity(new Intent(activity, LoginActivity.class));
         return getLoginState();
     }
 

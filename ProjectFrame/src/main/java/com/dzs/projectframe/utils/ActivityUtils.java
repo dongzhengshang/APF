@@ -2,43 +2,42 @@ package com.dzs.projectframe.utils;
 
 import android.app.Activity;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 /**
- * 堆栈工具类
+ * 当前应用程序Activity管理类
  *
  * @author DZS dzsdevelop@163.com
  * @version 1.1
  * @date 2015-1-24 下午4:12:13
  */
-public class StackUtils {
+public class ActivityUtils {
 
     private static Stack<Activity> activityStack;
-    private static StackUtils stackUtils;
+    private static ActivityUtils activityUtils;
 
-    private StackUtils() {
+    private ActivityUtils() {
     }
 
     /**
      * 单利模式
-     *
-     * @return
      */
-    public static StackUtils getInstanse() {
-        if (stackUtils == null) {
-            synchronized (StackUtils.class) {
-                if (stackUtils == null) {
-                    stackUtils = new StackUtils();
+    public static ActivityUtils getInstanse() {
+        if (activityUtils == null) {
+            synchronized (ActivityUtils.class) {
+                if (activityUtils == null) {
+                    activityUtils = new ActivityUtils();
                 }
             }
         }
-        return stackUtils;
+        return activityUtils;
     }
 
     /**
      * 添加Activity
      *
-     * @param activity
+     * @param activity activity
      */
     public void addActivity(Activity activity) {
         if (activityStack == null) activityStack = new Stack<>();
@@ -48,7 +47,7 @@ public class StackUtils {
     /**
      * 获取当前Activity
      *
-     * @return
+     * @return Activity
      */
     public Activity currentActivity() {
         return activityStack.lastElement();
@@ -57,8 +56,8 @@ public class StackUtils {
     /**
      * 获取指定的Activity
      *
-     * @param cls
-     * @return
+     * @param cls class
+     * @return Activity
      */
     public Activity getActivity(Class<?> cls) {
         if (activityStack != null)
@@ -81,7 +80,7 @@ public class StackUtils {
     /**
      * 结束指定的Activity
      *
-     * @param activity
+     * @param activity activity
      */
     public void finishActivity(Activity activity) {
         if (activity != null) {
@@ -93,12 +92,12 @@ public class StackUtils {
     /**
      * 结束指定类名的Activity
      *
-     * @param class1
+     * @param class1 class
      */
     public void finishActivity(Class<?> class1) {
-        for (Activity activity : activityStack) {
-            if (activity.getClass().equals(class1)) {
-                finishActivity(activity);
+        for (int i = 0; i < activityStack.size(); i++) {
+            if (((activityStack.get(i)).getClass()).equals(class1)) {
+                finishActivity(activityStack.get(i));
             }
         }
     }
@@ -116,6 +115,29 @@ public class StackUtils {
     }
 
     /**
+     * 结束除参数外的所有Activity
+     *
+     * @param class1 class数组
+     */
+    public void finishAllOtherActivity(Class<?>... class1) {
+        ArrayList<Activity> activities = new ArrayList<>();
+        for (int i = 0; i < activityStack.size(); i++) {
+            Activity activity = activityStack.get(i);
+            for (Class<?> c : class1) {
+                if (activity.getClass().getName().equals(c.getName())) {
+                    activityStack.remove(i);
+                    i--;
+                    activities.add(activity);
+                    break;
+                }
+            }
+        }
+        finishAllActivity();
+        activityStack.addAll(activities);
+
+    }
+
+    /**
      * 退出应用
      */
     public void AppExit() {
@@ -125,7 +147,7 @@ public class StackUtils {
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(0);
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtils.exception(e);
         }
     }
 }

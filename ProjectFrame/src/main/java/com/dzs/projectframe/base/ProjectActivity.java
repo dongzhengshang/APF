@@ -1,9 +1,6 @@
 package com.dzs.projectframe.base;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -18,16 +15,17 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.dzs.projectframe.Conif;
+import com.dzs.projectframe.Cfg;
 import com.dzs.projectframe.R;
 import com.dzs.projectframe.adapter.ViewHolder;
 import com.dzs.projectframe.base.Bean.LibEntity;
+import com.dzs.projectframe.broadcast.Receiver;
 import com.dzs.projectframe.utils.AsyncTaskUtils;
 import com.dzs.projectframe.utils.DiskLruCacheHelpUtils;
 import com.dzs.projectframe.utils.FileUtils;
 import com.dzs.projectframe.utils.LogUtils;
 import com.dzs.projectframe.utils.SharedPreferUtils;
-import com.dzs.projectframe.utils.StackUtils;
+import com.dzs.projectframe.utils.ActivityUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,12 +36,11 @@ import java.util.List;
  * @version V1.0
  * @date 2016/8/19.
  */
-public abstract class ProjectActivity extends FragmentActivity implements View.OnClickListener, AsyncTaskUtils.OnNetReturnListener {
-    protected ViewHolder viewUtils;
+public abstract class ProjectActivity extends FragmentActivity implements View.OnClickListener, AsyncTaskUtils.OnNetReturnListener, Receiver.OnBroadcaseReceiverListener {
+    public ViewHolder viewUtils;
     protected Resources resources;
     protected SharedPreferUtils sharedPreferUtils;
     protected PowerManager.WakeLock wakeLock;
-    protected Receiver receiver;
 
     protected abstract int setContentById();
 
@@ -55,28 +52,29 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
         return null;
     }
 
+    /*设置View之前做的一些操作*/
     protected void setContentViewBefore() {
-
     }
 
-    protected void onBroadcastReceiver(LibEntity libEntity) {
-
+    /*设置View之后做的一些操作*/
+    protected void setContentViewAfter() {
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StackUtils.getInstanse().addActivity(this);
+        ActivityUtils.getInstanse().addActivity(this);
+        ProjectContext.appContext.addReceiver(this);
+        resources = ProjectContext.resources;
+        sharedPreferUtils = ProjectContext.sharedPreferUtils;
         setTextAbout();
-        setBroadcast();
         setContentViewBefore();
         int layoutId = setContentById();
         View view = setContentByView();
         if (layoutId <= 0 && view == null) throw new NullPointerException("layout can not be null.");
         viewUtils = layoutId > 0 ? ViewHolder.get(this, layoutId) : ViewHolder.get(this, view);
         setContentView(viewUtils.getView());
-        resources = ProjectContext.resources;
-        sharedPreferUtils = ProjectContext.sharedPreferUtils;
+        setContentViewAfter();
         initView();
         initData();
     }
@@ -90,8 +88,13 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(receiver);
-        StackUtils.getInstanse().finishActivity(this);
+        ProjectContext.appContext.removeReceiver(this);
+        ActivityUtils.getInstanse().finishActivity(this);
+    }
+
+    @Override
+    public void onDateReceiver(LibEntity libEntity) {
+
     }
 
     /**
@@ -104,15 +107,6 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
         res.updateConfiguration(config, res.getDisplayMetrics());
     }
 
-    /**
-     * 设置广播
-     */
-    private void setBroadcast() {
-        receiver = new Receiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("ProjectActivity.BROADCAST");
-        registerReceiver(receiver, intentFilter);
-    }
 
     //设置全屏
     protected void setFullScream() {
@@ -166,7 +160,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     protected Uri photoUri = tempPhotoImageFile == null ? null : Uri.fromFile(tempPhotoImageFile);
     protected String photoPath = tempPhotoImageFile == null ? "" : tempPhotoImageFile.getAbsolutePath();
     protected File tempCropImageFile = FileUtils.getSaveFile("TempImage", "tempCrop.jpeg");
-    protected Uri cropUri = tempCropImageFile == null ? null : Uri.fromFile(tempCropImageFile);
+    private Uri cropUri = tempCropImageFile == null ? null : Uri.fromFile(tempCropImageFile);
     protected String cropPath = tempCropImageFile == null ? "" : tempCropImageFile.getAbsolutePath();
 
     //调用系统相册
@@ -186,15 +180,15 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     }
 
     //调用系统相机
-    public void cameraPhoto(Conif.OperationResult result) {
+    public void cameraPhoto(Cfg.OperationResult result) {
         cameraPhoto(null, result);
     }
 
     //调用系统相机，fragment调用
-    public void cameraPhoto(Fragment fragment, Conif.OperationResult result) {
+    public void cameraPhoto(Fragment fragment, Cfg.OperationResult result) {
         try {
             if (!FileUtils.checkSDcard()) {
-                result.onResult(Conif.OperationResultType.FAIL.setMessage(ProjectContext.appContext.getString(R.string.SDError)));
+                result.onResult(Cfg.OperationResultType.FAIL.setMessage(ProjectContext.appContext.getString(R.string.SDError)));
                 return;
             }
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -205,7 +199,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
             }
             startActivityForResult(intent, CAMERA_INTENT_REQUEST);
         } catch (Exception e) {
-            result.onResult(Conif.OperationResultType.FAIL.setMessage(ProjectContext.appContext.getString(R.string.OpenCameraError)));
+            result.onResult(Cfg.OperationResultType.FAIL.setMessage(ProjectContext.appContext.getString(R.string.OpenCameraError)));
             LogUtils.exception(e);
         }
     }
@@ -225,6 +219,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
         intent.putExtra("outputX", outputX);
         intent.putExtra("outputY", outputY);
         intent.putExtra("scale", true);
+        intent.putExtra("scaleUpIfNeeded", true);//黑边
         intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);
         intent.putExtra("return-data", false);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
@@ -234,24 +229,5 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
             return;
         }
         startActivityForResult(intent, requestCode);
-    }
-
-    /**
-     * 发送广播
-     *
-     * @param libEntity libEntity
-     */
-    public void sendBroadcast(LibEntity libEntity) {
-        Intent intent = new Intent();
-        intent.putExtra(LibEntity.class.getName(), libEntity);
-        sendBroadcast(intent);
-    }
-
-    public class Receiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            LibEntity libEntity = (LibEntity) intent.getSerializableExtra(LibEntity.class.getName());
-            onBroadcastReceiver(libEntity);
-        }
     }
 }

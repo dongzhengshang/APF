@@ -3,6 +3,9 @@ package com.dzs.projectframe.widget;
 import android.os.CountDownTimer;
 import android.widget.TextView;
 
+import com.dzs.projectframe.R;
+import com.dzs.projectframe.base.ProjectContext;
+
 /**
  * 自定义CountDownTimer类，用于验证码倒计时
  *
@@ -31,7 +34,7 @@ public class CustomCountDownTimer extends CountDownTimer {
     @Override
     public void onFinish() {
         button.setEnabled(true);
-        button.setText("获取验证码");
+        button.setText(ProjectContext.resources.getText(R.string.GetVerificationCode));
     }
 
 }

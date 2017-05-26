@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * RecyclerView 适配器
+ *
  * @author DZS dzsdevelop@163.com
  * @version V1.0
  * @date 2016/8/19.
@@ -22,9 +23,11 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
     protected List<T> data;
     protected int layoutResId;
     protected ViewHolder viewHolder;
-    protected OnItemClickListener onItemClickListener;
-    protected OnItemLongClickListener onItemLongClickListener;
     protected MultiItemTypeSupport multiItemTypeSupport;
+
+    public BaseUniversalAdapter(Context context, int layoutResId) {
+        this(context, layoutResId, null);
+    }
 
     public BaseUniversalAdapter(Context context, int layoutResId, List<T> data) {
         this.data = data == null ? new ArrayList<T>() : new ArrayList<>(data);
@@ -35,7 +38,8 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
     public BaseUniversalAdapter(Context context, List<T> data, MultiItemTypeSupport multiItemTypeSupport) {
         this.data = data == null ? new ArrayList<T>() : new ArrayList<>(data);
         this.context = context;
-        if (multiItemTypeSupport == null) throw new IllegalArgumentException("the multiItemTypeSupport can not be null.");
+        if (multiItemTypeSupport == null)
+            throw new IllegalArgumentException("the multiItemTypeSupport can not be null.");
         this.multiItemTypeSupport = multiItemTypeSupport;
     }
 
@@ -47,7 +51,6 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
         } else {
             viewHolder = ViewHolder.get(context, null, parent, layoutResId);
         }
-        initListener(parent);
         return viewHolder;
     }
 
@@ -73,42 +76,53 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
         super.onViewRecycled(holder);
     }
 
-    /**
-     * 设置监听
-     */
-    private void initListener(final ViewGroup parent) {
-        viewHolder.getView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onItemClickListener != null)
-                    onItemClickListener.onItemClick(parent, v, data.get(viewHolder.getCurrentPosition()), viewHolder.getCurrentPosition());
-            }
-        });
-        viewHolder.getView().setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (onItemLongClickListener != null)
-                    onItemLongClickListener.onItemLongClick(parent, v, data.get(viewHolder.getCurrentPosition()), viewHolder.getCurrentPosition());
-                return false;
-            }
-        });
+    public void add(T elem) {
+        data.add(elem);
+        notifyDataSetChanged();
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.onItemClickListener = listener;
+    public void addAll(List<T> elem) {
+        data.addAll(elem);
+        notifyDataSetChanged();
     }
 
-    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
-        this.onItemLongClickListener = listener;
+    public void set(T oldElem, T newElem) {
+        set(data.indexOf(oldElem), newElem);
     }
 
-    public interface OnItemClickListener<T> {
-        void onItemClick(ViewGroup parent, View view, T t, int position);
+    public void set(int index, T elem) {
+        data.set(index, elem);
+        notifyDataSetChanged();
     }
 
-    public interface OnItemLongClickListener<T> {
-        void onItemLongClick(ViewGroup parent, View view, T t, int position);
+    public void remove(T elem) {
+        data.remove(elem);
+        notifyDataSetChanged();
     }
 
-    public abstract void convert(ViewHolder holder, T t);
+    public void remove(int index) {
+        data.remove(index);
+        notifyDataSetChanged();
+    }
+
+    public void replaceAll(List<T> elem) {
+        data.clear();
+        data.addAll(elem);
+        notifyDataSetChanged();
+    }
+
+    public boolean contains(T elem) {
+        return data.contains(elem);
+    }
+
+    public T getItem(int index) {
+        return data.get(index);
+    }
+
+    public void clear() {
+        data.clear();
+        notifyDataSetChanged();
+    }
+
+    protected abstract void convert(ViewHolder holder, T t);
 }

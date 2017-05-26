@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--自定义控件属性-->
     <declare-styleable name="CustomTextView"> 
         <attr name="drawableLeftWidth" format="dimension"/> 
         <attr name="drawableLeftHeight" format="dimension"/> 
@@ -10,5 +9,43 @@
         <attr name="drawableRightHeight" format="dimension"/> 
         <attr name="drawableBottomWidth" format="dimension"/> 
         <attr name="drawableBottomHeight" format="dimension"/> 
+    </declare-styleable>
+
+    <!-- 圆角图片 -->
+    <declare-styleable name="CircleImageView">
+        <attr name="border_width" format="dimension"/>
+        <attr name="border_color" format="color"/>
+    </declare-styleable>
+    <!--比例图片-->
+    <declare-styleable name="RatioImageView">
+        <attr name="ratio" format="float"/>
+    </declare-styleable>
+    <!--GIF 动画-->
+    <declare-styleable name="GifView">
+        <attr name="gif" format="reference"/>
+        <attr name="paused" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="CustomTheme">
+        <attr name="gifViewStyle" format="reference"/>
+    </declare-styleable>
+
+    <!--流式布局-->
+    <declare-styleable name="TagFlowLayout">
+        <attr name="auto_select_effect" format="boolean"/>
+        <attr name="max_select" format="integer"/>
+        <attr name="layout_gravity">
+            <enum name="left" value="-1"/>
+            <enum name="center" value="0"/>
+            <enum name="right" value="1"/>
+        </attr>
+    </declare-styleable>
+    <!--圆角控件-->
+    <declare-styleable name="RoundedImageView">
+        <attr name="r_corner_radius" format="dimension"/>
+        <attr name="r_border_width" format="dimension"/>
+        <attr name="r_border_color" format="color"/>
+        <attr name="r_mutate_background" format="boolean"/>
+        <attr name="r_oval" format="boolean"/>
+        <attr name="android:scaleType"/>
     </declare-styleable>
 </resources>

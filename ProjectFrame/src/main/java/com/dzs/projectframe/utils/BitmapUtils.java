@@ -4,13 +4,21 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.util.Base64;
+
+import com.dzs.projectframe.base.ProjectActivity;
+import com.dzs.projectframe.base.ProjectContext;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -171,6 +179,29 @@ public class BitmapUtils {
             }
         }
         return inSampleSize;
+    }
+
+    public static String bitmapToBase64(Bitmap bitmap) {
+        ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bStream);
+        byte[] bytes = bStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
+
+
+    /**
+     * 获取位图
+     *
+     * @param uri
+     * @return
+     */
+    public static Bitmap decodeUriAsBitmap(Uri uri) {
+        try {
+            return MediaStore.Images.Media.getBitmap(ProjectContext.appContext.getContentResolver(), uri);
+        } catch (IOException e) {
+            LogUtils.exception(e);
+            return null;
+        }
     }
 
 }

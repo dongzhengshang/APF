@@ -52,8 +52,8 @@ public class JsonUtils {
      * @return map
      * @throws Exception
      */
-    public static Map<String, Object> getMap(String jsonStr) throws JSONException {
-        Map<String, Object> result = new HashMap<>();
+    public static HashMap<String, Object> getMap(String jsonStr) throws JSONException {
+        HashMap<String, Object> result = new HashMap<>();
         if (!StringUtils.isEmpty(jsonStr)) {
             JSONObject json = new JSONObject(jsonStr);
             Iterator<String> it = json.keys();
@@ -64,8 +64,18 @@ public class JsonUtils {
                     result.put(key.trim(), getMapList(value + ""));
                 } else if (value instanceof JSONObject) {
                     result.put(key.trim(), getMap(value + ""));
+                } else if (value instanceof String) {
+                    result.put(key.trim(), json.getString(key));
+                } else if (value instanceof Boolean) {
+                    result.put(key.trim(), json.getBoolean(key));
+                } else if (value instanceof Double) {
+                    result.put(key.trim(), json.getDouble(key));
+                } else if (value instanceof Integer) {
+                    result.put(key.trim(), json.getInt(key));
+                } else if (value instanceof Long) {
+                    result.put(key.trim(), json.getLong(key));
                 } else {
-                    result.put(key.trim(), value);
+                    result.put(key.trim(), value + "");
                 }
             }
         }
@@ -79,13 +89,13 @@ public class JsonUtils {
      * @return List
      * @throws Exception
      */
-    public static List<Map<String, Object>> getMapList(String jsonStr) throws JSONException {
-        List<Map<String, Object>> list = new ArrayList<>();
+    public static List<HashMap<String, Object>> getMapList(String jsonStr) throws JSONException {
+        ArrayList<HashMap<String, Object>> list = new ArrayList<>();
         JSONArray ja = new JSONArray(jsonStr);
         for (int j = 0; j < ja.length(); j++) {
             Object value = ja.get(j);
             if (value instanceof JSONObject) {
-                Map<String, Object> map = getMap(value + "");
+                HashMap<String, Object> map = getMap(value + "");
                 list.add(map);
             }
         }

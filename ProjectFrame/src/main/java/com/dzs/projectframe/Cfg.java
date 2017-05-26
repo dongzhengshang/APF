@@ -14,9 +14,8 @@ import com.dzs.projectframe.utils.SystemUtils;
  * @version V1.0
  * @date 2016/8/19.
  */
-public class Conif {
-    public static boolean IS_DEBUG = true;
-    //public static boolean IS_DEBUG = BuildConfig.DEBUG;
+public class Cfg {
+    public static boolean IS_DEBUG = false;
     public static String APP_ROOT = ProjectContext.appContext.getPackageName();
     public static String SHAREDPREFER_USERINFO = "ApplicationData";
     // 连接超时
@@ -47,7 +46,8 @@ public class Conif {
 
     /*操作结果枚举类*/
     public enum OperationResultType {
-        SUCCESS(""), FAIL("");
+        SUCCESS(""), FAIL(""),//成功/失败
+        PROGRESS(""), FAIL_HAS_CACHE("");//进度/缓存
         private String message;
 
         OperationResultType(String message) {
@@ -101,5 +101,10 @@ public class Conif {
         SystemUtils.NetWorkType networkType = SystemUtils.getNetworkType(ProjectContext.appContext);
         if (networkType.type == SystemUtils.NetWorkType.WIFI.type) return WIFI_CACHE_TIME;
         return NET_CACHE_TIME;
+    }
+
+    /*设置是否打印LOG*/
+    public static void setIsDebug(boolean isDebug) {
+        IS_DEBUG = isDebug;
     }
 }

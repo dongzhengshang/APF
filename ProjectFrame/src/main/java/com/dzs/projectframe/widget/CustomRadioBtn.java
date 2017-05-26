@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatRadioButton;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 
 import com.dzs.projectframe.R;
@@ -68,5 +69,6 @@ public class CustomRadioBtn extends AppCompatRadioButton {
             drawables[3].setBounds(0, 0, drawableBottomWidth, drawableBottomHeight);
         }
         setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
+        typedArray.recycle();
     }
 }

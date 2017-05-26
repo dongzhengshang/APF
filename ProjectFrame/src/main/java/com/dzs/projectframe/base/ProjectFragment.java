@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dzs.projectframe.adapter.ViewHolder;
+import com.dzs.projectframe.base.Bean.LibEntity;
+import com.dzs.projectframe.broadcast.Receiver;
 
 /**
  * Fragment 基类
@@ -15,7 +17,7 @@ import com.dzs.projectframe.adapter.ViewHolder;
  * @version 1.0
  * @date 2015-6-17 下午3:47:45
  */
-public abstract class ProjectFragment extends Fragment {
+public abstract class ProjectFragment extends Fragment implements Receiver.OnBroadcaseReceiverListener {
     protected abstract int setLayoutById();
 
     protected View setLayoutByView() {
@@ -59,6 +61,7 @@ public abstract class ProjectFragment extends Fragment {
         if (parent != null) {
             parent.removeView(view);
         }
+        ProjectContext.appContext.addReceiver(this);
         initView();
         isPrepared = true;
         layoutVisiable();
@@ -66,4 +69,14 @@ public abstract class ProjectFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ProjectContext.appContext.removeReceiver(this);
+    }
+
+    @Override
+    public void onDateReceiver(LibEntity libEntity) {
+
+    }
 }

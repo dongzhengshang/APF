@@ -10,19 +10,13 @@ android {
         versionCode 1
         versionName "1.0"
     }
-    buildTypes {
-        release {
-            zipAlignEnabled true//Zipalign优化
-            shrinkResources false//移除无用的resource文件
-            minifyEnabled false//是否启用代码混淆
-            proguardFiles '../proguard-rules.pro'
-        }
-    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:25.2.0'
-    compile 'com.android.support:recyclerview-v7:25.2.0'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.android.support:percent:25.3.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
 }

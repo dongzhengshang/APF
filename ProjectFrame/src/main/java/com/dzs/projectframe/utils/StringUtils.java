@@ -1,8 +1,17 @@
 package com.dzs.projectframe.utils;
 
+import android.support.annotation.NonNull;
+
+import com.dzs.projectframe.base.ProjectContext;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -38,8 +47,16 @@ public class StringUtils {
      * @return
      */
     public static boolean isPhone(CharSequence phone) {
-        if (isEmpty(phone)) return false;
-        return PHONE.matcher(phone).matches();
+        if (isEmpty(phone)) {
+            ToastUtils.showOneToast("手机号不能为空");
+            return false;
+        }
+        if (PHONE.matcher(phone).matches()){
+            return true;
+        }else{
+            ToastUtils.showOneToast("请输入正确的手机号");
+            return false;
+        }
     }
 
     /**
@@ -155,7 +172,7 @@ public class StringUtils {
      * @throws UnsupportedEncodingException
      */
     public static StringBuilder mapToParmeters(Map<String, Object> parameters) throws UnsupportedEncodingException {
-        if (parameters == null || parameters.isEmpty()) throw new NullPointerException("parameters can not be null");
+        if (parameters == null || parameters.isEmpty()) return new StringBuilder("");
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, Object> parm : parameters.entrySet()) {
             sb.append(parm.getKey()).append("=").append(URLEncoder.encode(parm.getValue() == null ? "" : parm.getValue().toString(), UTF_8));
@@ -163,6 +180,48 @@ public class StringUtils {
         }
         sb.deleteCharAt(sb.length() - 1);
         return sb;
+    }
+
+
+    /**
+     * 获取assets目录下的城市列表
+     *
+     * @return
+     */
+    public static String convertStreamToString() {
+        StringBuilder sb = new StringBuilder();
+        String line;
+        InputStream is = null;
+        try {
+            is = ProjectContext.appContext.getAssets().open("province.json");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return sb.toString();
+    }
+
+
+    /**
+     * 判断密码是否包含中文
+     *
+     * @param password 密码字符串
+     */
+    public static boolean isContainChinese(@NonNull String password) {
+        Pattern pattern = Pattern.compile("[\u4e00-\u9fa5]");
+        Matcher matcher = pattern.matcher(password);
+        return matcher.find();
     }
 
 }

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 
-import com.dzs.projectframe.Conif;
+import com.dzs.projectframe.Cfg;
 
 import java.util.Map;
 
@@ -23,7 +23,7 @@ public class SharedPreferUtils {
     private static SharedPreferUtils sharedPreferHelper;
 
     private SharedPreferUtils(Context context) {
-        prefs = context.getSharedPreferences(Conif.SHAREDPREFER_USERINFO, Context.MODE_PRIVATE);
+        prefs = context.getSharedPreferences(Cfg.SHAREDPREFER_USERINFO, Context.MODE_PRIVATE);
         editor = prefs.edit();
         editor.apply();
     }

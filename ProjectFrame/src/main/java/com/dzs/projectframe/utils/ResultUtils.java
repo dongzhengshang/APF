@@ -18,7 +18,14 @@ public class ResultUtils {
      */
     public static ArrayList getListMapFromResult(Map<?, ?> result, String key) {
         Object object = getObject(result, key);
-        if (object != null) return ArrayList.class.cast(object);
+        if (object != null) {
+            try {
+                return ArrayList.class.cast(object);
+            }catch (Exception e){
+                return new ArrayList<>();
+            }
+
+        }
         return new ArrayList<>();
     }
 
@@ -76,7 +83,7 @@ public class ResultUtils {
      * @param key    键值
      * @return String
      */
-    public static String getStringFromResult(Map<String, Object> result, String key) {
+    public static String getStringFromResult(Map<?, ?> result, String key) {
         Object object = getObject(result, key);
         if (object != null) {
             return object.toString();
@@ -91,22 +98,18 @@ public class ResultUtils {
      * @param key    键值
      * @return Object
      */
-    public static Object getObject(Map<?, ?> result, String key) {
-        if (result.containsKey(key)) {
-            return result.get(key);
-        } else {
+    private static Object getObject(Map<?, ?> result, String key) {
+        if (result == null || result.isEmpty() || StringUtils.isEmpty(key)) return null;
+        if (result.containsKey(key)) return result.get(key);
+        else {
             for (Map.Entry<?, ?> entry : result.entrySet()) {
                 if (entry.getValue() instanceof Map) {
                     Object o = getObject(Map.class.cast(entry.getValue()), key);
-                    if (o != null) {
-                        return o;
-                    }
+                    if (o != null) return o;
                 } else if (entry.getValue() instanceof List) {
                     for (Object map : List.class.cast(entry.getValue())) {
                         Object o2 = getObject(Map.class.cast(map), key);
-                        if (o2 != null) {
-                            return o2;
-                        }
+                        if (o2 != null) return o2;
                     }
                 }
             }
@@ -121,17 +124,12 @@ public class ResultUtils {
      */
 
     public static <T> T getBeanFromMap(Map<?, ?> value, Class<T> clazz) {
-        if (value == null || clazz == null) {
-            return null;
-        }
+        if (value == null || clazz == null) return null;
         T t;
         try {
             t = clazz.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogUtils.exception(e);
             return null;
         }
         for (Map.Entry<?, ?> map : value.entrySet()) {

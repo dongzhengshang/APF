@@ -68,5 +68,6 @@ public class CustomTextView extends AppCompatTextView {
             drawables[3].setBounds(0, 0, drawableBottomWidth, drawableBottomHeight);
         }
         setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
+        typedArray.recycle();
     }
 }

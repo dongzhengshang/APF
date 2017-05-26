@@ -3,13 +3,13 @@ package com.dzs.projectframe.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.CursorLoader;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 
-import com.dzs.projectframe.Conif;
+import com.dzs.projectframe.Cfg;
+import com.dzs.projectframe.base.ProjectContext;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -60,7 +60,17 @@ public class FileUtils {
 
     //获取当前AppSD卡根目录
     public static String getAppRoot() throws NullPointerException {
-        return getSDRoot() + File.separator + Conif.APP_ROOT;
+        return getSDRoot() + File.separator + Cfg.APP_ROOT;
+    }
+
+    //获取机身储存
+    public static String getInternalFileDirectory() {
+        String fileDirPath = null;
+        File fileDir = ProjectContext.appContext.getFilesDir();
+        if (fileDir != null) {
+            fileDirPath = fileDir.getPath();
+        }
+        return fileDirPath;
     }
 
     /**
@@ -418,4 +428,6 @@ public class FileUtils {
             }
         }
     }
+
+
 }

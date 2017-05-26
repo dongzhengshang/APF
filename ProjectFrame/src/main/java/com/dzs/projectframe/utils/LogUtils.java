@@ -2,7 +2,7 @@ package com.dzs.projectframe.utils;
 
 import android.util.Log;
 
-import com.dzs.projectframe.Conif;
+import com.dzs.projectframe.Cfg;
 
 /**
  * LOG 工具类
@@ -12,7 +12,7 @@ import com.dzs.projectframe.Conif;
  * @date 2015年11月21日 下午5:37:28
  */
 public class LogUtils {
-    private static boolean IS_SHOWLOG = Conif.IS_DEBUG;
+    public static boolean IS_SHOWLOG = Cfg.IS_DEBUG;
 
     public static void info(String message) {
         logI("Debug-I", message);

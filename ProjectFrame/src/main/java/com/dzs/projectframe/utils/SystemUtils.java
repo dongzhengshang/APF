@@ -13,18 +13,30 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -61,8 +73,9 @@ public class SystemUtils {
      * @param cxt Context
      * @return String
      */
+    @SuppressLint("HardwareIds")
     public static String getPhoneIMEI(Context cxt) {
-        TelephonyManager tm = (TelephonyManager) cxt.getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager tm = (TelephonyManager) cxt.getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getDeviceId();
     }
 
@@ -89,10 +102,19 @@ public class SystemUtils {
      *
      * @return String
      */
+    @SuppressLint("HardwareIds")
     public static String getMac(Context context) {
-        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = wifi.getConnectionInfo();
         return info.getMacAddress();
+    }
+
+    /**
+     * 获取当前连接的WIFI信息
+     */
+    public static WifiInfo getCurrentWIFIInfo(Context context) {
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        return wifiManager.getConnectionInfo();
     }
 
     /**
@@ -200,6 +222,16 @@ public class SystemUtils {
         return netWorkType;
     }
 
+    /*判断是否是5G网络,Android系统方法*/
+    public static boolean is5GHz(int freq) {
+        return freq > 4900 && freq < 5900;
+    }
+
+    /*判断是否是2.4G网络,Android系统方法*/
+    public static boolean is24GHz(int freq) {
+        return freq > 2400 && freq < 2500;
+    }
+
     /**
      * 打开网络设置
      *
@@ -214,6 +246,18 @@ public class SystemUtils {
     }
 
     /**
+     * 打开应用详情
+     *
+     * @param activity activity
+     */
+    public static void openApplicationInfo(Activity activity) {
+        Uri packUri = Uri.parse("package:" + activity.getPackageName());
+        Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packUri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);
+    }
+
+    /**
      * 打开系统图库
      *
      * @param activity            activity
@@ -224,18 +268,6 @@ public class SystemUtils {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
         activity.startActivityForResult(Intent.createChooser(intent, "File Chooser"), GALLERY_RESULT_CODE);
-    }
-
-    /**
-     * 打开应用详情
-     *
-     * @param activity activity
-     */
-    public static void openApplicationInfo(Activity activity) {
-        Uri packUri = Uri.parse("package:" + activity.getPackageName());
-        Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packUri);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        activity.startActivity(intent);
     }
 
     /**
@@ -450,6 +482,147 @@ public class SystemUtils {
             }
         LogUtils.info("清理了" + (getDeviceUsableMemory(context) - i) + "M内存");
         return count;
+    }
+
+
+    /**
+     * 保存图片到本地
+     *
+     * @param context
+     * @param path
+     */
+    public static void saveImageToGallery(final Context context, final String imageUrl, final String path) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap bitmapc = null;
+                try {
+                    bitmapc = Glide.with(context)
+                            .load(imageUrl)
+                            .asBitmap() //必须
+                            .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                            .get();
+                } catch (Exception e) {
+
+                    LogUtils.debug("bitmap失败");
+                    e.printStackTrace();
+                }
+
+                if (bitmapc == null) {
+                    ToastUtils.showOneToast("保存失败，请重试");
+                    return;
+                }
+                // 首先保存图片
+                File appDir = new File(Environment.getExternalStorageDirectory(), path);
+                if (!appDir.exists()) {
+                    appDir.mkdir();
+                }
+                String fileName = System.currentTimeMillis() + ".jpg";
+                File file = new File(appDir, fileName);
+                try {
+                    FileOutputStream fos = new FileOutputStream(file);
+                    bitmapc.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                    fos.flush();
+                    fos.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // 其次把文件插入到系统图库
+                try {
+                    MediaStore.Images.Media.insertImage(context.getContentResolver(),
+                            file.getAbsolutePath(), fileName, null);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                // 最后通知图库更新
+                context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+
+            }
+        }).start();
+    }
+
+    /**
+     * 关闭软键盘
+     *
+     * @param context
+     */
+    public static void closeKeyboard(Activity context) {
+        if (context==null) return;
+        View view = context.getWindow().peekDecorView();
+        if (view != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    /**
+     * Dialog中隐藏软键盘
+     * @param activity
+     */
+    public static void  HideSoftKeyBoardDialog(Activity activity){
+        if(activity.getWindow().getAttributes().softInputMode== WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE){
+            try{
+                InputMethodManager imm = (InputMethodManager) activity.getSystemService(activity.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
+            }
+            catch(Exception ex){
+            }
+        }
+
+    }
+
+
+    /**
+     * 判断是否安装某软件
+     *
+     * @param context
+     * @param pageName 应用包名
+     * @return
+     */
+    public static boolean isWeixinAvilible(Context context, String pageName) {
+        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
+        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
+        if (pinfo != null) {
+            for (int i = 0; i < pinfo.size(); i++) {
+                String pn = pinfo.get(i).packageName;
+                if (pn.equals(pageName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /*判断是否为当前App的ProcessAppName*/
+    public static boolean isCurrentAppProcessAppName(Context context, int pID) {
+        String processAppName = getAppName(context, pID);
+        return !(processAppName == null || !processAppName.equalsIgnoreCase(getPackageInfo(context).packageName));
+    }
+
+    /**
+     * 获取processAppName
+     *
+     * @param context AppContext
+     * @param pID     PID:android.os.Process.myPid()
+     * @return String
+     */
+    private static String getAppName(Context context, int pID) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List l = am.getRunningAppProcesses();
+        Iterator i = l.iterator();
+        PackageManager pm = context.getPackageManager();
+        while (i.hasNext()) {
+            ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (i.next());
+            try {
+                if (info.pid == pID) return info.processName;
+            } catch (Exception e) {
+                LogUtils.exception(e);
+            }
+        }
+        return null;
     }
 
 }

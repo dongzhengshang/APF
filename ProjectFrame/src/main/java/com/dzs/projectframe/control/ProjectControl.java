@@ -1,5 +1,7 @@
 package com.dzs.projectframe.control;
 
+import android.os.AsyncTask;
+
 import com.dzs.projectframe.base.Bean.Upload;
 import com.dzs.projectframe.utils.AsyncTaskUtils;
 import com.dzs.projectframe.utils.HttpUtils;
@@ -31,7 +33,7 @@ public class ProjectControl {
      */
     private void getData(String taskId, String url, InputStream inputStream, Map<String, Object> params, String[] keys, Upload[] uploads, HttpUtils.HttpType httpType, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
         AsyncTaskUtils ansyTaskUtils = new AsyncTaskUtils(taskId, httpType, saveCache, reflsh, netReturnListeners);
-        ansyTaskUtils.execute(url, inputStream,params, keys, uploads);
+        ansyTaskUtils.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,url, inputStream,params, keys, uploads);
     }
 
     protected void getDataByGet(String taskId, String url, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
