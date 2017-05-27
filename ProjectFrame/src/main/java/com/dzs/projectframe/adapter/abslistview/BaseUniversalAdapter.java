@@ -140,6 +140,9 @@ public abstract class BaseUniversalAdapter<T> extends BaseAdapter {
         return data.contains(elem);
     }
 
+    /**
+     * Clear data list
+     */
     public void clear() {
         data.clear();
         notifyDataSetChanged();

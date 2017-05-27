@@ -67,7 +67,8 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
 
     @Override
     public int getItemViewType(int position) {
-        if (multiItemTypeSupport != null) return multiItemTypeSupport.getItemViewType(position, data.get(position));
+        if (multiItemTypeSupport != null)
+            return multiItemTypeSupport.getItemViewType(position, data.get(position));
         return super.getItemViewType(position);
     }
 
@@ -119,10 +120,12 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
         return data.get(index);
     }
 
+    /**
+     * Clear data list
+     */
     public void clear() {
         data.clear();
         notifyDataSetChanged();
     }
-
     protected abstract void convert(ViewHolder holder, T t);
 }
