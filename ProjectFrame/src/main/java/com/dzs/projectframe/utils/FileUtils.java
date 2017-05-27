@@ -47,13 +47,13 @@ public class FileUtils {
     }
 
     //获取缓存目录
-    public static String getAppCache(Context context, String folderName) {
+    public static String getAppCache(Context context, String folderName) throws NullPointerException {
         return !checkSDcard() ? context.getCacheDir() + File.separator + folderName
                 : context.getExternalCacheDir() + File.separator + folderName;
     }
 
     //获取缓文件目录
-    public static String getAppFile(Context context, String folderName) {
+    public static String getAppFile(Context context, String folderName) throws NullPointerException {
         return !checkSDcard() ? context.getFilesDir() + File.separator + folderName
                 : context.getExternalFilesDir(File.separator) + File.separator + folderName;
     }
@@ -67,9 +67,7 @@ public class FileUtils {
     public static String getInternalFileDirectory() {
         String fileDirPath = null;
         File fileDir = ProjectContext.appContext.getFilesDir();
-        if (fileDir != null) {
-            fileDirPath = fileDir.getPath();
-        }
+        if (fileDir != null) fileDirPath = fileDir.getPath();
         return fileDirPath;
     }
 
@@ -77,7 +75,7 @@ public class FileUtils {
      * 获取当前APP文件夹下指定目录,没有则从新创建
      *
      * @param folderName 文件夹名称
-     * @return
+     * @return File
      * @throws NullPointerException SD卡不存在会抛出异常
      */
     public static File getAppSaveFolder(String folderName) throws NullPointerException {
@@ -91,7 +89,7 @@ public class FileUtils {
      * 获取SD卡APP目录下指定文件夹的绝对路径
      *
      * @param folderName 文件夹名称
-     * @return
+     * @return String
      * @throws NullPointerException SD卡不存在会抛出异常
      */
     public static String getAppSavePath(String folderName) throws NullPointerException {
@@ -103,15 +101,13 @@ public class FileUtils {
      *
      * @param folderName 文件目录名称
      * @param fileName   文件名称
-     * @return
+     * @return File
+     * @throws Exception SD卡不存在会抛出异常/删除创建异常
      */
-    public static File getSaveFile(String folderName, String fileName) {
+    public static File getSaveFile(String folderName, String fileName) throws Exception {
         File file = new File(getAppSavePath(folderName) + File.separator + fileName);
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            LogUtils.exception(e);
-        }
+        if (file.exists()) file.delete();
+        file.createNewFile();
         return file;
     }
 
@@ -249,9 +245,7 @@ public class FileUtils {
         int size = 0;
         if (dir == null || !dir.isDirectory()) return 0;
         File[] files = dir.listFiles();
-        for (File file2 : files) {
-            size += file2.isDirectory() ? getDirSize(file2) : file2.length();
-        }
+        for (File file2 : files) size += file2.isDirectory() ? getDirSize(file2) : file2.length();
         return size;
     }
 
@@ -383,20 +377,15 @@ public class FileUtils {
      * @param from   File
      * @param toFile File
      */
-    public static void copyFile(File from, File toFile) {
+    public static void copyFile(File from, File toFile) throws Exception {
         if (null == from || !from.exists() || null == toFile) return;
         FileInputStream is = null;
         FileOutputStream os = null;
-        try {
-            is = new FileInputStream(from);
-            if (!toFile.exists()) toFile.createNewFile();
-            os = new FileOutputStream(toFile);
-            copyFileFast(is, os);
-        } catch (Exception e) {
-            throw new RuntimeException(FileUtils.class.getClass().getName(), e);
-        } finally {
-            closeIO(is, os);
-        }
+        is = new FileInputStream(from);
+        if (!toFile.exists()) toFile.createNewFile();
+        os = new FileOutputStream(toFile);
+        copyFileFast(is, os);
+        closeIO(is, os);
     }
 
     /**
