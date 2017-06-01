@@ -41,25 +41,26 @@ public class FileUtils {
     }
 
     // 获取SD卡根目录
-    private static String getSDRoot() throws NullPointerException {
-        if (!checkSDcard()) throw new NullPointerException("SD card does not exist.");
+    private static String getSDRoot() {
+        if (!checkSDcard()) return null;
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
     //获取缓存目录
-    public static String getAppCache(Context context, String folderName) throws NullPointerException {
+    public static String getAppCache(Context context, String folderName) {
         return !checkSDcard() ? context.getCacheDir() + File.separator + folderName
                 : context.getExternalCacheDir() + File.separator + folderName;
     }
 
     //获取缓文件目录
-    public static String getAppFile(Context context, String folderName) throws NullPointerException {
+    public static String getAppFile(Context context, String folderName) {
         return !checkSDcard() ? context.getFilesDir() + File.separator + folderName
                 : context.getExternalFilesDir(File.separator) + File.separator + folderName;
     }
 
     //获取当前AppSD卡根目录
-    public static String getAppRoot() throws NullPointerException {
+    public static String getAppRoot() {
+        if (!checkSDcard()) return null;
         return getSDRoot() + File.separator + Cfg.APP_ROOT;
     }
 
@@ -76,9 +77,9 @@ public class FileUtils {
      *
      * @param folderName 文件夹名称
      * @return File
-     * @throws NullPointerException SD卡不存在会抛出异常
      */
-    public static File getAppSaveFolder(String folderName) throws NullPointerException {
+    public static File getAppSaveFolder(String folderName) {
+        if (!checkSDcard()) return null;
         File file = new File(getAppRoot() + File.separator + folderName);
         if (!file.exists()) file.mkdirs();
         return file;
@@ -90,9 +91,9 @@ public class FileUtils {
      *
      * @param folderName 文件夹名称
      * @return String
-     * @throws NullPointerException SD卡不存在会抛出异常
      */
-    public static String getAppSavePath(String folderName) throws NullPointerException {
+    public static String getAppSavePath(String folderName) {
+        if (getAppSaveFolder(folderName) != null) return null;
         return getAppSaveFolder(folderName).getAbsolutePath();
     }
 
@@ -102,12 +103,16 @@ public class FileUtils {
      * @param folderName 文件目录名称
      * @param fileName   文件名称
      * @return File
-     * @throws Exception SD卡不存在会抛出异常/删除创建异常
      */
-    public static File getSaveFile(String folderName, String fileName) throws Exception {
+    public static File getSaveFile(String folderName, String fileName) {
+        if (getAppSaveFolder(folderName) != null) return null;
         File file = new File(getAppSavePath(folderName) + File.separator + fileName);
         if (file.exists()) file.delete();
-        file.createNewFile();
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            return null;
+        }
         return file;
     }
 

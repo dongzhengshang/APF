@@ -19,7 +19,7 @@ import java.io.Serializable;
  * @date 2016/8/19.
  */
 public class Cfg {
-    public static boolean IS_DEBUG = false;
+    public static boolean IS_DEBUG = true;
     public static String APP_ROOT = ProjectContext.appContext.getPackageName();
     public static String SHAREDPREFER_USERINFO = "ApplicationData";
     // 连接超时
