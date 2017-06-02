@@ -3,8 +3,8 @@ package com.dzs.marketing.ui;
 import android.view.View;
 
 import com.dzs.marketing.R;
-import com.dzs.marketing.ui.widget.TimeAxisView;
-import com.dzs.marketing.ui.widget.TimeScaleView;
+import com.dzs.marketing.ui.TimeScale.Scale;
+import com.dzs.marketing.ui.TimeScale.TimeScaleView;
 import com.dzs.projectframe.base.Bean.LibEntity;
 import com.dzs.projectframe.base.ProjectActivity;
 
@@ -16,7 +16,8 @@ import java.util.List;
  * @version V1.0
  * @date 2017/5/26
  */
-public class MainActivity extends ProjectActivity implements TimeScaleView.OnScrollListener {
+public class MainActivity extends ProjectActivity {
+    private Scale scale;
 
     @Override
     protected int setContentById() {
@@ -25,7 +26,13 @@ public class MainActivity extends ProjectActivity implements TimeScaleView.OnScr
 
     @Override
     protected void initView() {
-        TimeAxisView timeAxisView = (TimeAxisView) findViewById(R.id.scaleview2);
+        scale = ((TimeScaleView) findViewById(R.id.scal)).getScale();
+        List<Scale.TimePart> list = new ArrayList<>();
+        Scale.TimePart timePart1 = new Scale.TimePart(0, 0, 2, 18);
+        Scale.TimePart timePart4 = new Scale.TimePart(23, 40, 24, 0);
+        list.add(timePart1);
+        list.add(timePart4);
+        scale.setRect(list);
     }
 
     @Override
@@ -40,16 +47,6 @@ public class MainActivity extends ProjectActivity implements TimeScaleView.OnScr
 
     @Override
     public void onDateReturn(LibEntity libEntity) {
-
-    }
-
-    @Override
-    public void onScroll(int hour, int min, int sec) {
-
-    }
-
-    @Override
-    public void onScrollFinish(int hour, int min, int sec) {
 
     }
 }

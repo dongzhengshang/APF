@@ -8,17 +8,10 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-    <com.dzs.marketing.ui.widget.TimeAxisView
-        android:id="@+id/scaleview2"
+    <com.dzs.marketing.ui.TimeScale.TimeScaleView
+        android:id="@+id/scal"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginTop="100dp"/>
-
-
-    <com.dzs.marketing.ui.widget.TimeScale
-        android:id="@+id/scaleview3"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="110dp"
         android:layout_marginTop="100dp"/>
 
 </LinearLayout>
