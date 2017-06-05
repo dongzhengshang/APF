@@ -33,6 +33,18 @@ public class MainActivity extends ProjectActivity {
         list.add(timePart1);
         list.add(timePart4);
         scale.setRect(list);
+        findViewById(R.id.Start).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((TimeScaleView) findViewById(R.id.scal)).showAnim();
+            }
+        });
+        findViewById(R.id.End).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((TimeScaleView) findViewById(R.id.scal)).closeAnim();
+            }
+        });
     }
 
     @Override

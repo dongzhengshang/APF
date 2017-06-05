@@ -5,14 +5,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
-import android.graphics.Path;
+import android.graphics.Shader;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.LinearLayout;
 
 /**
- * 刻度指针
+ * 动画
  *
  * @author DZS dzsdevelop@163.com
  * @version V1.0
@@ -20,7 +19,10 @@ import android.widget.LinearLayout;
  */
 public class AnimView extends View {
     private Paint paint;//画笔
-    private LinearGradient linearGradient;
+    private String startColor = "#66dd2a1d";
+    private String endColor = "#00000000";
+    private int layoutWight = 0;
+
     public AnimView(Context context) {
         super(context);
         init(context);
@@ -39,6 +41,7 @@ public class AnimView extends View {
     /*初始化*/
     private void init(Context context) {
         paint = new Paint();
+        paint.setAntiAlias(true);
     }
 
     @Override
@@ -47,16 +50,22 @@ public class AnimView extends View {
         drawView(canvas, getWidth(), getHeight());
     }
 
-    /*绘制指针*/
+    /*绘制布局*/
     private void drawView(Canvas canvas, int wight, int height) {
-//        linearGradient = new LinearGradient();
-//        paint.setShader(linearGradient);
-//        canvas.drawRect(0, 0, (wight - 40), 0, paint);
-
+        LinearGradient linearGradient = new LinearGradient(wight / 4, 0, 0, 0, Color.parseColor(startColor), Color.parseColor(endColor), Shader.TileMode.MIRROR);
+        paint.setShader(linearGradient);
+        canvas.drawRect(0, 0, wight / 4, height, paint);
+        this.layoutWight = wight / 4;
     }
 
-    /*设置画笔*/
-    public void setPaint(Paint paint) {
-        this.paint = paint;
+    /*设置颜色*/
+    public void setColor(String start, String end) {
+        this.startColor = start;
+        this.endColor = end;
+    }
+
+    /*获取渐变宽度*/
+    public int getLayoutWight() {
+        return layoutWight;
     }
 }
