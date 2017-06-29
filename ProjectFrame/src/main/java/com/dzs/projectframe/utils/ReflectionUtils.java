@@ -21,7 +21,6 @@ import java.util.Map;
 public class ReflectionUtils {
 
     private static Map<String, Method> methodPool = new Hashtable<>();
-    private static Map<String, Class<?>> classPool = new Hashtable<>();
     private static ReflectionUtils reflectionUtils;
 
     private ReflectionUtils() {
@@ -72,14 +71,9 @@ public class ReflectionUtils {
      * @return object
      */
     public Class getTypeClass(Class<?> clazz, String fieldsName) {
-        String key = clazz.toString() + fieldsName;
-        if (classPool.containsKey(key)) {
-            return classPool.get(key);
-        }
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             Class cls = field.getType();
-            classPool.put(key, cls);
             if (field.getName().equals(fieldsName)) {
                 return cls;
             }

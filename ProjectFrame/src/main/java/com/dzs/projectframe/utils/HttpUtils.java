@@ -93,7 +93,7 @@ public class HttpUtils {
      * @return LibEntity
      */
     public static LibEntity getCatch(String url, boolean isForce) {
-        LibEntity cacheLibEntity = DiskLruCacheHelpUtils.getInstanse().getCatch(url);
+        LibEntity cacheLibEntity = DiskLruCacheHelpUtils.getInstance().getCatch(url);
         return cacheLibEntity == null ? null : isForce ? cacheLibEntity : (cacheLibEntity.isExpired() ? null : cacheLibEntity);
     }
 
@@ -152,7 +152,7 @@ public class HttpUtils {
                 libEntity.setShelfLife(System.currentTimeMillis() + Cfg.getCacheTime());
                 libEntity.setNetResultType(Cfg.NetResultType.NET_CONNECT_SUCCESS);
                 LogUtils.info("Network-URL(GET)返回值：" + resultString);
-                if (saveCache) DiskLruCacheHelpUtils.getInstanse().putCatch(cachkey, libEntity, true);
+                if (saveCache) DiskLruCacheHelpUtils.getInstance().putCatch(cachkey, libEntity);
                 break;
             } catch (JSONException e) {
                 LogUtils.exception(e);
@@ -262,7 +262,7 @@ public class HttpUtils {
                 libEntity.setNetResultType(Cfg.NetResultType.NET_CONNECT_SUCCESS);
                 LogUtils.info("Network-URL(POST_FORMS)返回值：" + resultString);
                 if (saveCache) {
-                    DiskLruCacheHelpUtils.getInstanse().putCatch(cachkey, libEntity, true);
+                    DiskLruCacheHelpUtils.getInstance().putCatch(cachkey, libEntity);
                 }
                 dataOutputStream.close();
                 break;

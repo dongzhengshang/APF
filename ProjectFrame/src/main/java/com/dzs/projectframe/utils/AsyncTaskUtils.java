@@ -27,15 +27,7 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
         this.reflsh = reflsh;
         this.saveCache = saveCache;
         dataReturnListeners = new ArrayList<>();
-        Collections.addAll(dataReturnListeners, dataReturnListener);
-    }
-
-    public AsyncTaskUtils(String taskId, HttpUtils.HttpType httpType, boolean saveCache, boolean reflsh) {
-        this.taskId = taskId;
-        this.httpType = httpType;
-        this.reflsh = reflsh;
-        this.saveCache = saveCache;
-        dataReturnListeners = new ArrayList<>();
+        if (dataReturnListener != null) Collections.addAll(dataReturnListeners, dataReturnListener);
     }
 
     public void addDataReturnListener(OnNetReturnListener... dataReturnListener) {

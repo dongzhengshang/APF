@@ -2,7 +2,6 @@ package com.dzs.projectframe.adapter.recyclerview;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.dzs.projectframe.adapter.ViewHolder;
@@ -23,7 +22,9 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
     protected List<T> data;
     protected int layoutResId;
     protected ViewHolder viewHolder;
-    protected MultiItemTypeSupport multiItemTypeSupport;
+    protected MultiItemTypeSupport<T> multiItemTypeSupport;
+
+    protected abstract void convert(ViewHolder holder, T t);
 
     public BaseUniversalAdapter(Context context, int layoutResId) {
         this(context, layoutResId, null);
@@ -35,11 +36,10 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
         this.layoutResId = layoutResId;
     }
 
-    public BaseUniversalAdapter(Context context, List<T> data, MultiItemTypeSupport multiItemTypeSupport) {
+    public BaseUniversalAdapter(Context context, List<T> data, MultiItemTypeSupport<T> multiItemTypeSupport) {
         this.data = data == null ? new ArrayList<T>() : new ArrayList<>(data);
         this.context = context;
-        if (multiItemTypeSupport == null)
-            throw new IllegalArgumentException("the multiItemTypeSupport can not be null.");
+        if (multiItemTypeSupport == null) throw new IllegalArgumentException("the multiItemTypeSupport can not be null.");
         this.multiItemTypeSupport = multiItemTypeSupport;
     }
 
@@ -67,8 +67,7 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
 
     @Override
     public int getItemViewType(int position) {
-        if (multiItemTypeSupport != null)
-            return multiItemTypeSupport.getItemViewType(position, data.get(position));
+        if (multiItemTypeSupport != null) return multiItemTypeSupport.getItemViewType(position, data.get(position));
         return super.getItemViewType(position);
     }
 
@@ -120,12 +119,8 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
         return data.get(index);
     }
 
-    /**
-     * Clear data list
-     */
     public void clear() {
         data.clear();
         notifyDataSetChanged();
     }
-    protected abstract void convert(ViewHolder holder, T t);
 }

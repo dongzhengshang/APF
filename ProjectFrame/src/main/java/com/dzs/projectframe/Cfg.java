@@ -1,15 +1,11 @@
 package com.dzs.projectframe;
 
 import android.content.pm.PackageInfo;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.dzs.projectframe.base.Bean.LibEntity;
 import com.dzs.projectframe.base.ProjectContext;
 import com.dzs.projectframe.utils.StringUtils;
 import com.dzs.projectframe.utils.SystemUtils;
-
-import java.io.Serializable;
 
 /**
  * 配置文件
@@ -19,7 +15,7 @@ import java.io.Serializable;
  * @date 2016/8/19.
  */
 public class Cfg {
-    public static boolean IS_DEBUG = true;
+    public static boolean IS_DEBUG = false;
     public static String APP_ROOT = ProjectContext.appContext.getPackageName();
     public static String SHAREDPREFER_USERINFO = "ApplicationData";
     // 连接超时

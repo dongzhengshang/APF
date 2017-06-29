@@ -82,7 +82,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     @Override
     protected void onPause() {
         super.onPause();
-        DiskLruCacheHelpUtils.getInstanse().flush();
+        DiskLruCacheHelpUtils.getInstance().flush();
     }
 
     @Override
@@ -156,10 +156,10 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     protected static final int SYS_INTENT_REQUEST = 0XFF01;//系统相册
     protected static final int CAMERA_INTENT_REQUEST = 0XFF02;//调用系统相机
     protected static final int IMAGE_CUT = 0XFF03;//裁剪
-    protected File tempPhotoImageFile = FileUtils.getSaveFile("TempImage", "tempPhoto.jpeg");
+    protected File tempPhotoImageFile = FileUtils.createNFAtAPPRoot("TempImage", "tempPhoto.jpeg");
     protected Uri photoUri = tempPhotoImageFile == null ? null : Uri.fromFile(tempPhotoImageFile);
     protected String photoPath = tempPhotoImageFile == null ? "" : tempPhotoImageFile.getAbsolutePath();
-    protected File tempCropImageFile = FileUtils.getSaveFile("TempImage", "tempCrop.jpeg");
+    protected File tempCropImageFile = FileUtils.createNFAtAPPRoot("TempImage", "tempCrop.jpeg");
     private Uri cropUri = tempCropImageFile == null ? null : Uri.fromFile(tempCropImageFile);
     protected String cropPath = tempCropImageFile == null ? "" : tempCropImageFile.getAbsolutePath();
 
@@ -187,7 +187,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     //调用系统相机，fragment调用
     public void cameraPhoto(Fragment fragment, Cfg.OperationResult result) {
         try {
-            if (!FileUtils.checkSDcard()) {
+            if (!FileUtils.checkSDCard()) {
                 result.onResult(Cfg.OperationResultType.FAIL.setMessage(ProjectContext.appContext.getString(R.string.SDError)));
                 return;
             }

@@ -22,8 +22,8 @@ public class ScreenUtils {
      * dp转px
      *
      * @param context 上下文
-     * @param dpValue
-     * @return
+     * @param dpValue dp
+     * @return int
      */
     public static int dip2px(Context context, float dpValue) {
         Resources r = context.getResources();
@@ -34,51 +34,47 @@ public class ScreenUtils {
     /**
      * px转dp
      *
-     * @param context
-     * @param pxValue
-     * @return
+     * @param context 上下文
+     * @param pxValue px
+     * @return int
      */
     public static int px2dip(Context context, float pxValue) {
-        final float scale = context.getResources().getDisplayMetrics().density;
+        final float scale = context.getApplicationContext().getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
 
     /**
      * px转sp
      *
-     * @param context
-     * @param pxValue
-     * @return
+     * @param context 上下文
+     * @param pxValue px
+     * @return int
      */
     public static int px2sp(Context context, float pxValue) {
-        float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        float fontScale = context.getApplicationContext().getResources().getDisplayMetrics().scaledDensity;
         return (int) (pxValue / fontScale + 0.5f);
     }
 
     /**
      * sp转px
      *
-     * @param context
-     * @param spValue
-     * @return
+     * @param context 上下文
+     * @param spValue sp
+     * @return int
      */
     public static int sp2px(Context context, float spValue) {
-        float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        float fontScale = context.getApplicationContext().getResources().getDisplayMetrics().scaledDensity;
         return (int) (spValue * fontScale + 0.5f);
     }
 
     /**
      * 获取屏幕宽度
      *
-     * @param aty
-     * @return
+     * @param aty 当前Activity
+     * @return int
      */
     public static int getScreenW(Context aty) {
-        DisplayMetrics dm = new DisplayMetrics();
-        dm = aty.getResources().getDisplayMetrics();
-        int w = dm.widthPixels;
-        // int w = aty.getWindowManager().getDefaultDisplay().getWidth();
-        return w;
+        return aty.getResources().getDisplayMetrics().widthPixels;
     }
 
     /**
@@ -88,11 +84,7 @@ public class ScreenUtils {
      * @return int
      */
     public static int getScreenH(Context aty) {
-        DisplayMetrics dm = new DisplayMetrics();
-        dm = aty.getResources().getDisplayMetrics();
-        int h = dm.heightPixels;
-        // int h = aty.getWindowManager().getDefaultDisplay().getHeight();
-        return h;
+        return aty.getResources().getDisplayMetrics().heightPixels;
     }
 
     /**
@@ -105,7 +97,7 @@ public class ScreenUtils {
         Class<?> c = null;
         Object obj = null;
         Field field = null;
-        int x = 0, statusBarHeight = 0;
+        int x, statusBarHeight = 0;
         try {
             c = Class.forName("com.android.internal.R$dimen");
             obj = c.newInstance();
@@ -171,7 +163,4 @@ public class ScreenUtils {
         view.measure(w, h);
         return view.getMeasuredHeight();
     }
-
-
-
 }

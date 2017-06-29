@@ -50,7 +50,7 @@ public class JsonUtils {
      *
      * @param jsonStr json字符串
      * @return map
-     * @throws Exception
+     * @throws JSONException JSON异常
      */
     public static HashMap<String, Object> getMap(String jsonStr) throws JSONException {
         HashMap<String, Object> result = new HashMap<>();

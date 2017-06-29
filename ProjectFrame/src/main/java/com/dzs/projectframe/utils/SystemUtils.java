@@ -292,15 +292,7 @@ public class SystemUtils {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
         for (RunningAppProcessInfo appProcess : appProcesses) {
-            if (appProcess.processName.equals(context.getPackageName())) {
-                if (appProcess.importance == RunningAppProcessInfo.IMPORTANCE_BACKGROUND) {
-                    // 后台运行
-                    return true;
-                } else {
-                    // 前台运行
-                    return false;
-                }
-            }
+            if (appProcess.processName.equals(context.getPackageName())) return appProcess.importance == RunningAppProcessInfo.IMPORTANCE_BACKGROUND;
         }
         return false;
     }
@@ -313,8 +305,7 @@ public class SystemUtils {
      */
     public static boolean isSleeping(Context context) {
         KeyguardManager kgMgr = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-        boolean isSleeping = kgMgr.inKeyguardRestrictedInputMode();
-        return isSleeping;
+        return kgMgr.inKeyguardRestrictedInputMode();
     }
 
     /**
@@ -345,10 +336,10 @@ public class SystemUtils {
         try {
             info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
         } catch (NameNotFoundException e) {
-            e.printStackTrace(System.err);
+            LogUtils.exception(e);
         }
-        if (info == null)
-            info = new PackageInfo();
+        if (info == null) info = new PackageInfo();
+
         return info;
     }
 
@@ -361,6 +352,7 @@ public class SystemUtils {
      */
     public static String getSign(Context context, String pkgName) {
         try {
+            @SuppressLint("PackageManagerGetSignatures")
             PackageInfo pis = context.getPackageManager().getPackageInfo(pkgName, PackageManager.GET_SIGNATURES);
             return hexdigest(pis.signatures[0].toByteArray());
         } catch (NameNotFoundException e) {
@@ -381,9 +373,7 @@ public class SystemUtils {
             byte[] arrayOfByte = localMessageDigest.digest();
             char[] arrayOfChar = new char[32];
             for (int i = 0, j = 0; ; i++, j++) {
-                if (i >= 16) {
-                    return new String(arrayOfChar);
-                }
+                if (i >= 16) return new String(arrayOfChar);
                 int k = arrayOfByte[i];
                 arrayOfChar[j] = hexDigits[(0xF & k >>> 4)];
                 arrayOfChar[++j] = hexDigits[(k & 0xF)];
@@ -456,8 +446,7 @@ public class SystemUtils {
                     android.os.Process.killProcess(service.pid);
                     count++;
                 } catch (Exception e) {
-                    e.getStackTrace();
-                    continue;
+                    LogUtils.exception(e);
                 }
             }
 
@@ -484,110 +473,50 @@ public class SystemUtils {
         return count;
     }
 
-
     /**
-     * 保存图片到本地
+     * Activity中关闭软键盘
      *
-     * @param context
-     * @param path
+     * @param activity 当前Activity
      */
-    public static void saveImageToGallery(final Context context, final String imageUrl, final String path) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Bitmap bitmapc = null;
-                try {
-                    bitmapc = Glide.with(context)
-                            .load(imageUrl)
-                            .asBitmap() //必须
-                            .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                            .get();
-                } catch (Exception e) {
-
-                    LogUtils.debug("bitmap失败");
-                    e.printStackTrace();
-                }
-
-                if (bitmapc == null) {
-                    ToastUtils.showOneToast("保存失败，请重试");
-                    return;
-                }
-                // 首先保存图片
-                File appDir = new File(Environment.getExternalStorageDirectory(), path);
-                if (!appDir.exists()) {
-                    appDir.mkdir();
-                }
-                String fileName = System.currentTimeMillis() + ".jpg";
-                File file = new File(appDir, fileName);
-                try {
-                    FileOutputStream fos = new FileOutputStream(file);
-                    bitmapc.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                    fos.flush();
-                    fos.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                // 其次把文件插入到系统图库
-                try {
-                    MediaStore.Images.Media.insertImage(context.getContentResolver(),
-                            file.getAbsolutePath(), fileName, null);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                // 最后通知图库更新
-                context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
-
-            }
-        }).start();
-    }
-
-    /**
-     * 关闭软键盘
-     *
-     * @param context
-     */
-    public static void closeKeyboard(Activity context) {
-        if (context==null) return;
-        View view = context.getWindow().peekDecorView();
+    public static void closeKeyboard(Activity activity) {
+        if (activity == null) return;
+        View view = activity.getWindow().peekDecorView();
         if (view != null) {
-            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
     /**
      * Dialog中隐藏软键盘
-     * @param activity
+     *
+     * @param activity 当前Activity
      */
-    public static void  HideSoftKeyBoardDialog(Activity activity){
-        if(activity.getWindow().getAttributes().softInputMode== WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE){
-            try{
-                InputMethodManager imm = (InputMethodManager) activity.getSystemService(activity.INPUT_METHOD_SERVICE);
+    public static void HideSoftKeyBoardDialog(Activity activity) {
+        if (activity.getWindow().getAttributes().softInputMode == WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE) {
+            try {
+                InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
-            }
-            catch(Exception ex){
+            } catch (Exception ex) {
+                LogUtils.exception(ex);
             }
         }
-
     }
 
 
     /**
      * 判断是否安装某软件
      *
-     * @param context
+     * @param context  上下文
      * @param pageName 应用包名
-     * @return
+     * @return boolean
      */
-    public static boolean isWeixinAvilible(Context context, String pageName) {
-        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
-        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
-        if (pinfo != null) {
-            for (int i = 0; i < pinfo.size(); i++) {
-                String pn = pinfo.get(i).packageName;
+    public static boolean isInstallApp(Context context, String pageName) {
+        final PackageManager packageManager = context.getApplicationContext().getPackageManager();// 获取packagemanager
+        List<PackageInfo> packageInfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
+        if (packageInfo != null) {
+            for (int i = 0; i < packageInfo.size(); i++) {
+                String pn = packageInfo.get(i).packageName;
                 if (pn.equals(pageName)) {
                     return true;
                 }
@@ -596,7 +525,13 @@ public class SystemUtils {
         return false;
     }
 
-    /*判断是否为当前App的ProcessAppName*/
+    /**
+     * 判断是否为当前App的ProcessAppName
+     *
+     * @param context 上下文
+     * @param pID     PID
+     * @return boolean
+     */
     public static boolean isCurrentAppProcessAppName(Context context, int pID) {
         String processAppName = getAppName(context, pID);
         return !(processAppName == null || !processAppName.equalsIgnoreCase(getPackageInfo(context).packageName));
@@ -610,12 +545,10 @@ public class SystemUtils {
      * @return String
      */
     private static String getAppName(Context context, int pID) {
-        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager am = (ActivityManager) context.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
         List l = am.getRunningAppProcesses();
-        Iterator i = l.iterator();
-        PackageManager pm = context.getPackageManager();
-        while (i.hasNext()) {
-            ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (i.next());
+        for (Object aL : l) {
+            RunningAppProcessInfo info = (RunningAppProcessInfo) (aL);
             try {
                 if (info.pid == pID) return info.processName;
             } catch (Exception e) {

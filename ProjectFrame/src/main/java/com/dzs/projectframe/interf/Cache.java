@@ -9,7 +9,7 @@ package com.dzs.projectframe.interf;
  * @date 2015-11-3 上午11:54:55
  */
 public interface Cache<T> {
-    void putCatch(String key, T t, boolean isCover);
+    void putCatch(String key, T t);
 
     T getCatch(String key);
 

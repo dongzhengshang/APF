@@ -48,8 +48,8 @@ public class SharedPreferUtils {
     /**
      * 保存字符串
      *
-     * @param key
-     * @param value
+     * @param key   key
+     * @param value value
      * @return boolean
      */
     public boolean putString(String key, String value) {
@@ -65,7 +65,7 @@ public class SharedPreferUtils {
     /**
      * 获取字符串
      *
-     * @param key
+     * @param key key
      * @return boolean
      */
     public String getString(String key) {
@@ -75,8 +75,8 @@ public class SharedPreferUtils {
     /**
      * 保存int类型
      *
-     * @param key
-     * @param value
+     * @param key   key
+     * @param value value
      * @return boolean
      */
     public boolean putInt(String key, int value) {
@@ -92,7 +92,7 @@ public class SharedPreferUtils {
     /**
      * 获取int类型
      *
-     * @param key
+     * @param key kye
      * @return int
      */
     public int getInt(String key) {
@@ -102,8 +102,8 @@ public class SharedPreferUtils {
     /**
      * 保存boolean类型
      *
-     * @param key
-     * @param value
+     * @param key   key
+     * @param value value
      * @return int
      */
     public boolean putBoolean(String key, boolean value) {
@@ -119,7 +119,7 @@ public class SharedPreferUtils {
     /**
      * 获取boolean类型
      *
-     * @param key
+     * @param key 键值
      * @return boolean
      */
     public boolean getBoolean(String key) {
@@ -129,7 +129,7 @@ public class SharedPreferUtils {
     /**
      * 保存map集合(同步方法)
      *
-     * @param map
+     * @param map map
      */
     public boolean saveMapByCommit(Map<?, ?> map) {
         for (Map.Entry<?, ?> entry : map.entrySet()) {
@@ -154,7 +154,7 @@ public class SharedPreferUtils {
     /**
      * 异步保存map集合,不关心是否保存成功
      *
-     * @param map
+     * @param map map
      */
     public void saveMap(Map<?, ?> map) {
         for (Map.Entry<?, ?> entry : map.entrySet()) {

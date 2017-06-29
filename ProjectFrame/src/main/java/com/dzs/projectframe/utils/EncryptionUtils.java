@@ -34,6 +34,8 @@ public class EncryptionUtils {
     }
 
     /**
+     * MD5 加密
+     *
      * @param data       被密数据
      * @param is16Encode 是否是16位加密
      */
@@ -62,7 +64,11 @@ public class EncryptionUtils {
         return result;
     }
 
-    //创建AES密钥
+    /**
+     * 创建AES密钥
+     *
+     * @return String
+     */
     public static String createAESKey() {
         try {
             KeyGenerator kg = KeyGenerator.getInstance(AES);
@@ -76,19 +82,41 @@ public class EncryptionUtils {
         return "";
     }
 
-    public static byte[] encrypt(byte[] content, String key, String iv) {
+    /**
+     * AES加密
+     *
+     * @param content 加密内容
+     * @param key     key
+     * @param iv      IV
+     * @return byte[]
+     */
+    private static byte[] encrypt(byte[] content, String key, String iv) {
         try {
             Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM_CBC);
-            int blockSize = cipher.getBlockSize();
+            SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), AES);
+            IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes());
+            cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
+            return cipher.doFinal(content);
+        } catch (Exception e) {
+            LogUtils.exception(e);
+        }
+        return null;
+    }
 
-            int plaintextLength = content.length;
-            if (plaintextLength % blockSize != 0) {
-                plaintextLength = plaintextLength + (blockSize - (plaintextLength % blockSize));
-            }
-            byte[] plaintext = new byte[plaintextLength];
-            SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), AES);
-            IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
-            cipher.init(Cipher.ENCRYPT_MODE, keyspec, ivspec);
+    /**
+     * AES解密
+     *
+     * @param content 加密后的内容
+     * @param key     key
+     * @param iv      IV
+     * @return byte[]
+     */
+    private static byte[] decrypt(byte[] content, String key, String iv) {
+        try {
+            Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM_CBC);
+            SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), AES);
+            IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes());
+            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
             return cipher.doFinal(content);
         } catch (Exception e) {
             LogUtils.exception(e);
@@ -125,20 +153,6 @@ public class EncryptionUtils {
             e.printStackTrace();
         }
         return result;
-    }
-
-    //解密
-    public static byte[] decrypt(byte[] content, String key, String iv) {
-        try {
-            Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM_CBC);
-            SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), AES);
-            IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
-            cipher.init(Cipher.DECRYPT_MODE, keyspec, ivspec);
-            return cipher.doFinal(content);
-        } catch (Exception e) {
-            LogUtils.exception(e);
-        }
-        return null;
     }
 
     //16进制字符串转换为二进制数组

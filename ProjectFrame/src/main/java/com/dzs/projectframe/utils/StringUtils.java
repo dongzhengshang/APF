@@ -32,38 +32,28 @@ public class StringUtils {
     /**
      * 判断是不是一个合法的电子邮件地址
      *
-     * @param email
-     * @return
+     * @param email email
+     * @return boolean
      */
     public static boolean isEmail(CharSequence email) {
-        if (isEmpty(email)) return false;
-        return EMAIL.matcher(email).matches();
+        return !isEmpty(email) && EMAIL.matcher(email).matches();
     }
 
     /**
      * 判断手机号
      *
-     * @param phone
-     * @return
+     * @param phone 手机号字符串
+     * @return boolean
      */
     public static boolean isPhone(CharSequence phone) {
-        if (isEmpty(phone)) {
-            ToastUtils.showOneToast("手机号不能为空");
-            return false;
-        }
-        if (PHONE.matcher(phone).matches()){
-            return true;
-        }else{
-            ToastUtils.showOneToast("请输入正确的手机号");
-            return false;
-        }
+        return !isEmpty(phone) && PHONE.matcher(phone).matches();
     }
 
     /**
      * 判断字符串是否为空
      *
-     * @param input
-     * @return
+     * @param input 字符串
+     * @return boolean
      */
     public static boolean isEmpty(CharSequence input) {
         if (input == null || input.length() == 0) return true;
@@ -76,7 +66,12 @@ public class StringUtils {
         return true;
     }
 
-    /*判断字符串数组是否为空*/
+    /**
+     * 判断字符串数组中是否有空
+     *
+     * @param input 字符串数组
+     * @return boolean
+     */
     public static boolean isEmpty(CharSequence... input) {
         if (input == null || input.length == 0) return true;
         for (CharSequence in : input) {
@@ -88,33 +83,31 @@ public class StringUtils {
     /**
      * 判断是否为url
      *
-     * @param str
-     * @return
+     * @param str URL支付串
+     * @return boolean
      */
     public static boolean isUrl(CharSequence str) {
-        if (isEmail(str)) return false;
-        return URL.matcher(str).matches();
+        return !isEmail(str) && URL.matcher(str).matches();
     }
 
     /**
      * 判断是否是图片url
      *
-     * @param url
-     * @return
+     * @param url 图片URL
+     * @return boolean
      */
     public static boolean isImgUrl(CharSequence url) {
-        if (isEmpty(url)) return false;
-        return IMG_URL.matcher(url).matches();
+        return !isEmpty(url) && IMG_URL.matcher(url).matches();
     }
 
     /**
      * 字符串转换为Unicode编码
      *
-     * @param s
-     * @return
+     * @param s 字符串
+     * @return String
      */
     public static String stringToUnicode(String s) {
-        StringBuffer str = new StringBuffer();
+        StringBuilder str = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
             int ch = (int) s.charAt(i);
             if (ch > 255) {
@@ -129,34 +122,34 @@ public class StringUtils {
     /**
      * 将网络请求Map转换为url
      *
-     * @param url
-     * @param parmas
-     * @return
-     * @throws UnsupportedEncodingException
+     * @param url        URL
+     * @param parameters 参数列表
+     * @return String
+     * @throws UnsupportedEncodingException 转换异常
      */
-    public static String mapToUrl(String url, Map<String, Object> parmas) throws UnsupportedEncodingException {
-        return mapToCatchUrl(url, parmas);
+    public static String mapToUrl(String url, Map<String, Object> parameters) throws UnsupportedEncodingException {
+        return mapToCatchUrl(url, parameters);
     }
 
     /**
      * 将网络请求Map转换成为缓存KEY，去掉可变量
      *
      * @param url         URL
-     * @param parmas      请求参数
+     * @param parameters  请求参数
      * @param variableKey 可变的键值(可以为空)
-     * @throws UnsupportedEncodingException
+     * @throws UnsupportedEncodingException 异常
      */
-    public static String mapToCatchUrl(String url, Map<String, Object> parmas, String... variableKey) throws UnsupportedEncodingException {
+    public static String mapToCatchUrl(String url, Map<String, Object> parameters, String... variableKey) throws UnsupportedEncodingException {
         StringBuilder getUrl = new StringBuilder(url);
-        if (parmas != null && !parmas.isEmpty()) {
+        if (parameters != null && !parameters.isEmpty()) {
             getUrl.append("?");
-            for (Map.Entry<String, Object> parm : parmas.entrySet()) {
+            for (Map.Entry<String, Object> param : parameters.entrySet()) {
                 if (variableKey != null) {
                     for (String key : variableKey) {
-                        if (parm.getKey().equals(key)) break;
+                        if (param.getKey().equals(key)) break;
                     }
                 }
-                getUrl.append(parm.getKey()).append("=").append(URLEncoder.encode(parm.getValue() == null ? "" : parm.getValue().toString(), UTF_8));
+                getUrl.append(param.getKey()).append("=").append(URLEncoder.encode(param.getValue() == null ? "" : param.getValue().toString(), UTF_8));
                 getUrl.append("&");
             }
             getUrl.deleteCharAt(getUrl.length() - 1);
@@ -167,51 +160,20 @@ public class StringUtils {
     /**
      * 将map请求参数转换为get参数
      *
-     * @param parameters
-     * @return
-     * @throws UnsupportedEncodingException
+     * @param parameters 请求参数
+     * @return StringBuilder
+     * @throws UnsupportedEncodingException 转换异常
      */
-    public static StringBuilder mapToParmeters(Map<String, Object> parameters) throws UnsupportedEncodingException {
+    public static StringBuilder mapToParameters(Map<String, Object> parameters) throws UnsupportedEncodingException {
         if (parameters == null || parameters.isEmpty()) return new StringBuilder("");
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, Object> parm : parameters.entrySet()) {
-            sb.append(parm.getKey()).append("=").append(URLEncoder.encode(parm.getValue() == null ? "" : parm.getValue().toString(), UTF_8));
+        for (Map.Entry<String, Object> param : parameters.entrySet()) {
+            sb.append(param.getKey()).append("=").append(URLEncoder.encode(param.getValue() == null ? "" : param.getValue().toString(), UTF_8));
             sb.append("&");
         }
         sb.deleteCharAt(sb.length() - 1);
         return sb;
     }
-
-
-    /**
-     * 获取assets目录下的城市列表
-     *
-     * @return
-     */
-    public static String convertStreamToString() {
-        StringBuilder sb = new StringBuilder();
-        String line;
-        InputStream is = null;
-        try {
-            is = ProjectContext.appContext.getAssets().open("province.json");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (is != null) {
-                    is.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return sb.toString();
-    }
-
 
     /**
      * 判断密码是否包含中文
@@ -223,5 +185,4 @@ public class StringUtils {
         Matcher matcher = pattern.matcher(password);
         return matcher.find();
     }
-
 }

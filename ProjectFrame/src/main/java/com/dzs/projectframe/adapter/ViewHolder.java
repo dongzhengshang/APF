@@ -493,6 +493,19 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
+     * Sets the KeepScreenOn of the view.
+     *
+     * @param viewId The view id.
+     * @param isOn   The true or false;
+     * @return The ViewHolder for chaining.
+     */
+    public ViewHolder setKeepScreenOn(int viewId, boolean isOn) {
+        View view = retrieveView(viewId);
+        view.setKeepScreenOn(isOn);
+        return this;
+    }
+
+    /**
      * Sets the tag of the view.
      *
      * @param viewId The view id.
@@ -771,4 +784,6 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     public void intent(Activity activity, String scheme) {
         activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(scheme)));
     }
+
+
 }

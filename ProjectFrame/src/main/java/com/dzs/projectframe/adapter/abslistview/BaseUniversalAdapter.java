@@ -27,6 +27,8 @@ public abstract class BaseUniversalAdapter<T> extends BaseAdapter {
     protected boolean displayIndeterminateProgress = false;
     protected onChangeLoadMoreView changeLoadMoreView;
 
+    protected abstract void convert(ViewHolder helper, T item);
+
     public BaseUniversalAdapter(Context context, int layoutResId) {
         this(context, layoutResId, null);
     }
@@ -140,9 +142,6 @@ public abstract class BaseUniversalAdapter<T> extends BaseAdapter {
         return data.contains(elem);
     }
 
-    /**
-     * Clear data list
-     */
     public void clear() {
         data.clear();
         notifyDataSetChanged();
@@ -153,8 +152,6 @@ public abstract class BaseUniversalAdapter<T> extends BaseAdapter {
         displayIndeterminateProgress = display;
         notifyDataSetChanged();
     }
-
-    protected abstract void convert(ViewHolder helper, T item);
 
     public void setChangeLoadMoreView(onChangeLoadMoreView changeLoadMoreView) {
         this.changeLoadMoreView = changeLoadMoreView;

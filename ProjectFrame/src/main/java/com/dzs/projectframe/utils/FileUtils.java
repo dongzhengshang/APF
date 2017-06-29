@@ -7,8 +7,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 
 import com.dzs.projectframe.Cfg;
+import com.dzs.projectframe.R;
 import com.dzs.projectframe.base.ProjectContext;
 
 import java.io.BufferedInputStream;
@@ -36,40 +38,30 @@ import java.text.DecimalFormat;
 public class FileUtils {
 
     // 检查SD卡是否存在
-    public static boolean checkSDcard() {
+    public static boolean checkSDCard() {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
     // 获取SD卡根目录
     private static String getSDRoot() {
-        if (!checkSDcard()) return null;
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
     //获取缓存目录
     public static String getAppCache(Context context, String folderName) {
-        return !checkSDcard() ? context.getCacheDir() + File.separator + folderName
+        return !checkSDCard() ? context.getCacheDir() + File.separator + folderName
                 : context.getExternalCacheDir() + File.separator + folderName;
     }
 
     //获取缓文件目录
     public static String getAppFile(Context context, String folderName) {
-        return !checkSDcard() ? context.getFilesDir() + File.separator + folderName
+        return !checkSDCard() ? context.getFilesDir() + File.separator + folderName
                 : context.getExternalFilesDir(File.separator) + File.separator + folderName;
     }
 
     //获取当前AppSD卡根目录
     public static String getAppRoot() {
-        if (!checkSDcard()) return null;
         return getSDRoot() + File.separator + Cfg.APP_ROOT;
-    }
-
-    //获取机身储存
-    public static String getInternalFileDirectory() {
-        String fileDirPath = null;
-        File fileDir = ProjectContext.appContext.getFilesDir();
-        if (fileDir != null) fileDirPath = fileDir.getPath();
-        return fileDirPath;
     }
 
     /**
@@ -79,9 +71,8 @@ public class FileUtils {
      * @return File
      */
     public static File getAppSaveFolder(String folderName) {
-        if (!checkSDcard()) return null;
         File file = new File(getAppRoot() + File.separator + folderName);
-        if (!file.exists()) file.mkdirs();
+        if (!file.exists()) if (!file.mkdirs()) return null;
         return file;
     }
 
@@ -90,11 +81,11 @@ public class FileUtils {
      * 获取SD卡APP目录下指定文件夹的绝对路径
      *
      * @param folderName 文件夹名称
-     * @return String
+     * @return File
      */
     public static String getAppSavePath(String folderName) {
-        if (getAppSaveFolder(folderName) != null) return null;
-        return getAppSaveFolder(folderName).getAbsolutePath();
+        File file = getAppSaveFolder(folderName);
+        return file == null ? "" : file.getAbsolutePath();
     }
 
     /**
@@ -104,16 +95,14 @@ public class FileUtils {
      * @param fileName   文件名称
      * @return File
      */
-    public static File getSaveFile(String folderName, String fileName) {
-        if (getAppSaveFolder(folderName) != null) return null;
+    public static File createNFAtAPPRoot(String folderName, String fileName) {
         File file = new File(getAppSavePath(folderName) + File.separator + fileName);
-        if (file.exists()) file.delete();
         try {
-            file.createNewFile();
+            return file.createNewFile() ? file : null;
         } catch (IOException e) {
-            return null;
+            LogUtils.exception(e);
         }
-        return file;
+        return null;
     }
 
     /**
@@ -137,10 +126,10 @@ public class FileUtils {
     }
 
     /**
-     * 获取当前文件的文件夹
+     * 获取当前文件的文件夹路径
      *
-     * @param absoluteFilePath
-     * @return
+     * @param absoluteFilePath 文件绝对路径
+     * @return String
      */
     public static String getPathName(String absoluteFilePath) {
         return StringUtils.isEmpty(absoluteFilePath) ? "" : absoluteFilePath.substring(0, absoluteFilePath.lastIndexOf(File.separator));
@@ -160,10 +149,8 @@ public class FileUtils {
             if (!file.createNewFile()) return false;
             outputStream = new FileOutputStream(file);
             byte[] buffer = new byte[1024];
-            int len = 0;
-            while (-1 != (len = is.read(buffer))) {
-                outputStream.write(buffer, 0, len);
-            }
+            int len;
+            while (-1 != (len = is.read(buffer))) outputStream.write(buffer, 0, len);
             outputStream.flush();
         } catch (IOException e) {
             LogUtils.exception(e);
@@ -177,42 +164,42 @@ public class FileUtils {
     /**
      * 从文件中读取字符串
      *
-     * @param filePath
+     * @param filePath 文件绝对路径
      * @return String
      */
-    public static String readFile(String filePath) {
-        InputStream is = null;
+    public static String readFileString(String filePath) {
+        if (TextUtils.isEmpty(filePath)) return "";
         try {
-            is = new FileInputStream(filePath);
-        } catch (Exception e) {
-            throw new RuntimeException(FileUtils.class.getName() + "readFile---->" + filePath + " not found");
+            return input2String(new FileInputStream(filePath));
+        } catch (FileNotFoundException e) {
+            LogUtils.exception(e);
         }
-        return input2String(is);
+        return "";
     }
 
     /**
      * 从Asses中读取文本
      *
-     * @param context
-     * @param name
+     * @param context  上下文
+     * @param fileName 文件名
      * @return String
      */
-    public static String readFileFromAssets(Context context, String name) {
-        InputStream is = null;
+    public static String readFileStrFromAssets(Context context, String fileName) {
+        if (TextUtils.isEmpty(fileName)) return "";
         try {
-            is = context.getResources().getAssets().open(name);
-        } catch (Exception e) {
-            throw new RuntimeException(FileUtils.class.getName() + ".readFileFromAssets---->" + name + " not found");
+            return input2String(context.getApplicationContext().getResources().getAssets().open(fileName));
+        } catch (IOException e) {
+            LogUtils.exception(e);
         }
-        return input2String(is);
+        return "";
     }
 
 
     /**
      * 获取文件大小
      *
-     * @param filePath
-     * @return
+     * @param filePath 文件绝对路径
+     * @return long
      */
     public static long getFileSize(String filePath) {
         File file = new File(filePath);
@@ -227,7 +214,7 @@ public class FileUtils {
      */
     public static String formatFileSize(long size) {
         DecimalFormat df = new DecimalFormat("#.00");
-        String fileSizeString = "";
+        String fileSizeString;
         if (size < 1024) {
             fileSizeString = df.format((double) size) + "B";
         } else if (size < 1048576) {
@@ -243,26 +230,28 @@ public class FileUtils {
     /**
      * 获取文件目录大小
      *
-     * @param dir
-     * @return
+     * @param dirFile 文件目录
+     * @return long
      */
-    public static long getDirSize(File dir) {
+    public static long getDirSize(File dirFile) {
         int size = 0;
-        if (dir == null || !dir.isDirectory()) return 0;
-        File[] files = dir.listFiles();
-        for (File file2 : files) size += file2.isDirectory() ? getDirSize(file2) : file2.length();
+        if (dirFile == null || !dirFile.isDirectory()) return 0;
+        File[] files = dirFile.listFiles();
+        for (File file2 : files) {
+            size += file2.isDirectory() ? getDirSize(file2) : file2.length();
+        }
         return size;
     }
 
     /**
      * 获取目录中文件个数
      *
-     * @param dir
-     * @return
+     * @param dirFile 文件目录
+     * @return long
      */
-    public static long getFileCount(File dir) {
-        long count = 0;
-        File[] files = dir.listFiles();
+    public static long getFileCount(File dirFile) {
+        long count;
+        File[] files = dirFile.listFiles();
         count = files.length;
         for (File file : files) {
             if (file.isDirectory()) {
@@ -277,7 +266,7 @@ public class FileUtils {
      * 删除目录或文件（删除目录时包括目录中的所有文件）
      *
      * @param dir 文件/或者目录
-     * @return
+     * @return boolean
      */
     public static boolean deleteDirectoryAllOrFile(File dir) {
         if (dir == null) return false;
@@ -315,10 +304,10 @@ public class FileUtils {
     }
 
     /**
-     * 文件转换为byte
+     * 文件转换为byte数组
      *
-     * @param filepath
-     * @return
+     * @param filepath 文件绝对路径
+     * @return byte[]
      */
     public static byte[] file2byte(String filepath) throws FileNotFoundException {
         InputStream in;
@@ -327,10 +316,10 @@ public class FileUtils {
     }
 
     /**
-     * 输入流转byte
+     * 输入流转byte[]
      *
-     * @param inStream
-     * @return
+     * @param inStream 输入流
+     * @return byte[]
      */
     public static byte[] input2byte(InputStream inStream) {
         if (inStream == null) return null;
@@ -354,8 +343,8 @@ public class FileUtils {
     /**
      * 输入流转字符串
      *
-     * @param is
-     * @return
+     * @param is 输入流
+     * @return string
      */
     public static String input2String(InputStream is) {
         if (null == is) return null;
@@ -382,15 +371,21 @@ public class FileUtils {
      * @param from   File
      * @param toFile File
      */
-    public static void copyFile(File from, File toFile) throws Exception {
-        if (null == from || !from.exists() || null == toFile) return;
+    public static boolean copyFile(File from, File toFile) {
+        if (null == from || !from.exists() || null == toFile) return false;
         FileInputStream is = null;
         FileOutputStream os = null;
-        is = new FileInputStream(from);
-        if (!toFile.exists()) toFile.createNewFile();
-        os = new FileOutputStream(toFile);
-        copyFileFast(is, os);
-        closeIO(is, os);
+        try {
+            is = new FileInputStream(from);
+            if (!toFile.exists()) if (!toFile.createNewFile()) return false;
+            os = new FileOutputStream(toFile);
+            return copyFileFast(is, os);
+        } catch (Exception e) {
+            LogUtils.exception(e);
+        } finally {
+            closeIO(is, os);
+        }
+        return false;
     }
 
     /**
@@ -400,10 +395,11 @@ public class FileUtils {
      * @param os 数据目标
      * @throws IOException
      */
-    public static void copyFileFast(FileInputStream is, FileOutputStream os) throws IOException {
+    public static boolean copyFileFast(FileInputStream is, FileOutputStream os) throws IOException {
         FileChannel in = is.getChannel();
         FileChannel out = os.getChannel();
         in.transferTo(0, in.size(), out);
+        return true;
     }
 
     /**
@@ -411,17 +407,17 @@ public class FileUtils {
      *
      * @param closeables 数据流
      */
-    public static void closeIO(Closeable... closeables) {
-        if (null == closeables || closeables.length <= 0) return;
+    public static boolean closeIO(Closeable... closeables) {
+        if (null == closeables || closeables.length <= 0) return false;
         for (Closeable cb : closeables) {
             try {
                 if (null == cb) continue;
                 cb.close();
             } catch (IOException e) {
-                throw new RuntimeException(FileUtils.class.getClass().getName(), e);
+                LogUtils.exception(e);
+                return false;
             }
         }
+        return true;
     }
-
-
 }
