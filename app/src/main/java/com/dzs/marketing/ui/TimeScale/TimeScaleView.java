@@ -51,8 +51,8 @@ public class TimeScaleView extends RelativeLayout {
 
     /*创建动画*/
     private void creatAnim() {
-        animation = new TranslateAnimation(-100, getWidth(), 0, 0);
-        animation.setDuration(1000);
+        animation = new TranslateAnimation(-getWidth() / 4, getWidth() + getWidth() / 4, 0, 0);
+        animation.setDuration(1500);
         animation.setRepeatCount(1000);
         animation.setFillAfter(true);
     }
