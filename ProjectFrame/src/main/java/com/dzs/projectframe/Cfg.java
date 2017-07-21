@@ -1,11 +1,15 @@
 package com.dzs.projectframe;
 
 import android.content.pm.PackageInfo;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.dzs.projectframe.base.Bean.LibEntity;
 import com.dzs.projectframe.base.ProjectContext;
 import com.dzs.projectframe.utils.StringUtils;
 import com.dzs.projectframe.utils.SystemUtils;
+
+import java.io.Serializable;
 
 /**
  * 配置文件

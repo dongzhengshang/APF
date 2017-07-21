@@ -98,11 +98,11 @@ public class FileUtils {
     public static File createNFAtAPPRoot(String folderName, String fileName) {
         File file = new File(getAppSavePath(folderName) + File.separator + fileName);
         try {
-            return file.createNewFile() ? file : null;
+            if (!file.exists()) return file.createNewFile()? file:null;
         } catch (IOException e) {
             LogUtils.exception(e);
         }
-        return null;
+        return file;
     }
 
     /**

@@ -146,6 +146,7 @@ public class ActivityUtils {
             // 杀死应用进程
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(0);
+            System.gc();
         } catch (Exception e) {
             LogUtils.exception(e);
         }

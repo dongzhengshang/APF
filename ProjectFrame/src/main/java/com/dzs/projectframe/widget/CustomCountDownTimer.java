@@ -37,4 +37,5 @@ public class CustomCountDownTimer extends CountDownTimer {
         button.setText(ProjectContext.resources.getText(R.string.GetVerificationCode));
     }
 
+
 }

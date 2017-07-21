@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.RecyclerView;
 import android.text.util.Linkify;
 import android.util.SparseArray;
@@ -343,6 +344,19 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     public ViewHolder setProgress(int viewId, int progress, int max) {
         ProgressBar view = retrieveView(viewId);
         view.setMax(max);
+        view.setProgress(progress);
+        return this;
+    }
+
+    /**
+     * Sets the progress of a AppCompatSeekBar.
+     *
+     * @param viewId   The view id.
+     * @param progress The progress.
+     * @return The ViewHolder for chaining.
+     */
+    public ViewHolder AppCompatSeekBarProgress(int viewId, int progress) {
+        AppCompatSeekBar view = retrieveView(viewId);
         view.setProgress(progress);
         return this;
     }
