@@ -132,6 +132,18 @@ public class StringUtils {
     }
 
     /**
+     * 将网络请求Map转换为url
+     *
+     * @param url        URL
+     * @param parameters 参数列表
+     * @return String
+     * @throws UnsupportedEncodingException 转换异常
+     */
+    public static String mapToUrlNoEncode(String url, Map<String, Object> parameters) throws UnsupportedEncodingException {
+        return mapToCatchUrlNoEncode(url, parameters);
+    }
+
+    /**
      * 将网络请求Map转换成为缓存KEY，去掉可变量
      *
      * @param url         URL
@@ -150,6 +162,33 @@ public class StringUtils {
                     }
                 }
                 getUrl.append(param.getKey()).append("=").append(URLEncoder.encode(param.getValue() == null ? "" : param.getValue().toString(), UTF_8));
+                getUrl.append("&");
+            }
+            getUrl.deleteCharAt(getUrl.length() - 1);
+        }
+        return getUrl.toString();
+    }
+
+
+    /**
+     * 将网络请求Map转换成为缓存KEY，去掉可变量
+     *
+     * @param url         URL
+     * @param parameters  请求参数
+     * @param variableKey 可变的键值(可以为空)
+     * @throws UnsupportedEncodingException 异常
+     */
+    public static String mapToCatchUrlNoEncode(String url, Map<String, Object> parameters, String... variableKey) throws UnsupportedEncodingException {
+        StringBuilder getUrl = new StringBuilder(url);
+        if (parameters != null && !parameters.isEmpty()) {
+            getUrl.append("?");
+            for (Map.Entry<String, Object> param : parameters.entrySet()) {
+                if (variableKey != null) {
+                    for (String key : variableKey) {
+                        if (param.getKey().equals(key)) break;
+                    }
+                }
+                getUrl.append(param.getKey()).append("=").append(param.getValue());
                 getUrl.append("&");
             }
             getUrl.deleteCharAt(getUrl.length() - 1);

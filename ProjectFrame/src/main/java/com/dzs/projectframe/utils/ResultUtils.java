@@ -21,7 +21,7 @@ public class ResultUtils {
         if (object != null) {
             try {
                 return ArrayList.class.cast(object);
-            }catch (Exception e){
+            } catch (Exception e) {
                 return new ArrayList<>();
             }
 

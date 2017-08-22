@@ -65,6 +65,11 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
                     libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (InputStream) params[1], (Map<String, Object>) params[2], (Upload[]) params[4],
                             saveCache, reflsh, cacheKey, HttpUtils.HttpType.Form);
                     break;
+                case GET_NO_ENCOLD:
+                    String url2 = StringUtils.mapToUrlNoEncode(params[0].toString(), (Map<String, Object>) params[2]);
+                    cacheKey = saveCache ? StringUtils.mapToCatchUrlNoEncode(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]) : "";
+                    libEntity = HttpUtils.httpURLConnect_Get(url2, (InputStream) params[1], saveCache, reflsh, cacheKey);
+                    break;
             }
         } catch (UnsupportedEncodingException e) {
             libEntity = new LibEntity();

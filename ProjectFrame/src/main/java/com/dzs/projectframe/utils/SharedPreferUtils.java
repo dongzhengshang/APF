@@ -69,7 +69,11 @@ public class SharedPreferUtils {
      * @return boolean
      */
     public String getString(String key) {
-        return prefs.getString(key, null);
+        return getString(key, null);
+    }
+
+    public String getString(String key, String defaultValue) {
+        return prefs.getString(key, defaultValue);
     }
 
     /**

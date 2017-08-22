@@ -110,7 +110,7 @@ public class DateUtils {
         if (StringUtils.isEmpty(longTime)) {
             return "";
         }
-        return formatTime(Long.parseLong(longTime), dateFormat);
+        return formatTime(Long.parseLong(longTime.length() < 13 ? longTime + "000" : longTime), dateFormat);
     }
 
     /**

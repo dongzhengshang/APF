@@ -2,10 +2,14 @@ package com.dzs.projectframe.adapter.recyclerview;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import com.dzs.projectframe.adapter.ViewHolder;
-import com.dzs.projectframe.adapter.abslistview.MultiItemTypeSupport;
+import com.dzs.projectframe.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +26,8 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
     protected List<T> data;
     protected int layoutResId;
     protected ViewHolder viewHolder;
-    protected MultiItemTypeSupport<T> multiItemTypeSupport;
+    protected View loadMoreView;
+    protected boolean showLoadMore = false;
 
     protected abstract void convert(ViewHolder holder, T t);
 
@@ -36,44 +41,57 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
         this.layoutResId = layoutResId;
     }
 
-    public BaseUniversalAdapter(Context context, List<T> data, MultiItemTypeSupport<T> multiItemTypeSupport) {
-        this.data = data == null ? new ArrayList<T>() : new ArrayList<>(data);
-        this.context = context;
-        if (multiItemTypeSupport == null) throw new IllegalArgumentException("the multiItemTypeSupport can not be null.");
-        this.multiItemTypeSupport = multiItemTypeSupport;
-    }
-
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (multiItemTypeSupport != null) {
-            layoutResId = multiItemTypeSupport.getLayoutId(viewType, data.get(viewType));
-            viewHolder = ViewHolder.get(context, null, parent, layoutResId);
-        } else {
-            viewHolder = ViewHolder.get(context, null, parent, layoutResId);
-        }
+        if (viewType != 0) viewHolder = ViewHolder.get(context, null, parent, layoutResId);
+        else viewHolder = loadMoreView != null ? ViewHolder.get(context, loadMoreView) : createLoadMoreViewHolder();
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.updatePosition(position);
-        convert(holder, data.get(position));
+        if (getItemViewType(position) != 0) convert(holder, data.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        int extra = showLoadMore ? 1 : 0;
+        return data.size() + extra;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (multiItemTypeSupport != null) return multiItemTypeSupport.getItemViewType(position, data.get(position));
-        return super.getItemViewType(position);
+        return position >= data.size() ? 0 : 1;
     }
 
     @Override
     public void onViewRecycled(ViewHolder holder) {
         super.onViewRecycled(holder);
+    }
+
+    public boolean isEnabled(int position) {
+        return position < data.size();
+    }
+
+    public void showLoadMoreView(boolean display) {
+        if (display == showLoadMore) return;
+        showLoadMore = display;
+        notifyDataSetChanged();
+    }
+
+    /*设置加载更多布局*/
+    public void setLoadMoreView(View view) {
+        this.loadMoreView = view;
+    }
+
+    /*创建加载更多*/
+    private ViewHolder createLoadMoreViewHolder() {
+        FrameLayout container = new FrameLayout(context);
+        container.setForegroundGravity(Gravity.CENTER);
+        ProgressBar progress = new ProgressBar(context);
+        container.addView(progress);
+        return ViewHolder.get(context, container);
     }
 
     public void add(T elem) {

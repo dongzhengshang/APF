@@ -129,11 +129,9 @@ public class HttpUtils {
         //进行三次访问网络
         do {
             try {
-                LogUtils.info("Network-URL(GET)：" + url);
                 connection = isHttps ? null : getHttpUrlConnect(url, "GET");
                 httpsURLConnection = isHttps ? getHttpsUrlConnect(url, "GET", inputStream) : null;
                 int statueCode = isHttps ? httpsURLConnection.getResponseCode() : connection.getResponseCode();
-                LogUtils.info("Network-URL(GET)返回状态值：" + statueCode);
                 if (statueCode != HttpURLConnection.HTTP_OK) {
                     time++;
                     try {
@@ -146,12 +144,13 @@ public class HttpUtils {
                 is = isHttps ? httpsURLConnection.getInputStream() : connection.getInputStream();
                 libEntity = new LibEntity();
                 String resultString = FileUtils.input2String(is);
+                LogUtils.info("Network-URL(GET)返回状态值：" + statueCode);
+                LogUtils.info("Network-URL(GET)地址："+url+"  返回值：" + resultString);
                 libEntity.setResultString(resultString);
                 libEntity.setResultMap(JsonUtils.getMap(resultString));
                 libEntity.setCachKey(cachkey);
                 libEntity.setShelfLife(System.currentTimeMillis() + Cfg.getCacheTime());
                 libEntity.setNetResultType(Cfg.NetResultType.NET_CONNECT_SUCCESS);
-                LogUtils.info("Network-URL(GET)返回值：" + resultString);
                 if (saveCache) DiskLruCacheHelpUtils.getInstance().putCatch(cachkey, libEntity);
                 break;
             } catch (JSONException e) {
@@ -213,7 +212,7 @@ public class HttpUtils {
         // 如果没有开启强制刷新,先读取缓存
         if (!reflsh && saveCache && getCatch(cachkey, false) != null) {
             libEntity = getCatch(cachkey, false);
-            if (libEntity!=null){
+            if (libEntity != null) {
                 libEntity.setNetResultType(Cfg.NetResultType.NET_CONNECT_SUCCESS);
                 return libEntity;
             }
@@ -222,8 +221,8 @@ public class HttpUtils {
         //进行三次访问网络
         do {
             try {
-                LogUtils.info("Network-URL(POST_FORMS)：" + url);
-                LogUtils.info("Network-URL(POST_FORMS-GET地址)：" + StringUtils.mapToUrl(url, params));
+                //LogUtils.info("Network-URL(POST_FORMS-GET地址)：" + StringUtils.mapToUrl(url, params));
+                LogUtils.info("Network-URL(POST_FORMS)：" +  StringUtils.mapToUrl(url, params));
                 connection = isHttps ? null : getHttpUrlConnect(url, "POST");
                 httpsURLConnection = isHttps ? getHttpsUrlConnect(url, "POST", inputStream) : null;
                 DataOutputStream dataOutputStream = new DataOutputStream(isHttps ? httpsURLConnection.getOutputStream() : connection.getOutputStream());
@@ -242,7 +241,6 @@ public class HttpUtils {
                 dataOutputStream.writeBytes(twoHyphens + BOUNDARY + twoHyphens + lineEnd);
                 dataOutputStream.flush();
                 int statueCode = isHttps ? httpsURLConnection.getResponseCode() : connection.getResponseCode();
-                LogUtils.info("Network-URL(POST_FORMS)返回状态值：" + statueCode);
                 if (statueCode != HttpURLConnection.HTTP_OK) {
                     time++;
                     try {
@@ -255,12 +253,13 @@ public class HttpUtils {
                 is = isHttps ? httpsURLConnection.getInputStream() : connection.getInputStream();
                 libEntity = new LibEntity();
                 String resultString = FileUtils.input2String(is);
+                LogUtils.info("Network-URL(POST_FORMS)返回状态值：" + statueCode);
+                LogUtils.info("Network-URL(POST_FORMS)地址："+StringUtils.mapToUrl(url, params)+"  \n返回值：" + resultString);
                 libEntity.setResultString(resultString);
                 libEntity.setResultMap(JsonUtils.getMap(resultString));
                 libEntity.setCachKey(cachkey);
                 libEntity.setShelfLife(System.currentTimeMillis() + Cfg.getCacheTime());
                 libEntity.setNetResultType(Cfg.NetResultType.NET_CONNECT_SUCCESS);
-                LogUtils.info("Network-URL(POST_FORMS)返回值：" + resultString);
                 if (saveCache) {
                     DiskLruCacheHelpUtils.getInstance().putCatch(cachkey, libEntity);
                 }
@@ -360,7 +359,7 @@ public class HttpUtils {
     }
 
     public enum HttpType {
-        Get, Json, Form
+        Get, Json, Form, GET_NO_ENCOLD
     }
 
     private static void initSSL(HttpsURLConnection httpsURLConnection, InputStream inputStream) throws Exception {

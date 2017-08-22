@@ -23,6 +23,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.WindowManager;
@@ -85,7 +86,7 @@ public class SystemUtils {
      * @return int
      */
     public static int getSDKVersion() {
-        return android.os.Build.VERSION.SDK_INT;
+        return Build.VERSION.SDK_INT;
     }
 
     /**
@@ -94,7 +95,7 @@ public class SystemUtils {
      * @return String
      */
     public static String getSystemVersion() {
-        return android.os.Build.VERSION.RELEASE;
+        return Build.VERSION.RELEASE;
     }
 
     /**
@@ -315,13 +316,18 @@ public class SystemUtils {
      * @param file    File文件
      */
     public static void installApk(Context context, File file) {
-        Intent intent = new Intent();
-        intent.setAction("android.intent.action.VIEW");
-        intent.addCategory("android.intent.category.DEFAULT");
-        intent.setType("application/vnd.android.package-archive");
-        intent.setData(Uri.fromFile(file));
-        intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+        Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Uri apkUri = FileProvider.getUriForFile(context, context.getPackageName() + ".provider", file);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+        } else {
+            intent.addCategory("android.intent.category.DEFAULT");
+            intent.setType("application/vnd.android.package-archive");
+            intent.setData(Uri.fromFile(file));
+            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+        }
         context.startActivity(intent);
     }
 
@@ -556,6 +562,17 @@ public class SystemUtils {
             }
         }
         return null;
+    }
+
+    //是否连接WIFI
+    public static boolean isWifiConnected(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (wifiNetworkInfo.isConnected()) {
+            return true;
+        }
+
+        return false;
     }
 
 }

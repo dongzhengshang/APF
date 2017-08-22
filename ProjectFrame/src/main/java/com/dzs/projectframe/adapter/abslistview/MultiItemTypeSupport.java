@@ -6,6 +6,6 @@ public interface MultiItemTypeSupport<T> {
 
 	int getViewTypeCount();
 
-	int getItemViewType(int postion, T t);
+	int getItemViewType(int position, T t);
 
 }

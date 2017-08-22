@@ -35,6 +35,9 @@ public class ProjectControl {
         AsyncTaskUtils ansyTaskUtils = new AsyncTaskUtils(taskId, httpType, saveCache, reflsh, netReturnListeners);
         ansyTaskUtils.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,url, inputStream,params, keys, uploads);
     }
+    protected void getDataByGetNoEncold(String taskId, String url,Map<String, Object> params, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
+        getData(taskId, url, null, params, null, null, HttpUtils.HttpType.GET_NO_ENCOLD, false, false, netReturnListeners);
+    }
 
     protected void getDataByGet(String taskId, String url, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
         getDataByGet(taskId, url, null, params, keys, saveCache, reflsh, netReturnListeners);

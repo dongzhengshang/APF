@@ -119,6 +119,19 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
+     * Will set the text of a TextView.
+     *
+     * @param viewId The view id.
+     * @param strRes The String id to put in the text view.
+     * @return The ViewHolder for chaining.
+     */
+    public ViewHolder setText(int viewId, int strRes) {
+        TextView view = retrieveView(viewId);
+        view.setText(context.getApplicationContext().getText(strRes));
+        return this;
+    }
+
+    /**
      * Will get the text of a TextView.
      *
      * @param viewId The view id.

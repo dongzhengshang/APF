@@ -133,7 +133,7 @@ public class TagFlowLayout extends FlowLayout implements TagAdapter.OnDataChange
                 tagViewContainer.setLayoutParams(tagView.getLayoutParams());
             } else
             {
-                ViewGroup.MarginLayoutParams lp = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                MarginLayoutParams lp = new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                 lp.setMargins(dip2px(getContext(), 5),
                         dip2px(getContext(), 5),
                         dip2px(getContext(), 5),
@@ -141,8 +141,8 @@ public class TagFlowLayout extends FlowLayout implements TagAdapter.OnDataChange
                 tagViewContainer.setLayoutParams(lp);
             }
             tagViewContainer.addView(tagView);
-            ViewGroup.MarginLayoutParams rootLp = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            MarginLayoutParams rootLp = new MarginLayoutParams(LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT);
             rootLp.setMargins(0, dip2px(getContext(), 16), dip2px(getContext(), 16), 0);
             addView(tagViewContainer, rootLp);
 
