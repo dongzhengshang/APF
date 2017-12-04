@@ -286,6 +286,14 @@ public class FileUtils {
         }
     }
 
+    public static boolean deleteFile(String filePath) {
+        File file = new File(filePath);
+        if (file.isFile() && file.exists()) {
+            return file.delete();
+        }
+        return false;
+    }
+
 
     /**
      * 把uri转为File对象

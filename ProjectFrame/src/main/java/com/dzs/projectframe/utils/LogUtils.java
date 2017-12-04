@@ -12,7 +12,6 @@ import com.dzs.projectframe.Cfg;
  * @date 2015年11月21日 下午5:37:28
  */
 public class LogUtils {
-    public static boolean IS_SHOWLOG = Cfg.IS_DEBUG;
 
     public static void info(String message) {
         logI("Debug-I", message);
@@ -51,25 +50,25 @@ public class LogUtils {
     }
 
     public static void exception(Exception e) {
-        if (IS_SHOWLOG && e != null) {
+        if (Cfg.IS_DEBUG && e != null) {
             e.printStackTrace();
         }
     }
 
     public static void logE(String tag, String message) {
-        if (IS_SHOWLOG) {
+        if (Cfg.IS_DEBUG) {
             Log.e(tag, message);
         }
     }
 
     public static void logD(String tag, String message) {
-        if (IS_SHOWLOG) {
+        if (Cfg.IS_DEBUG) {
             Log.d(tag, message);
         }
     }
 
     public static void logI(String tag, String message) {
-        if (IS_SHOWLOG) {
+        if (Cfg.IS_DEBUG) {
             Log.i(tag, message);
         }
     }

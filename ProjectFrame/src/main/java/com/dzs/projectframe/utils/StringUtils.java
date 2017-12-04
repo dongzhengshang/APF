@@ -24,9 +24,10 @@ import java.util.regex.Pattern;
 public class StringUtils {
 
     private final static Pattern EMAIL = Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
-    private final static Pattern PHONE = Pattern.compile("^[1][3,4,5,8][0-9]{9}$");
+    private final static Pattern PHONE = Pattern.compile("^[1][3,4,5,6,7,8,9][0-9]{9}$");
     private final static Pattern IMG_URL = Pattern.compile(".*?(gif|jpeg|png|jpg|bmp)");
     private final static Pattern URL = Pattern.compile("^(https|http)://.*?$(net|com|.com.cn|org|me|)");
+    private final static Pattern TEXT = Pattern.compile("^[\\u4e00-\\u9fa5\\u278b-\\u2792_a-zA-Z0-9'!@#$%^&*,;\'￥~·+-/，？：:() \\s]+$");
     public static final String UTF_8 = "UTF-8";
 
     /**
@@ -50,6 +51,43 @@ public class StringUtils {
     }
 
     /**
+     * 判断是否是正常的输入 （中午，数字，英文，基本符号,不含空）
+     *
+     * @param text 字符串
+     * @return boolean
+     */
+    public static boolean isText(CharSequence text) {
+        return isText(text,false);
+    }
+
+
+    /**
+     * 判断是否是正常的输入 （中午，数字，英文，基本符号,含空）
+     *
+     * @param text 字符串
+     * @param isEntity 是否允许空字符串
+     * @return boolean
+     */
+    public static boolean isText(CharSequence text,boolean isEntity) {
+        return isEntity?TEXT.matcher(text).matches():(!isEmpty(text) && TEXT.matcher(text).matches());
+    }
+
+    /**
+     * 验证密码
+     * 6-16位，字母、数字组合
+     *
+     * @param pwd
+     * @return
+     */
+    public static boolean isPwd(String pwd) {
+        String str = "^(?!\\d+$|[a-zA-Z]+$)\\w{6,16}$";
+        Pattern p = Pattern.compile(str);
+        Matcher m = p.matcher(pwd.trim());
+        return m.matches();
+    }
+
+
+    /**
      * 判断字符串是否为空
      *
      * @param input 字符串
@@ -67,7 +105,7 @@ public class StringUtils {
     }
 
     /**
-     * 判断字符串数组中是否有空
+     * 判断字符串是否为空
      *
      * @param input 字符串数组
      * @return boolean
@@ -223,5 +261,31 @@ public class StringUtils {
         Pattern pattern = Pattern.compile("[\u4e00-\u9fa5]");
         Matcher matcher = pattern.matcher(password);
         return matcher.find();
+    }
+
+    /**
+     * 字符串转int
+     * @param text
+     * @return
+     */
+    public static int StringToInt(String text){
+        try {
+            return  Integer.parseInt(text);
+        }catch (Exception e){
+            return  0;
+        }
+    }
+
+    /**
+     * 字符串转Float
+     * @param text
+     * @return
+     */
+    public static float StringToFloat(String text){
+        try {
+            return Float.parseFloat(text);
+        }catch (Exception e){
+            return 0.00f;
+        }
     }
 }

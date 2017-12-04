@@ -1,5 +1,7 @@
 package com.dzs.projectframe.utils;
 
+import android.text.TextUtils;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,6 +64,17 @@ public class ResultUtils {
         return ts;
     }
 
+    public static <T> ArrayList<T> getListStringBeanFromResult(Map<?, ?> result, String key, Class<T> clazz) {
+        ArrayList<T> ts = new ArrayList<>();
+        Object value = getObject(result, key);
+        if (value != null) {
+            for (Object map : ArrayList.class.cast(value)) {
+                ts.add(clazz.cast(getStringBeanFromMap(Map.class.cast(map), clazz)));
+            }
+        }
+        return ts;
+    }
+
     /**
      * 从结果中获取数据Bean
      *
@@ -92,6 +105,37 @@ public class ResultUtils {
     }
 
     /**
+     * 从结果中获取字符串集合
+     *
+     * @param result map集合
+     * @param key    键值
+     * @return String
+     */
+    public static ArrayList getStringList(Map<?, ?> result, String key) {
+        Object object = getObject(result, key);
+        if (object != null && object instanceof List) {
+            return ArrayList.class.cast(object);
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * 从结果中获取字符串
+     *
+     * @param result       map集合
+     * @param key          键值
+     * @param defaultValue 默认值
+     * @return String
+     */
+    public static String getStringFromResult(Map<?, ?> result, String key, String defaultValue) {
+        Object object = getObject(result, key);
+        if (object != null && !TextUtils.isEmpty(object.toString())) {
+            return object.toString();
+        }
+        return defaultValue;
+    }
+
+    /**
      * 递归
      *
      * @param result map集合
@@ -107,9 +151,11 @@ public class ResultUtils {
                     Object o = getObject(Map.class.cast(entry.getValue()), key);
                     if (o != null) return o;
                 } else if (entry.getValue() instanceof List) {
-                    for (Object map : List.class.cast(entry.getValue())) {
-                        Object o2 = getObject(Map.class.cast(map), key);
-                        if (o2 != null) return o2;
+                    for (Object va : List.class.cast(entry.getValue())) {
+                        if (va instanceof Map) {
+                            Object o2 = getObject(Map.class.cast(va), key);
+                            if (o2 != null) return o2;
+                        }
                     }
                 }
             }
@@ -120,10 +166,13 @@ public class ResultUtils {
     /**
      * 将map反射成数据Bean
      *
-     * @return T
+     * @param value    需要反射的Map数据
+     * @param clazz    反射后的类
+     * @param isString 字段是否为String
+     * @param <T>
+     * @return
      */
-
-    public static <T> T getBeanFromMap(Map<?, ?> value, Class<T> clazz) {
+    private static <T> T getBeanFromMap(Map<?, ?> value, Class<T> clazz, boolean isString) {
         if (value == null || clazz == null) return null;
         T t;
         try {
@@ -136,19 +185,27 @@ public class ResultUtils {
             Method method = ReflectionUtils.getInstance().getMethod(clazz, clazz.toString() + map.getKey());
             if (null != method && map.getValue() instanceof Map) {
                 Class<?> cls = ReflectionUtils.getInstance().getTypeClass(clazz, map.getKey() + "");
-                ReflectionUtils.getInstance().setValue(method, t, getBeanFromMap(Map.class.cast(map.getValue()), cls));
+                ReflectionUtils.getInstance().setValue(method, t, getBeanFromMap(Map.class.cast(map.getValue()), cls, isString));
             } else if (null != method && map.getValue() instanceof List) {
                 Class<?> cls = ReflectionUtils.getInstance().getListItemType(clazz, map.getKey() + "");
                 ArrayList ts = new ArrayList<>();
                 for (Object o : ArrayList.class.cast(map.getValue())) {
-                    ts.add(getBeanFromMap(Map.class.cast(o), cls));
+                    ts.add(getBeanFromMap(Map.class.cast(o), cls, isString));
                 }
                 ReflectionUtils.getInstance().setValue(method, t, ts);
             } else if (null != method) {
-                ReflectionUtils.getInstance().setValue(method, t, map.getValue());
+                ReflectionUtils.getInstance().setValue(method, t, isString ? map.getValue() + "" : map.getValue());
             }
         }
         return t;
+    }
+
+    public static <T> T getStringBeanFromMap(Map<?, ?> value, Class<T> clazz) {
+        return getBeanFromMap(value, clazz, true);
+    }
+
+    public static <T> T getBeanFromMap(Map<?, ?> value, Class<T> clazz) {
+        return getBeanFromMap(value, clazz, false);
     }
 
 }

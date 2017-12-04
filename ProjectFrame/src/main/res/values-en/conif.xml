@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--手机网络缓存时间 2分钟Mobile phone network cache time 2 minutes-->
+    <integer name="NET_CACHE_TIME">2</integer>
+    <!--WiFI网络缓存时间 1分钟net cache time 1 minute -->
+    <integer name="WIFI_CACHE_TIME">1</integer>
+    <!--连接超时时间connection timeout-->
+    <integer name="TIMEOUT_CONNECTION">3000</integer>
+    <!--读取超时时间read timeout-->
+    <integer name="TIMEOUT_READ">10000</integer>
+    <!--网络访问失败时,重连次数When network access fails, reconnect times-->
+    <integer name="RETRY_TIME">3</integer>
+    <!--网络访问提示Network access tips-->
+    <string name="NetConnectSuccess">Network connection success</string>
+    <string name="NetConnectFail">Network connection failed, please try again</string>
+    <string name="NetNotConnectFail">Network connection failed, please check the network connection</string>
+    <string name="NetParseFail">Data abnormal, please try again</string>
+    <!--相机相关Camera related-->
+    <string name="SDError">SD card unavailable</string>
+    <string name="OpenCameraError">fail to obtain system camera</string>
+    <!--验证码倒计时Verification code countdown-->
+    <string name="GetVerificationCode"> get verification code</string>
+</resources>

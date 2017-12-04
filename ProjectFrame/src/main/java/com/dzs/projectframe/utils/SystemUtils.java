@@ -13,32 +13,26 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.Environment;
+import android.os.LocaleList;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.Target;
-
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 
@@ -293,7 +287,8 @@ public class SystemUtils {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
         for (RunningAppProcessInfo appProcess : appProcesses) {
-            if (appProcess.processName.equals(context.getPackageName())) return appProcess.importance == RunningAppProcessInfo.IMPORTANCE_BACKGROUND;
+            if (appProcess.processName.equals(context.getPackageName()))
+                return appProcess.importance == RunningAppProcessInfo.IMPORTANCE_BACKGROUND;
         }
         return false;
     }
@@ -550,7 +545,7 @@ public class SystemUtils {
      * @param pID     PID:android.os.Process.myPid()
      * @return String
      */
-    private static String getAppName(Context context, int pID) {
+    public static String getAppName(Context context, int pID) {
         ActivityManager am = (ActivityManager) context.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
         List l = am.getRunningAppProcesses();
         for (Object aL : l) {
@@ -568,11 +563,48 @@ public class SystemUtils {
     public static boolean isWifiConnected(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (wifiNetworkInfo.isConnected()) {
-            return true;
-        }
-
-        return false;
+        return wifiNetworkInfo.isConnected();
     }
 
+    /**
+     * 权限检查
+     *
+     * @param activity  当前Activity
+     * @param questCode 请求码
+     * @param permArray 权限列表
+     * @return 当前授权状态
+     */
+    public static boolean isPermissionGranted(Activity activity, int questCode, String... permArray) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        //获得批量请求但被禁止的权限列表
+        List<String> deniedPerms = new ArrayList<>();
+        for (int i = 0; permArray != null && i < permArray.length; i++) {
+            if (PackageManager.PERMISSION_GRANTED != activity.checkSelfPermission(permArray[i])) {
+                deniedPerms.add(permArray[i]);
+            }
+        }
+        //进行批量请求
+        int denyPermNum = deniedPerms.size();
+        if (denyPermNum != 0) {
+            activity.requestPermissions(deniedPerms.toArray(new String[denyPermNum]), questCode);
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
+     * 获取手机当前语言
+     *
+     * @return zh-CN  en-US
+     */
+    public static String getSystemLanguage() {
+        Locale locale;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            locale = LocaleList.getDefault().get(0);
+        } else locale = Locale.getDefault();
+        return locale.getLanguage()+"-"+locale.getCountry();
+    }
 }

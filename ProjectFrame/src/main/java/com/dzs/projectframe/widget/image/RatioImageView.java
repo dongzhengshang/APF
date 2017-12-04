@@ -18,6 +18,10 @@ import com.dzs.projectframe.utils.LogUtils;
  */
 public class RatioImageView extends AppCompatImageView {
     private float ratio;
+    public RatioImageView(Context context) {
+        super(context);
+        initView(context);
+    }
 
     public RatioImageView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -27,6 +31,11 @@ public class RatioImageView extends AppCompatImageView {
     public RatioImageView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView(context, attrs);
+    }
+
+
+    /*初始化*/
+    private void initView(Context context) {
     }
 
     /*初始化*/

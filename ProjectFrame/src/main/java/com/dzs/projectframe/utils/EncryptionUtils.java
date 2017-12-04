@@ -10,6 +10,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import static android.provider.Contacts.SettingsColumns.KEY;
+
 /**
  * 加密解密工具类
  *
@@ -22,6 +24,8 @@ public class EncryptionUtils {
     private static final String UTF_8 = "UTF-8";
     private static final String MD5 = "MD5";
     private static final String AES = "AES";
+    private static final String KEY = "625202f9149e061d";//加密key
+    private static final String IV = "5efd3f6060e20330";//加密偏移量
 
     /**
      * MD5 32位加密
@@ -133,6 +137,19 @@ public class EncryptionUtils {
             e.printStackTrace();
         }
         data = encrypt(data, key, iv);
+        return byte2hex(data);
+    }
+
+
+    // 加密字符串
+    public static String encryptString(String content) {
+        byte[] data = null;
+        try {
+            data = content.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        data = encrypt(data, KEY, IV);
         return byte2hex(data);
     }
 

@@ -144,8 +144,7 @@ public class HttpUtils {
                 is = isHttps ? httpsURLConnection.getInputStream() : connection.getInputStream();
                 libEntity = new LibEntity();
                 String resultString = FileUtils.input2String(is);
-                LogUtils.info("Network-URL(GET)返回状态值：" + statueCode);
-                LogUtils.info("Network-URL(GET)地址："+url+"  返回值：" + resultString);
+                LogUtils.info("Network-URL(GET)地址：" + url + "\n返回状态值" + statueCode + "\n返回值：" + resultString);
                 libEntity.setResultString(resultString);
                 libEntity.setResultMap(JsonUtils.getMap(resultString));
                 libEntity.setCachKey(cachkey);
@@ -221,8 +220,7 @@ public class HttpUtils {
         //进行三次访问网络
         do {
             try {
-                //LogUtils.info("Network-URL(POST_FORMS-GET地址)：" + StringUtils.mapToUrl(url, params));
-                LogUtils.info("Network-URL(POST_FORMS)：" +  StringUtils.mapToUrl(url, params));
+                LogUtils.info("Network-URL(POST_FORMS)：" + StringUtils.mapToUrl(url, params));
                 connection = isHttps ? null : getHttpUrlConnect(url, "POST");
                 httpsURLConnection = isHttps ? getHttpsUrlConnect(url, "POST", inputStream) : null;
                 DataOutputStream dataOutputStream = new DataOutputStream(isHttps ? httpsURLConnection.getOutputStream() : connection.getOutputStream());
@@ -253,8 +251,7 @@ public class HttpUtils {
                 is = isHttps ? httpsURLConnection.getInputStream() : connection.getInputStream();
                 libEntity = new LibEntity();
                 String resultString = FileUtils.input2String(is);
-                LogUtils.info("Network-URL(POST_FORMS)返回状态值：" + statueCode);
-                LogUtils.info("Network-URL(POST_FORMS)地址："+StringUtils.mapToUrl(url, params)+"  \n返回值：" + resultString);
+                LogUtils.info("Network-URL(POST_FORMS)地址：" + StringUtils.mapToUrl(url, params) + "\n返回状态值: " + statueCode + "\n返回值：" + resultString);
                 libEntity.setResultString(resultString);
                 libEntity.setResultMap(JsonUtils.getMap(resultString));
                 libEntity.setCachKey(cachkey);
@@ -303,8 +300,8 @@ public class HttpUtils {
     /**
      * 添加图片/文件
      *
-     * @param files
-     * @param output
+     * @param files  图片文件
+     * @param output 数据流
      */
     private static void addImageContent(Upload[] files, DataOutputStream output) throws IOException {
         if (files != null) {
@@ -345,21 +342,20 @@ public class HttpUtils {
     /**
      * 添加json数据
      *
-     * @param params
-     * @param output
+     * @param params 参数
+     * @param output 输入流
      */
-    private static void addJsonField(Map<String, Object> params, DataOutputStream output) throws IOException {
+    private static void addJsonField(Map<String, Object> params, DataOutputStream output) throws Exception {
         StringBuilder sb = new StringBuilder();
         sb.append(twoHyphens).append(BOUNDARY).append(lineEnd);
         sb.append("Content-Disposition: form-data; name=\"params\"").append(lineEnd);
         sb.append(lineEnd);
-        JSONObject json = new JSONObject(params);
-        sb.append(json.toString()).append(lineEnd);
+        sb.append(JsonUtils.mapToJsonStr(params)).append(lineEnd);
         output.write(new String(sb.toString().getBytes(), UTF_8).getBytes());
     }
 
     public enum HttpType {
-        Get, Json, Form, GET_NO_ENCOLD
+        Get, Json, Form, GET_NO_ENCODE
     }
 
     private static void initSSL(HttpsURLConnection httpsURLConnection, InputStream inputStream) throws Exception {

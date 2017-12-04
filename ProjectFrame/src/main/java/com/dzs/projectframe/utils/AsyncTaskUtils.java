@@ -17,14 +17,14 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
 
     private String taskId;
     private HttpUtils.HttpType httpType;
-    private boolean reflsh;//强制刷新
+    private boolean refresh;//强制刷新
     private boolean saveCache;//是否进行数据缓存
     private ArrayList<OnNetReturnListener> dataReturnListeners;
 
-    public AsyncTaskUtils(String taskId, HttpUtils.HttpType httpType, boolean saveCache, boolean reflsh, OnNetReturnListener... dataReturnListener) {
+    public AsyncTaskUtils(String taskId, HttpUtils.HttpType httpType, boolean saveCache, boolean refresh, OnNetReturnListener... dataReturnListener) {
         this.taskId = taskId;
         this.httpType = httpType;
-        this.reflsh = reflsh;
+        this.refresh = refresh;
         this.saveCache = saveCache;
         dataReturnListeners = new ArrayList<>();
         if (dataReturnListener != null) Collections.addAll(dataReturnListeners, dataReturnListener);
@@ -35,7 +35,7 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
     }
 
     public void removeDataReturnListener(OnNetReturnListener dataReturnListener) {
-        dataReturnListeners.remove(dataReturnListener);
+        if (dataReturnListener != null && dataReturnListeners != null && dataReturnListeners.contains(dataReturnListener)) dataReturnListeners.remove(dataReturnListener);
     }
 
     @Override
@@ -53,22 +53,22 @@ public class AsyncTaskUtils extends AsyncTask<Object, Integer, LibEntity> {
                 case Get:
                     String url = StringUtils.mapToUrl(params[0].toString(), (Map<String, Object>) params[2]);
                     cacheKey = saveCache ? StringUtils.mapToCatchUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]) : "";
-                    libEntity = HttpUtils.httpURLConnect_Get(url, (InputStream) params[1], saveCache, reflsh, cacheKey);
+                    libEntity = HttpUtils.httpURLConnect_Get(url, (InputStream) params[1], saveCache, refresh, cacheKey);
                     break;
                 case Json:
                     cacheKey = saveCache ? StringUtils.mapToCatchUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]) : "";
                     libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (InputStream) params[1], (Map<String, Object>) params[2], (Upload[]) params[4],
-                            saveCache, reflsh, cacheKey, HttpUtils.HttpType.Json);
+                            saveCache, refresh, cacheKey, HttpUtils.HttpType.Json);
                     break;
                 case Form:
                     cacheKey = saveCache ? StringUtils.mapToCatchUrl(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]) : "";
                     libEntity = HttpUtils.httpURLConnect_Post(params[0].toString(), (InputStream) params[1], (Map<String, Object>) params[2], (Upload[]) params[4],
-                            saveCache, reflsh, cacheKey, HttpUtils.HttpType.Form);
+                            saveCache, refresh, cacheKey, HttpUtils.HttpType.Form);
                     break;
-                case GET_NO_ENCOLD:
+                case GET_NO_ENCODE:
                     String url2 = StringUtils.mapToUrlNoEncode(params[0].toString(), (Map<String, Object>) params[2]);
                     cacheKey = saveCache ? StringUtils.mapToCatchUrlNoEncode(params[0].toString(), (Map<String, Object>) params[2], (String[]) params[3]) : "";
-                    libEntity = HttpUtils.httpURLConnect_Get(url2, (InputStream) params[1], saveCache, reflsh, cacheKey);
+                    libEntity = HttpUtils.httpURLConnect_Get(url2, (InputStream) params[1], saveCache, refresh, cacheKey);
                     break;
             }
         } catch (UnsupportedEncodingException e) {

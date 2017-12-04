@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import com.dzs.projectframe.adapter.ViewHolder;
+import com.dzs.projectframe.adapter.abslistview.MultiItemTypeSupport;
 import com.dzs.projectframe.utils.LogUtils;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
     protected ViewHolder viewHolder;
     protected View loadMoreView;
     protected boolean showLoadMore = false;
+    protected MultiItemTypeSupport<T> multiItemTypeSupport;
 
     protected abstract void convert(ViewHolder holder, T t);
 
@@ -41,10 +43,23 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
         this.layoutResId = layoutResId;
     }
 
+    public BaseUniversalAdapter(Context context, List<T> data, MultiItemTypeSupport<T> multiItemTypeSupport) {
+        this.data = data == null ? new ArrayList<T>() : new ArrayList<>(data);
+        this.context = context;
+        if (multiItemTypeSupport == null) throw new IllegalArgumentException("the multiItemTypeSupport can not be null.");
+        this.multiItemTypeSupport = multiItemTypeSupport;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType != 0) viewHolder = ViewHolder.get(context, null, parent, layoutResId);
-        else viewHolder = loadMoreView != null ? ViewHolder.get(context, loadMoreView) : createLoadMoreViewHolder();
+        if (viewType != 0) {
+            if (multiItemTypeSupport != null) {
+                layoutResId = multiItemTypeSupport.getLayoutId(viewType, null);
+                viewHolder = ViewHolder.get(context, null, parent, layoutResId);
+            }else{
+                viewHolder = ViewHolder.get(context, null, parent, layoutResId);
+            }
+        } else viewHolder = loadMoreView != null ? ViewHolder.get(context, loadMoreView) : createLoadMoreViewHolder();
         return viewHolder;
     }
 
@@ -62,7 +77,7 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
 
     @Override
     public int getItemViewType(int position) {
-        return position >= data.size() ? 0 : 1;
+        return position >= data.size() ? 0 :multiItemTypeSupport != null? multiItemTypeSupport.getItemViewType(position, data.get(position)):1;
     }
 
     @Override
@@ -129,6 +144,9 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
         notifyDataSetChanged();
     }
 
+    public ArrayList<T> getAllData() {
+        return (ArrayList<T>) data;
+    }
     public boolean contains(T elem) {
         return data.contains(elem);
     }

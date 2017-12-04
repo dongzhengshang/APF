@@ -25,6 +25,7 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.CheckedTextView;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -115,6 +116,19 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     public ViewHolder setText(int viewId, CharSequence value) {
         TextView view = retrieveView(viewId);
         view.setText(value);
+        return this;
+    }
+
+    /**
+     * Will set the hint of a EditText.
+     *
+     * @param viewId The view id.
+     * @param value  The text to put in the text view.
+     * @return The ViewHolder for chaining.
+     */
+    public ViewHolder setHint(int viewId, CharSequence value) {
+        EditText view = retrieveView(viewId);
+        view.setHint(value);
         return this;
     }
 

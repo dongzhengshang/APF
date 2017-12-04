@@ -6,6 +6,10 @@ import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+
+import com.dzs.projectframe.base.ProjectContext;
 
 import java.lang.reflect.Field;
 
@@ -27,6 +31,18 @@ public class ScreenUtils {
      */
     public static int dip2px(Context context, float dpValue) {
         Resources r = context.getResources();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, r.getDisplayMetrics());
+        return (int) px;
+    }
+
+    /**
+     * dp转px
+     *
+     * @param dpValue dp
+     * @return int
+     */
+    public static int dip2px( float dpValue) {
+        Resources r = ProjectContext.appContext.getResources();
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, r.getDisplayMetrics());
         return (int) px;
     }
@@ -66,6 +82,18 @@ public class ScreenUtils {
         float fontScale = context.getApplicationContext().getResources().getDisplayMetrics().scaledDensity;
         return (int) (spValue * fontScale + 0.5f);
     }
+
+    /**
+     * sp转px
+     *
+     * @param spValue sp
+     * @return int
+     */
+    public static int sp2px( float spValue) {
+        float fontScale = ProjectContext.appContext.getApplicationContext().getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
+
 
     /**
      * 获取屏幕宽度
@@ -163,4 +191,28 @@ public class ScreenUtils {
         view.measure(w, h);
         return view.getMeasuredHeight();
     }
+
+    /**
+     * 计算ListView总高度
+     *
+     * @param listView
+     * @return
+     */
+    public static int getListViewTotalHieght(ListView listView) {
+        int totalHeight = 0;
+
+        // 获取ListView对应的Adapter
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            return 0;
+        }
+        for (int i = 0; i < listAdapter.getCount(); i++) { // listAdapter.getCount()返回数据项的数目
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(0, 0); // 计算子项View 的宽高
+            totalHeight += listItem.getMeasuredHeight(); // 统计所有子项的总高度
+        }
+
+        return totalHeight;
+    }
+
 }

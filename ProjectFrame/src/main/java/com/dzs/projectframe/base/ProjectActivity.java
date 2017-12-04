@@ -26,6 +26,7 @@ import com.dzs.projectframe.utils.FileUtils;
 import com.dzs.projectframe.utils.LogUtils;
 import com.dzs.projectframe.utils.SharedPreferUtils;
 import com.dzs.projectframe.utils.ActivityUtils;
+import com.dzs.projectframe.utils.SystemUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -133,23 +134,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     //--------------------------权限管理-需要重写onRequestPermissionsResult----------------------------
     //判断是否授权,批量处理
     public boolean isPermissionGranted(int questCode, String... permArray) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        //获得批量请求但被禁止的权限列表
-        List<String> deniedPerms = new ArrayList<>();
-        for (int i = 0; permArray != null && i < permArray.length; i++) {
-            if (PackageManager.PERMISSION_GRANTED != checkSelfPermission(permArray[i])) {
-                deniedPerms.add(permArray[i]);
-            }
-        }
-        //进行批量请求
-        int denyPermNum = deniedPerms.size();
-        if (denyPermNum != 0) {
-            requestPermissions(deniedPerms.toArray(new String[denyPermNum]), questCode);
-            return false;
-        }
-        return true;
+        return SystemUtils.isPermissionGranted(this, questCode, permArray);
     }
 
     //------------------相机操作相关------------------------

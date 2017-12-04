@@ -11,6 +11,8 @@ import android.text.TextUtils;
 import com.dzs.projectframe.base.ProjectContext;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -97,7 +99,7 @@ public class BitmapUtils {
     /*根据指定比例压缩，从流中获取图片*/
     @SuppressWarnings("deprecation")
     public static Bitmap decodeSampledBitmapFromStream(InputStream is, int reqWidth, int reqHeight) {
-        final BitmapFactory.Options options = new BitmapFactory.Options();
+        BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         options.inPurgeable = true;
         BitmapFactory.decodeStream(is, null, options);
@@ -105,7 +107,7 @@ public class BitmapUtils {
         options.inJustDecodeBounds = false;
         try {
             return BitmapFactory.decodeStream(is, null, options);
-        } catch (OutOfMemoryError e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -114,7 +116,7 @@ public class BitmapUtils {
     /*根据指定比例压缩，从文件中获取图片*/
     @SuppressWarnings("deprecation")
     public static Bitmap decodeSampledBitmapFromDescriptor(FileDescriptor fileDescriptor, int reqWidth, int reqHeight) {
-        final BitmapFactory.Options options = new BitmapFactory.Options();
+        BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         options.inPurgeable = true;
         BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
@@ -131,7 +133,7 @@ public class BitmapUtils {
     /*根据指定压缩比例压缩，从数组中获取图片*/
     @SuppressWarnings("deprecation")
     public static Bitmap decodeSampledBitmapFromByteArray(byte[] data, int offset, int length, int reqWidth, int reqHeight) {
-        final BitmapFactory.Options options = new BitmapFactory.Options();
+        BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         options.inPurgeable = true;
         BitmapFactory.decodeByteArray(data, offset, length, options);
@@ -158,5 +160,31 @@ public class BitmapUtils {
             }
         }
         return inSampleSize;
+    }
+
+    /*图片质量压缩*/
+    public static String compressAndGenImage(Bitmap image, String outPath, int maxSize) {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        int options = 100;
+        image.compress(CompressFormat.JPEG, options, os);
+        while ((os.toByteArray().length / 1024) > maxSize && options > 0) {
+            LogUtils.debug("当前大小：" + os.toByteArray().length / 1024);
+            os.reset();
+            options -= 10;
+            image.compress(CompressFormat.JPEG, options, os);
+        }
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(outPath);
+            fos.write(os.toByteArray());
+            fos.flush();
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            outPath = "";
+        } finally {
+            FileUtils.closeIO(fos);
+        }
+        return outPath;
     }
 }

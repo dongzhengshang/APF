@@ -31,6 +31,13 @@ public class ActivityUtils {
                 }
             }
         }
+        if (activityStack == null){
+            synchronized (ActivityUtils.class) {
+                if (activityStack == null) {
+                    activityStack =new Stack<>();
+                }
+            }
+        }
         return activityUtils;
     }
 
@@ -50,7 +57,7 @@ public class ActivityUtils {
      * @return Activity
      */
     public Activity currentActivity() {
-        return activityStack.lastElement();
+        return activityStack != null?activityStack.lastElement():null;
     }
 
     /**

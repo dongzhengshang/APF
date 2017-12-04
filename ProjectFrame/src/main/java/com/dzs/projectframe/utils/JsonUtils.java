@@ -29,12 +29,17 @@ public class JsonUtils {
         JSONObject jsonObject = new JSONObject();
         for (Object o : params.entrySet()) {
             Map.Entry entry = (Map.Entry) o;
-            if (entry.getValue() instanceof Map && entry.getValue() != null) {
+            if (entry.getValue() instanceof Map) {
                 jsonObject.put((String) entry.getKey(), mapToJsonStr(Map.class.cast(entry.getValue())));
             } else if (entry.getValue() instanceof List) {
                 JSONArray jsonArray = new JSONArray();
-                for (int i = 0; i < ((List) entry.getValue()).size(); i++) {
-                    jsonArray.put(i, mapToJsonStr((Map<?, ?>) ((List) entry.getValue()).get(i)));
+                List list = (List) entry.getValue();
+                for (int i = 0; i < list.size(); i++) {
+                    if (((List) entry.getValue()).get(i) instanceof Map) {
+                        jsonArray.put(i, mapToJsonStr((Map<?, ?>) list.get(i)));
+                    } else {
+                        jsonArray.put(i, list.get(i));
+                    }
                 }
                 jsonObject.put((String) entry.getKey(), jsonArray);
             } else {
@@ -87,18 +92,20 @@ public class JsonUtils {
      *
      * @param jsonStr json字符串
      * @return List
-     * @throws Exception
      */
-    public static List<HashMap<String, Object>> getMapList(String jsonStr) throws JSONException {
+    private static List<?> getMapList(String jsonStr) throws JSONException {
         ArrayList<HashMap<String, Object>> list = new ArrayList<>();
+        ArrayList<String> list1 = new ArrayList<>();
         JSONArray ja = new JSONArray(jsonStr);
         for (int j = 0; j < ja.length(); j++) {
             Object value = ja.get(j);
             if (value instanceof JSONObject) {
                 HashMap<String, Object> map = getMap(value + "");
                 list.add(map);
+            } else {
+                list1.add(value + "");
             }
         }
-        return list;
+        return list.size() > list1.size() ? list : list1;
     }
 }

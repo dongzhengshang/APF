@@ -28,22 +28,24 @@ public class ProjectControl {
      * @param uploads            需要上传的文件
      * @param httpType           访问方式
      * @param saveCache          是否需要进行缓存
-     * @param reflsh             是否需要进行强制刷新
+     * @param refresh             是否需要进行强制刷新
      * @param netReturnListeners 回调
      */
-    private void getData(String taskId, String url, InputStream inputStream, Map<String, Object> params, String[] keys, Upload[] uploads, HttpUtils.HttpType httpType, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
-        AsyncTaskUtils ansyTaskUtils = new AsyncTaskUtils(taskId, httpType, saveCache, reflsh, netReturnListeners);
-        ansyTaskUtils.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,url, inputStream,params, keys, uploads);
+    private void getData(String taskId, String url, InputStream inputStream, Map<String, Object> params, String[] keys, Upload[] uploads, HttpUtils.HttpType httpType, boolean saveCache, boolean
+            refresh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
+        new AsyncTaskUtils(taskId, httpType, saveCache, refresh, netReturnListeners).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, inputStream, params, keys, uploads);
     }
-    protected void getDataByGetNoEncold(String taskId, String url,Map<String, Object> params, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
-        getData(taskId, url, null, params, null, null, HttpUtils.HttpType.GET_NO_ENCOLD, false, false, netReturnListeners);
+
+    protected void getDataByGetNoEncode(String taskId, String url, Map<String, Object> params, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
+        getData(taskId, url, null, params, null, null, HttpUtils.HttpType.GET_NO_ENCODE, false, false, netReturnListeners);
     }
 
     protected void getDataByGet(String taskId, String url, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
         getDataByGet(taskId, url, null, params, keys, saveCache, reflsh, netReturnListeners);
     }
 
-    protected void getDataByGet(String taskId, String url, InputStream inputStream, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
+    protected void getDataByGet(String taskId, String url, InputStream inputStream, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils
+            .OnNetReturnListener... netReturnListeners) {
         getData(taskId, url, inputStream, params, keys, null, HttpUtils.HttpType.Get, saveCache, reflsh, netReturnListeners);
     }
 
@@ -51,7 +53,8 @@ public class ProjectControl {
         getDataByJson(taskId, url, null, params, keys, saveCache, reflsh, netReturnListeners);
     }
 
-    protected void getDataByJson(String taskId, String url, InputStream inputStream, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
+    protected void getDataByJson(String taskId, String url, InputStream inputStream, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils
+            .OnNetReturnListener... netReturnListeners) {
         getData(taskId, url, inputStream, params, keys, null, HttpUtils.HttpType.Json, saveCache, reflsh, netReturnListeners);
     }
 
@@ -59,7 +62,8 @@ public class ProjectControl {
         getDataByForm(taskId, url, null, params, keys, saveCache, reflsh, netReturnListeners);
     }
 
-    protected void getDataByForm(String taskId, String url, InputStream inputStream, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
+    protected void getDataByForm(String taskId, String url, InputStream inputStream, Map<String, Object> params, String[] keys, boolean saveCache, boolean reflsh, AsyncTaskUtils
+            .OnNetReturnListener... netReturnListeners) {
         getData(taskId, url, inputStream, params, keys, null, HttpUtils.HttpType.Form, saveCache, reflsh, netReturnListeners);
     }
 

@@ -1,12 +1,15 @@
 package com.dzs.projectframe.utils;
 
 import android.annotation.SuppressLint;
+import android.text.TextUtils;
 
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -212,13 +215,227 @@ public class DateUtils {
         return date;
     }
 
-    /*判断是否为当天*/
+   /* *//*判断是否为当天*//*
     public static boolean isToday(long time) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date(System.currentTimeMillis()));
         Calendar calendar2 = Calendar.getInstance();
         calendar2.setTime(new Date(time));
         return calendar.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) && calendar.get(Calendar.DAY_OF_YEAR) == calendar2.get(Calendar.DAY_OF_YEAR);
+    }*/
+
+    public static boolean isToday(long time){
+        SimpleDateFormat fmt=new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date(time);
+        if(fmt.format(date).toString().equals(fmt.format(new Date()).toString())){//格式化为相同格式
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    /**
+     * 获取日期
+     *
+     * @param year
+     * @param month
+     * @param day
+     * @return yyyy-mm-dd
+     */
+    public static String getDate(String year, String month, String day) {
+        DecimalFormat mFormat = new DecimalFormat("00");
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append(year);
+        stringBuffer.append("-");
+        stringBuffer.append(mFormat.format(Double.valueOf(month)));
+        stringBuffer.append("-");
+        stringBuffer.append(mFormat.format(Double.valueOf(day)));
+        stringBuffer.append(" ");
+        return stringBuffer.toString();
+    }
+
+    /**
+     * 指定日期是否晚于当前日期
+     *
+     * @param year
+     * @param month
+     * @param day
+     * @return
+     */
+    public static boolean isTimeAfter(String year, String month, String day) {
+        Date nowdate = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+        Date d;
+        try {
+            d = sdf.parse(getDate(year, month, day));
+            boolean flag = d.before(nowdate);
+            if (flag) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 格式化日期
+     *
+     * @param date 20170518010203
+     * @return 2017-05-18 01:02:03
+     */
+    public static String getDateFormat(String date) {
+        if (TextUtils.isEmpty(date.trim())) return "";
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append(date.substring(0, 4)).append("-");
+        stringBuffer.append(date.substring(4, 6)).append("-");
+        stringBuffer.append(date.substring(6, 8)).append(" ");
+        stringBuffer.append(date.substring(8, 10)).append(":");
+        stringBuffer.append(date.substring(10, 12)).append(":");
+        stringBuffer.append(date.substring(12, date.length()));
+        return stringBuffer.toString();
+    }
+
+    /**
+     * 时间戳转时间
+     */
+    public static String timestampToTime(long timestamp) {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        return format.format(timestamp * 1000);
+    }
+
+
+    public static String getYear() {
+        Calendar calendar = Calendar.getInstance();
+        return String.valueOf(calendar.get(Calendar.YEAR));
+    }
+
+    public static String getMonth() {
+        Calendar calendar = Calendar.getInstance();
+        DecimalFormat mFormat = new DecimalFormat("00");
+        return mFormat.format(Double.valueOf(calendar.get(Calendar.MONTH) + 1));
+    }
+
+    public static String getDay() {
+        Calendar calendar = Calendar.getInstance();
+        DecimalFormat mFormat = new DecimalFormat("00");
+        return mFormat.format(Double.valueOf(calendar.get(Calendar.DATE)));
+    }
+
+    /**
+     * 获取当前日期
+     *
+     * @return
+     */
+    public static String getCurrentData() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+        return formatter.format(curDate);
+    }
+
+    /**
+     * Date或者String转化为时间戳
+     *
+     * @param data
+     * @return
+     */
+    public static long dataToTimestamp(String data) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            date = format.parse(data);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date.getTime() / 1000;
+    }
+
+    /**
+     * 判断某一时间是否在一个区间内
+     *
+     * @param sourceTime 时间区间,半闭合,如[10:00-20:00)
+     * @param curTime    需要判断的时间 如10:00
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public static boolean isInTime(String sourceTime, String curTime) {
+        if (sourceTime == null || !sourceTime.contains("-") || !sourceTime.contains(":")) {
+            throw new IllegalArgumentException("Illegal Argument arg:" + sourceTime);
+        }
+        if (curTime == null || !curTime.contains(":")) {
+            throw new IllegalArgumentException("Illegal Argument arg:" + curTime);
+        }
+        String[] args = sourceTime.split("-");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        try {
+            long now = sdf.parse(curTime).getTime();
+            long start = sdf.parse(args[0]).getTime();
+            long end = sdf.parse(args[1]).getTime();
+            if (args[1].equals("00:00")) {
+                args[1] = "24:00";
+            }
+            if (end < start) {
+                if (now >= end && now < start) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                if (now >= start && now < end) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("Illegal Argument arg:" + sourceTime);
+        }
+    }
+
+    /**
+     * 时间戳转换成字符窜
+     *
+     * @param milSecond
+     * @param pattern
+     * @return
+     */
+    public static String getDateToString(long milSecond, String pattern) {
+        Date date = new Date(milSecond);
+        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        return format.format(date);
+    }
+
+    /**
+     * 根据时间戳获取当天秒数
+     *
+     * @param imestamp 日期
+     * @returnt
+     */
+    public static int getSeconds(long imestamp) {
+        String time =  getDateToString(imestamp,"yyyy-MM-dd HH:mm:ss");
+        String [] times = time.split(" ")[1].split(":");
+        int hour = Integer.parseInt(times[0]);
+        int minute = Integer.parseInt(times[1]);
+        int seconds = Integer.parseInt(times[2]);
+        return hour * 3600 + minute * 60 + seconds;
+    }
+
+    /**
+     * 获取时间
+     *
+     * @param totalTime 秒数
+     * @return 00:00
+     */
+    public static String getTime(int totalTime) {
+        DecimalFormat mFormat = new DecimalFormat("00");
+        String min = mFormat.format(totalTime / 60);
+        String second = mFormat.format(totalTime % 60);
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append(min).append(":").append(second);
+        return stringBuffer.toString();
     }
 
 }
