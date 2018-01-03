@@ -1,12 +1,10 @@
 package com.dzs.projectframe.base;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.MediaStore;
@@ -29,15 +27,13 @@ import com.dzs.projectframe.utils.ActivityUtils;
 import com.dzs.projectframe.utils.SystemUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author DZS dzsdevelop@163.com
  * @version V1.0
  * @date 2016/8/19.
  */
-public abstract class ProjectActivity extends FragmentActivity implements View.OnClickListener, AsyncTaskUtils.OnNetReturnListener, Receiver.OnBroadcaseReceiverListener {
+public abstract class ProjectActivity extends FragmentActivity implements View.OnClickListener, AsyncTaskUtils.OnNetReturnListener, Receiver.OnBroadcastReceiverListener {
     public ViewHolder viewUtils;
     protected Resources resources;
     protected SharedPreferUtils sharedPreferUtils;

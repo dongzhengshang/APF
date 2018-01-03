@@ -63,12 +63,12 @@ public class ProjectContext extends Application {
     }
 
     /*添加广播监听*/
-    public void addReceiver(Receiver.OnBroadcaseReceiverListener receiverListener) {
+    public void addReceiver(Receiver.OnBroadcastReceiverListener receiverListener) {
         receiver.addReceiver(receiverListener);
     }
 
     /*移除广播监听*/
-    public void removeReceiver(Receiver.OnBroadcaseReceiverListener receiverListener) {
+    public void removeReceiver(Receiver.OnBroadcastReceiverListener receiverListener) {
         receiver.removeReceiver(receiverListener);
     }
 

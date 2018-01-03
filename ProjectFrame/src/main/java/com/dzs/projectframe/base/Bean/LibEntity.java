@@ -15,13 +15,13 @@ import java.util.HashMap;
 public class LibEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     private String taskId;
-    private String cachKey;// 缓存键值
+    private String cacheKey;// 缓存键值
     private long saveDate; // 缓存数据的时间
     private long shelfLife; // 有效期,System.currentTimeMillis()
     private Cfg.NetResultType netResultType;//请求结果
     private String resultString;// 数据(json字符串格式)
     private HashMap<String, Object> resultMap;//数据(map格式)
-    private boolean hasCach = false;//是否有缓存数据
+    private boolean hasCache = false;//是否有缓存数据
     private Object extendData;//扩展数据
 
     /**
@@ -33,12 +33,12 @@ public class LibEntity implements Serializable {
         return this.shelfLife < System.currentTimeMillis();
     }
 
-    public String getCachKey() {
-        return cachKey;
+    public String getCacheKey() {
+        return cacheKey;
     }
 
-    public void setCachKey(String cachKey) {
-        this.cachKey = cachKey;
+    public void setCacheKey(String cacheKey) {
+        this.cacheKey = cacheKey;
     }
 
     public String getResultString() {
@@ -89,12 +89,12 @@ public class LibEntity implements Serializable {
         this.taskId = taskId;
     }
 
-    public boolean isHasCach() {
-        return hasCach;
+    public boolean isHasCache() {
+        return hasCache;
     }
 
-    public void setHasCach(boolean hasCach) {
-        this.hasCach = hasCach;
+    public void setHasCache(boolean hasCache) {
+        this.hasCache = hasCache;
     }
 
     public Object getExtendData() {

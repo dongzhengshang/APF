@@ -32,7 +32,6 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.dzs.projectframe.utils.SystemUtils;
 
 import java.util.List;
 

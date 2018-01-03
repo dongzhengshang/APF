@@ -17,7 +17,7 @@ import com.dzs.projectframe.broadcast.Receiver;
  * @version 1.0
  * @date 2015-6-17 下午3:47:45
  */
-public abstract class ProjectFragment extends Fragment implements Receiver.OnBroadcaseReceiverListener {
+public abstract class ProjectFragment extends Fragment implements Receiver.OnBroadcastReceiverListener {
     protected abstract int setLayoutById();
 
     protected View setLayoutByView() {

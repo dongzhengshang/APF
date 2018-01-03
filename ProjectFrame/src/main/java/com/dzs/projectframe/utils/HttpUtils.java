@@ -7,7 +7,6 @@ import com.dzs.projectframe.base.Bean.Upload;
 import com.dzs.projectframe.base.ProjectContext;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -49,6 +48,9 @@ public class HttpUtils {
     private static String BOUNDARY = UUID.randomUUID().toString();
     private static String twoHyphens = "--";
     private static String lineEnd = System.getProperty("line.separator");
+    private static String HTTPS = "https";
+    private static String GET = "GET";
+    private static String POST = "POST";
 
     public static HttpURLConnection getHttpUrlConnect(String urlString, String method) throws IOException {
         HttpURLConnection connection;
@@ -74,7 +76,7 @@ public class HttpUtils {
 
     public static void setConnect(URLConnection connection, String method) throws IOException {
         connection.setDoInput(true);
-        connection.setDoOutput(method.equals("POST"));
+        connection.setDoOutput(method.equals(POST));
         connection.setUseCaches(false);
         connection.setConnectTimeout(TIMEOUT_CONNECTION);
         connection.setReadTimeout(TIMEOUT_READ);
@@ -114,23 +116,25 @@ public class HttpUtils {
         HttpsURLConnection httpsURLConnection = null;
         if (!SystemUtils.checkNetConttent(ProjectContext.appContext)) {
             LibEntity tempCache = getCatch(cachkey, true);
-            libEntity = saveCache ? tempCache != null ? tempCache : new LibEntity() : new LibEntity();
-            libEntity.setHasCach(tempCache != null);
+            libEntity = tempCache != null ? tempCache : new LibEntity();
+            libEntity.setHasCache(tempCache != null);
             libEntity.setNetResultType(Cfg.NetResultType.NET_NOT_CONNECT);
             return libEntity;
         }
         // 如果没有开启强制刷新,先读取缓存
-        if (!reflsh && saveCache && getCatch(cachkey, false) != null) {
+        if (!reflsh && saveCache) {
             libEntity = getCatch(cachkey, false);
-            libEntity.setNetResultType(Cfg.NetResultType.NET_CONNECT_SUCCESS);
-            return libEntity;
+            if (libEntity != null) {
+                libEntity.setNetResultType(Cfg.NetResultType.NET_CONNECT_SUCCESS);
+                return libEntity;
+            }
         }
-        boolean isHttps = url.startsWith("https");
+        boolean isHttps = url.startsWith(HTTPS);
         //进行三次访问网络
         do {
             try {
-                connection = isHttps ? null : getHttpUrlConnect(url, "GET");
-                httpsURLConnection = isHttps ? getHttpsUrlConnect(url, "GET", inputStream) : null;
+                connection = isHttps ? null : getHttpUrlConnect(url, GET);
+                httpsURLConnection = isHttps ? getHttpsUrlConnect(url, GET, inputStream) : null;
                 int statueCode = isHttps ? httpsURLConnection.getResponseCode() : connection.getResponseCode();
                 if (statueCode != HttpURLConnection.HTTP_OK) {
                     time++;
@@ -147,7 +151,7 @@ public class HttpUtils {
                 LogUtils.info("Network-URL(GET)地址：" + url + "\n返回状态值" + statueCode + "\n返回值：" + resultString);
                 libEntity.setResultString(resultString);
                 libEntity.setResultMap(JsonUtils.getMap(resultString));
-                libEntity.setCachKey(cachkey);
+                libEntity.setCacheKey(cachkey);
                 libEntity.setShelfLife(System.currentTimeMillis() + Cfg.getCacheTime());
                 libEntity.setNetResultType(Cfg.NetResultType.NET_CONNECT_SUCCESS);
                 if (saveCache) DiskLruCacheHelpUtils.getInstance().putCatch(cachkey, libEntity);
@@ -180,7 +184,7 @@ public class HttpUtils {
         if (libEntity == null) {
             LibEntity tempCache = getCatch(cachkey, true);
             libEntity = tempCache == null ? new LibEntity() : tempCache;
-            libEntity.setHasCach(tempCache != null);
+            libEntity.setHasCache(tempCache != null);
             libEntity.setNetResultType(Cfg.NetResultType.NET_CONNECT_FAIL);
         }
         return libEntity;
@@ -203,26 +207,26 @@ public class HttpUtils {
         HttpsURLConnection httpsURLConnection = null;
         if (!SystemUtils.checkNetConttent(ProjectContext.appContext)) {
             LibEntity tempCache = getCatch(cachkey, true);
-            libEntity = saveCache ? tempCache != null ? tempCache : new LibEntity() : new LibEntity();
-            libEntity.setHasCach(tempCache != null);
+            libEntity = tempCache != null ? tempCache : new LibEntity();
+            libEntity.setHasCache(tempCache != null);
             libEntity.setNetResultType(Cfg.NetResultType.NET_NOT_CONNECT);
             return libEntity;
         }
         // 如果没有开启强制刷新,先读取缓存
-        if (!reflsh && saveCache && getCatch(cachkey, false) != null) {
+        if (!reflsh) {
             libEntity = getCatch(cachkey, false);
             if (libEntity != null) {
                 libEntity.setNetResultType(Cfg.NetResultType.NET_CONNECT_SUCCESS);
                 return libEntity;
             }
         }
-        boolean isHttps = url.startsWith("https");
+        boolean isHttps = url.startsWith(HTTPS);
         //进行三次访问网络
         do {
             try {
                 LogUtils.info("Network-URL(POST_FORMS)：" + StringUtils.mapToUrl(url, params));
-                connection = isHttps ? null : getHttpUrlConnect(url, "POST");
-                httpsURLConnection = isHttps ? getHttpsUrlConnect(url, "POST", inputStream) : null;
+                connection = isHttps ? null : getHttpUrlConnect(url, POST);
+                httpsURLConnection = isHttps ? getHttpsUrlConnect(url, POST, inputStream) : null;
                 DataOutputStream dataOutputStream = new DataOutputStream(isHttps ? httpsURLConnection.getOutputStream() : connection.getOutputStream());
                 switch (httpType) {
                     case Json:
@@ -254,7 +258,7 @@ public class HttpUtils {
                 LogUtils.info("Network-URL(POST_FORMS)地址：" + StringUtils.mapToUrl(url, params) + "\n返回状态值: " + statueCode + "\n返回值：" + resultString);
                 libEntity.setResultString(resultString);
                 libEntity.setResultMap(JsonUtils.getMap(resultString));
-                libEntity.setCachKey(cachkey);
+                libEntity.setCacheKey(cachkey);
                 libEntity.setShelfLife(System.currentTimeMillis() + Cfg.getCacheTime());
                 libEntity.setNetResultType(Cfg.NetResultType.NET_CONNECT_SUCCESS);
                 if (saveCache) {
@@ -290,7 +294,7 @@ public class HttpUtils {
         if (libEntity == null) {
             LibEntity tempCache = getCatch(cachkey, true);
             libEntity = tempCache == null ? new LibEntity() : tempCache;
-            libEntity.setHasCach(tempCache != null);
+            libEntity.setHasCache(tempCache != null);
             libEntity.setNetResultType(Cfg.NetResultType.NET_CONNECT_FAIL);
         }
         return libEntity;

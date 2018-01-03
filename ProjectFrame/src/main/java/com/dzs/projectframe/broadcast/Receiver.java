@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class Receiver extends BroadcastReceiver {
     public final static String ACTION = "ProjectFrame.BROADCAST";
-    private List<OnBroadcaseReceiverListener> list;
+    private List<OnBroadcastReceiverListener> list;
 
     public Receiver() {
         list = new ArrayList<>();
@@ -28,19 +28,19 @@ public class Receiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(ACTION)) {
             LibEntity libEntity = (LibEntity) intent.getSerializableExtra(LibEntity.class.getName());
-            for (OnBroadcaseReceiverListener listener : list) listener.onDateReceiver(libEntity);
+            for (OnBroadcastReceiverListener listener : list) listener.onDateReceiver(libEntity);
         }
     }
 
-    public interface OnBroadcaseReceiverListener {
+    public interface OnBroadcastReceiverListener {
         void onDateReceiver(LibEntity libEntity);
     }
 
-    public void addReceiver(OnBroadcaseReceiverListener listener) {
+    public void addReceiver(OnBroadcastReceiverListener listener) {
         if (list != null) list.add(listener);
     }
 
-    public void removeReceiver(OnBroadcaseReceiverListener listener) {
+    public void removeReceiver(OnBroadcastReceiverListener listener) {
         if (list != null && list.contains(listener)) list.remove(listener);
     }
 
