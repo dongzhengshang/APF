@@ -5,7 +5,7 @@ import android.view.View;
 import com.dzs.marketing.R;
 import com.dzs.marketing.ui.TimeScale.Scale;
 import com.dzs.marketing.ui.TimeScale.TimeScaleView;
-import com.dzs.projectframe.base.Bean.LibEntity;
+import com.dzs.projectframe.base.bean.LibEntity;
 import com.dzs.projectframe.base.ProjectActivity;
 
 import java.util.ArrayList;

@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.dzs.projectframe.base.Bean.LibEntity;
+import com.dzs.projectframe.base.bean.LibEntity;
 
 import java.util.ArrayList;
 import java.util.List;

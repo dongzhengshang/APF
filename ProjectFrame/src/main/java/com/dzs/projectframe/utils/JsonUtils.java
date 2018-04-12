@@ -26,17 +26,28 @@ public class JsonUtils {
      * @return json字符串
      */
     public static String mapToJsonStr(Map<?, ?> params) throws Exception {
+        JSONObject jsonObject = mapToJSONObject(params);
+        return jsonObject == null ? "" : jsonObject.toString();
+    }
+
+    /**
+     * 将Map转换为JSONObject
+     *
+     * @param params map
+     * @return JSONObject
+     */
+    public static JSONObject mapToJSONObject(Map<?, ?> params) throws Exception {
         JSONObject jsonObject = new JSONObject();
         for (Object o : params.entrySet()) {
             Map.Entry entry = (Map.Entry) o;
             if (entry.getValue() instanceof Map) {
-                jsonObject.put((String) entry.getKey(), mapToJsonStr(Map.class.cast(entry.getValue())));
+                jsonObject.put((String) entry.getKey(), mapToJSONObject(Map.class.cast(entry.getValue())));
             } else if (entry.getValue() instanceof List) {
                 JSONArray jsonArray = new JSONArray();
                 List list = (List) entry.getValue();
                 for (int i = 0; i < list.size(); i++) {
                     if (((List) entry.getValue()).get(i) instanceof Map) {
-                        jsonArray.put(i, mapToJsonStr((Map<?, ?>) list.get(i)));
+                        jsonArray.put(i, mapToJSONObject((Map<?, ?>) list.get(i)));
                     } else {
                         jsonArray.put(i, list.get(i));
                     }
@@ -46,7 +57,7 @@ public class JsonUtils {
                 jsonObject.put((String) entry.getKey(), entry.getValue());
             }
         }
-        return jsonObject.toString();
+        return jsonObject;
     }
 
 

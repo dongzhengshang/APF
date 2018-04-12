@@ -1,6 +1,6 @@
 package com.dzs.projectframe.utils;
 
-import com.dzs.projectframe.base.Bean.LibEntity;
+import com.dzs.projectframe.base.bean.LibEntity;
 import com.dzs.projectframe.base.ProjectContext;
 import com.dzs.projectframe.interf.Cache;
 import com.dzs.projectframe.utils.lib.DiskLruCache;

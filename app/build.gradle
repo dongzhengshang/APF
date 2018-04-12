@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "com.dzs.marketing"
-        minSdkVersion 17
-        targetSdkVersion 25
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
     }
@@ -21,7 +21,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:appcompat-v7:27.1.0'
+    compile 'com.android.support:design:27.1.0'
     compile project(':ProjectFrame')
 }

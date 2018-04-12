@@ -16,7 +16,7 @@ import android.view.WindowManager;
 import com.dzs.projectframe.Cfg;
 import com.dzs.projectframe.R;
 import com.dzs.projectframe.adapter.ViewHolder;
-import com.dzs.projectframe.base.Bean.LibEntity;
+import com.dzs.projectframe.base.bean.LibEntity;
 import com.dzs.projectframe.broadcast.Receiver;
 import com.dzs.projectframe.utils.AsyncTaskUtils;
 import com.dzs.projectframe.utils.DiskLruCacheHelpUtils;

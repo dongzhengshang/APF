@@ -6,7 +6,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.res.Resources;
 
-import com.dzs.projectframe.base.Bean.LibEntity;
+import com.dzs.projectframe.base.bean.LibEntity;
 import com.dzs.projectframe.broadcast.Receiver;
 import com.dzs.projectframe.utils.SharedPreferUtils;
 import com.dzs.projectframe.utils.SystemUtils;

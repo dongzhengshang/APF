@@ -143,18 +143,25 @@ public class ResultUtils {
      * @return Object
      */
     private static Object getObject(Map<?, ?> result, String key) {
-        if (result == null || result.isEmpty() || StringUtils.isEmpty(key)) return null;
-        if (result.containsKey(key)) return result.get(key);
-        else {
+        if (result == null || result.isEmpty() || StringUtils.isEmpty(key)) {
+            return null;
+        }
+        if (result.containsKey(key)) {
+            return result.get(key);
+        } else {
             for (Map.Entry<?, ?> entry : result.entrySet()) {
                 if (entry.getValue() instanceof Map) {
                     Object o = getObject(Map.class.cast(entry.getValue()), key);
-                    if (o != null) return o;
+                    if (o != null) {
+                        return o;
+                    }
                 } else if (entry.getValue() instanceof List) {
                     for (Object va : List.class.cast(entry.getValue())) {
                         if (va instanceof Map) {
                             Object o2 = getObject(Map.class.cast(va), key);
-                            if (o2 != null) return o2;
+                            if (o2 != null) {
+                                return o2;
+                            }
                         }
                     }
                 }
@@ -162,6 +169,7 @@ public class ResultUtils {
         }
         return null;
     }
+
 
     /**
      * 将map反射成数据Bean

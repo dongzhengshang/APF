@@ -1,4 +1,4 @@
-package com.dzs.projectframe.base.Bean;
+package com.dzs.projectframe.base.bean;
 
 import java.io.Serializable;
 

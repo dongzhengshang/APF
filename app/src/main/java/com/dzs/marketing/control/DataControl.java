@@ -1,6 +1,6 @@
 package com.dzs.marketing.control;
 
-import com.dzs.projectframe.control.ProjectControl;
+import com.dzs.projectframe.ctrl.ProjectCtrl;
 
 /**
  * 网络数据中心
@@ -9,7 +9,7 @@ import com.dzs.projectframe.control.ProjectControl;
  * @version V1.0
  * @date 2016/9/14.
  */
-public class DataControl extends ProjectControl {
+public class DataControl extends ProjectCtrl {
     public static DataControl dataControl;
 
     private DataControl() {

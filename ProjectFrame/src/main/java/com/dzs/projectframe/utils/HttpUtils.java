@@ -2,8 +2,8 @@ package com.dzs.projectframe.utils;
 
 
 import com.dzs.projectframe.Cfg;
-import com.dzs.projectframe.base.Bean.LibEntity;
-import com.dzs.projectframe.base.Bean.Upload;
+import com.dzs.projectframe.base.bean.LibEntity;
+import com.dzs.projectframe.base.bean.Upload;
 import com.dzs.projectframe.base.ProjectContext;
 
 import org.json.JSONException;

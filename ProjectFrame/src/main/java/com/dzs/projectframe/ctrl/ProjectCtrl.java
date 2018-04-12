@@ -1,8 +1,8 @@
-package com.dzs.projectframe.control;
+package com.dzs.projectframe.ctrl;
 
 import android.os.AsyncTask;
 
-import com.dzs.projectframe.base.Bean.Upload;
+import com.dzs.projectframe.base.bean.Upload;
 import com.dzs.projectframe.utils.AsyncTaskUtils;
 import com.dzs.projectframe.utils.HttpUtils;
 
@@ -16,7 +16,7 @@ import java.util.Map;
  * @version V1.0
  * @date 2016/9/12.
  */
-public class ProjectControl {
+public class ProjectCtrl {
     /**
      * 网络访问获取数据
      *

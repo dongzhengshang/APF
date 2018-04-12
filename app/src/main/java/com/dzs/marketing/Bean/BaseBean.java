@@ -1,6 +1,6 @@
 package com.dzs.marketing.Bean;
 
-import com.dzs.projectframe.base.Bean.LibEntity;
+import com.dzs.projectframe.base.bean.LibEntity;
 
 /**
  * @author DZS dzsdevelop@163.com

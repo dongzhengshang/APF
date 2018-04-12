@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dzs.projectframe.adapter.ViewHolder;
-import com.dzs.projectframe.base.Bean.LibEntity;
+import com.dzs.projectframe.base.bean.LibEntity;
 import com.dzs.projectframe.broadcast.Receiver;
 
 /**
