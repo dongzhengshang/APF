@@ -13,10 +13,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:27.1.1'
-    compile 'com.android.support:design:27.1.1'
-    compile 'com.android.support:recyclerview-v7:27.1.1'
-    compile 'com.android.support:percent:27.1.1'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api'com.android.support:appcompat-v7:27.1.1'
+    api 'com.android.support:design:27.1.1'
+    api 'com.android.support:recyclerview-v7:27.1.1'
+    api 'com.android.support:percent:27.1.1'
+    api 'com.github.bumptech.glide:glide:3.7.0'
 }

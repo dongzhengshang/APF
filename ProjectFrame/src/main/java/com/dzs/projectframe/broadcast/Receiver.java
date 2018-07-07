@@ -26,7 +26,7 @@ public class Receiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals(ACTION)) {
+        if (ACTION.equals(intent.getAction())) {
             LibEntity libEntity = (LibEntity) intent.getSerializableExtra(LibEntity.class.getName());
             for (OnBroadcastReceiverListener listener : list) listener.onDateReceiver(libEntity);
         }

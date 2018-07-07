@@ -68,7 +68,8 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
         setContentViewBefore();
         int layoutId = setContentById();
         View view = setContentByView();
-        if (layoutId <= 0 && view == null) throw new NullPointerException("layout can not be null.");
+        if (layoutId <= 0 && view == null)
+            throw new NullPointerException("layout can not be null.");
         viewUtils = layoutId > 0 ? ViewHolder.get(this, layoutId) : ViewHolder.get(this, view);
         setContentView(viewUtils.getView());
         setContentViewAfter();
@@ -108,23 +109,6 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     //设置全屏
     protected void setFullScream() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    //屏幕常亮
-    protected void acquireWakeLock() {
-        if (wakeLock == null) {
-            PowerManager powerManager = (PowerManager) (getSystemService(POWER_SERVICE));
-            wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "ProjectActivity");
-            wakeLock.acquire();
-        }
-    }
-
-    //释放
-    protected void releaseWakeLock() {
-        if (wakeLock != null && wakeLock.isHeld()) {
-            wakeLock.release();
-            wakeLock = null;
-        }
     }
 
     //--------------------------权限管理-需要重写onRequestPermissionsResult----------------------------
