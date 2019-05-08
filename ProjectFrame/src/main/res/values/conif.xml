@@ -7,7 +7,7 @@
     <!--连接超时时间-->
     <integer name="TIMEOUT_CONNECTION">3000</integer>
     <!--读取超时时间-->
-    <integer name="TIMEOUT_READ">10000</integer>
+    <integer name="TIMEOUT_READ">1000</integer>
     <!--网络访问失败时,重连次数-->
     <integer name="RETRY_TIME">3</integer>
     <!--网络访问提示-->

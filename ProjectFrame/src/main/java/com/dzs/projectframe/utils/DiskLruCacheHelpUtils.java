@@ -1,6 +1,6 @@
 package com.dzs.projectframe.utils;
 
-import com.dzs.projectframe.base.bean.LibEntity;
+import com.dzs.projectframe.bean.NetEntity;
 import com.dzs.projectframe.base.ProjectContext;
 import com.dzs.projectframe.interf.Cache;
 import com.dzs.projectframe.utils.lib.DiskLruCache;
@@ -20,7 +20,7 @@ import java.io.OutputStream;
  * @version V1.0
  * @date 2015-12-31 下午3:47:54
  */
-public class DiskLruCacheHelpUtils implements Cache<LibEntity> {
+public class DiskLruCacheHelpUtils implements Cache<NetEntity> {
     private static DiskLruCacheHelpUtils diskLruCacheHelpUtils;
     private static int CACHE_SIZE = 20 * 1024 * 1024;// 默认缓存大小为20M
     private static String CACHE_PATH = FileUtils.getAppFile(ProjectContext.appContext, "DataCache");
@@ -61,7 +61,7 @@ public class DiskLruCacheHelpUtils implements Cache<LibEntity> {
     }
 
     @Override
-    public void putCatch(String key, LibEntity data) {
+    public void putCatch(String key, NetEntity data) {
         if (StringUtils.isEmpty(key) || data == null) return;
         if (mDiskLruCache != null && !mDiskLruCache.isClosed()) {
             String cacheKey = EncryptionUtils.MD5encode(key);
@@ -86,7 +86,7 @@ public class DiskLruCacheHelpUtils implements Cache<LibEntity> {
     }
 
     @Override
-    public LibEntity getCatch(String key) {
+    public NetEntity getCatch(String key) {
         if (mDiskLruCache != null && !mDiskLruCache.isClosed() && !StringUtils.isEmpty(key)) {
             String cacheKey = EncryptionUtils.MD5encode(key);
             InputStream inputStream = null;
@@ -96,7 +96,7 @@ public class DiskLruCacheHelpUtils implements Cache<LibEntity> {
                     inputStream = snapshot.getInputStream(DISK_CACHE_INDEX);
                     if (inputStream != null) {
                         ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-                        return (LibEntity) objectInputStream.readObject();
+                        return (NetEntity) objectInputStream.readObject();
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {

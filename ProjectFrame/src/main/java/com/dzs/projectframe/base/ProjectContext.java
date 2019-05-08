@@ -6,7 +6,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.res.Resources;
 
-import com.dzs.projectframe.base.bean.LibEntity;
+import com.dzs.projectframe.bean.NetEntity;
 import com.dzs.projectframe.broadcast.Receiver;
 import com.dzs.projectframe.utils.SharedPreferUtils;
 import com.dzs.projectframe.utils.SystemUtils;
@@ -54,11 +54,11 @@ public class ProjectContext extends Application {
     /**
      * 发送广播
      *
-     * @param libEntity libEntity
+     * @param netEntity netEntity
      */
-    public void sendBroadcast(LibEntity libEntity) {
+    public void sendBroadcast(NetEntity netEntity) {
         Intent intent = new Intent(Receiver.ACTION);
-        intent.putExtra(LibEntity.class.getName(), libEntity);
+        intent.putExtra(NetEntity.class.getName(), netEntity);
         sendBroadcast(intent);
     }
 

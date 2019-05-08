@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dzs.projectframe.adapter.ViewHolder;
-import com.dzs.projectframe.base.bean.LibEntity;
+import com.dzs.projectframe.bean.NetEntity;
 import com.dzs.projectframe.broadcast.Receiver;
 
 /**
@@ -76,7 +76,7 @@ public abstract class ProjectFragment extends Fragment implements Receiver.OnBro
     }
 
     @Override
-    public void onDateReceiver(LibEntity libEntity) {
+    public void onDateReceiver(NetEntity netEntity) {
 
     }
 }

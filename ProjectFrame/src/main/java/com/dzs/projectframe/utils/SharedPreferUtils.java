@@ -15,7 +15,6 @@ import java.util.Map;
  * @version 1.2
  * @date 2015-3-23 下午5:58:36
  */
-
 public class SharedPreferUtils {
 
     private SharedPreferences prefs;
@@ -23,7 +22,7 @@ public class SharedPreferUtils {
     private static SharedPreferUtils sharedPreferHelper;
 
     private SharedPreferUtils(Context context) {
-        prefs = context.getSharedPreferences(Cfg.SHAREDPREFER_USERINFO, Context.MODE_PRIVATE);
+        prefs = context.getSharedPreferences(Cfg.SHARED_PREFER_APPLICATION, Context.MODE_PRIVATE);
         editor = prefs.edit();
         editor.apply();
     }

@@ -10,8 +10,6 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import com.dzs.projectframe.Cfg;
-import com.dzs.projectframe.R;
-import com.dzs.projectframe.base.ProjectContext;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

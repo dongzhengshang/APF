@@ -16,7 +16,7 @@ import android.view.WindowManager;
 import com.dzs.projectframe.Cfg;
 import com.dzs.projectframe.R;
 import com.dzs.projectframe.adapter.ViewHolder;
-import com.dzs.projectframe.base.bean.LibEntity;
+import com.dzs.projectframe.bean.NetEntity;
 import com.dzs.projectframe.broadcast.Receiver;
 import com.dzs.projectframe.utils.AsyncTaskUtils;
 import com.dzs.projectframe.utils.DiskLruCacheHelpUtils;
@@ -91,7 +91,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     }
 
     @Override
-    public void onDateReceiver(LibEntity libEntity) {
+    public void onDateReceiver(NetEntity netEntity) {
 
     }
 
