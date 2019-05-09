@@ -28,7 +28,7 @@ public class JsonUtils {
 	 * @return json字符串
 	 */
 	public static String mapToJsonStr(Map<?, ?> params) throws Exception {
-		JSONObject jsonObject = mapToJSONObject(params);
+		JSONObject jsonObject = mapToJsonOb(params);
 		return jsonObject == null ? "" : jsonObject.toString();
 	}
 	
@@ -38,18 +38,18 @@ public class JsonUtils {
 	 * @param params map
 	 * @return JSONObject
 	 */
-	public static JSONObject mapToJSONObject(Map<?, ?> params) throws Exception {
+	public static JSONObject mapToJsonOb(Map<?, ?> params) throws Exception {
 		JSONObject jsonObject = new JSONObject();
 		for (Object o : params.entrySet()) {
 			Map.Entry entry = (Map.Entry) o;
 			if (entry.getValue() instanceof Map) {
-				jsonObject.put((String) entry.getKey(), mapToJSONObject((Map) entry.getValue()));
+				jsonObject.put((String) entry.getKey(), mapToJsonOb((Map) entry.getValue()));
 			} else if (entry.getValue() instanceof List) {
 				JSONArray jsonArray = new JSONArray();
 				List list = (List) entry.getValue();
 				for (int i = 0; i < list.size(); i++) {
 					if (((List) entry.getValue()).get(i) instanceof Map) {
-						jsonArray.put(i, mapToJSONObject((Map<?, ?>) list.get(i)));
+						jsonArray.put(i, mapToJsonOb((Map<?, ?>) list.get(i)));
 					} else {
 						jsonArray.put(i, list.get(i));
 					}
@@ -70,30 +70,30 @@ public class JsonUtils {
 	 * @return map
 	 * @throws JSONException JSON异常
 	 */
-	public static HashMap<String, Object> getMap(String jsonStr) throws JSONException {
-		HashMap<String, Object> result = new HashMap<>();
+	public static HashMap<String, Object> jsonToMap(String jsonStr) throws JSONException {
 		if (!TextUtils.isEmpty(jsonStr)) {
 			JSONObject json = new JSONObject(jsonStr);
-			Iterator<String> it = json.keys();
+			return resolveJsonOb(json);
+		}
+		return new HashMap<>();
+	}
+	
+	/**
+	 * 解析JSONObject
+	 */
+	private static HashMap<String, Object> resolveJsonOb(JSONObject jsonObject) throws JSONException {
+		HashMap<String, Object> result = new HashMap<>();
+		if (jsonObject != null) {
+			Iterator<String> it = jsonObject.keys();
 			while (it.hasNext()) {
 				String key = it.next();
-				Object value = json.get(key);
-				if (value instanceof JSONArray) {
-					result.put(key.trim(), getMapList(value + ""));
-				} else if (value instanceof JSONObject) {
-					result.put(key.trim(), getMap(value + ""));
-				} else if (value instanceof String) {
-					result.put(key.trim(), json.getString(key));
-				} else if (value instanceof Boolean) {
-					result.put(key.trim(), json.getBoolean(key));
-				} else if (value instanceof Double) {
-					result.put(key.trim(), json.getDouble(key));
-				} else if (value instanceof Integer) {
-					result.put(key.trim(), json.getInt(key));
-				} else if (value instanceof Long) {
-					result.put(key.trim(), json.getLong(key));
+				Object value = jsonObject.get(key);
+				if (value instanceof JSONObject) {
+					result.put(key.trim(), resolveJsonOb((JSONObject) value));
+				} else if (value instanceof JSONArray) {
+					result.put(key.trim(), resolveJsonA((JSONArray) value));
 				} else {
-					result.put(key.trim(), value + "");
+					result.put(key.trim(), value);
 				}
 			}
 		}
@@ -102,23 +102,21 @@ public class JsonUtils {
 	
 	/**
 	 * 解析json数组
-	 *
-	 * @param jsonStr json字符串
-	 * @return List
 	 */
-	private static List<?> getMapList(String jsonStr) throws JSONException {
+	private static List<?> resolveJsonA(JSONArray jsonArray) throws JSONException {
+		if (jsonArray == null) return new ArrayList<>();
 		ArrayList<HashMap<String, Object>> list = new ArrayList<>();
-		ArrayList<String> list1 = new ArrayList<>();
-		JSONArray ja = new JSONArray(jsonStr);
-		for (int j = 0; j < ja.length(); j++) {
-			Object value = ja.get(j);
+		ArrayList<Object> objects = new ArrayList<>();
+		for (int j = 0; j < jsonArray.length(); j++) {
+			Object value = jsonArray.get(j);
 			if (value instanceof JSONObject) {
-				HashMap<String, Object> map = getMap(value + "");
-				list.add(map);
+				list.add(resolveJsonOb((JSONObject) value));
+			} else if (value instanceof JSONArray) {
+				resolveJsonA((JSONArray) value);
 			} else {
-				list1.add(value + "");
+				objects.add(value);
 			}
 		}
-		return list.size() > list1.size() ? list : list1;
+		return list.size() > objects.size() ? list : objects;
 	}
 }

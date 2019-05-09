@@ -1,6 +1,6 @@
 package com.dzs.projectframe.utils;
 
-import com.dzs.projectframe.interf.DataBean;
+import com.dzs.projectframe.interf.SetValue;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class ReflectionUtils {
 	
-	private static Map<String, Method> methodPool = new Hashtable<>();
+	private static Map<String, Field> fieldPool = new Hashtable<>();
 	private static ReflectionUtils reflectionUtils;
 	
 	private ReflectionUtils() {
@@ -37,30 +37,35 @@ public class ReflectionUtils {
 		return reflectionUtils;
 	}
 	
-	public void setValue(Method method, Object object, Object value) {
-		try {
-			method.invoke(object, value);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
+	/**
+	 * 获取字段
+	 */
+	public Field getField(Class<?> clazz, String key) {
+		if (fieldPool.containsKey(key)) {
+			return fieldPool.get(key);
 		}
-	}
-	
-	public Method getMethod(Class<?> clazz, String key) {
-		if (methodPool.containsKey(key)) {
-			return methodPool.get(key);
-		}
-		Method[] methods = clazz.getMethods();
-		for (Method m : methods) {
-			DataBean b = m.getAnnotation(DataBean.class);
+		Field[] fields = clazz.getDeclaredFields();
+		for (Field f : fields) {
+			SetValue b = f.getAnnotation(SetValue.class);
 			if (null != b) {
 				String value = clazz.toString() + b.value();
-				methodPool.put(value, m);
-				if (value.equals(key)) {
-					return m;
-				}
+				fieldPool.put(value, f);
+				if (value.equals(key)) return f;
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * 设置数据
+	 */
+	public void setValue(Object cls, Field field, Object value) {
+		try {
+			field.setAccessible(true);
+			field.set(cls, value);
+		} catch (Exception e) {
+			LogUtils.error("Setting data exception" + e);
+		}
 	}
 	
 	/**
@@ -70,19 +75,17 @@ public class ReflectionUtils {
 	 * @param fieldsName 字段名
 	 * @return object
 	 */
-	public Class getTypeClass(Class<?> clazz, String fieldsName) {
+	public Class getFieldTypeClass(Class<?> clazz, String fieldsName) {
 		Field[] fields = clazz.getDeclaredFields();
 		for (Field field : fields) {
 			Class cls = field.getType();
-			if (field.getName().equals(fieldsName)) {
-				return cls;
-			}
+			if (field.getName().equals(fieldsName)) return cls;
 		}
 		return null;
 	}
 	
 	/**
-	 * 获取泛型参数
+	 * 获取泛型T的类型 T.class
 	 */
 	public Class<?> getTClass(Class<?> clazz) {
 		Type sType = clazz.getGenericSuperclass();
@@ -94,7 +97,7 @@ public class ReflectionUtils {
 	}
 	
 	/**
-	 * 获取泛型参数类型
+	 * 获取集合泛型参数类型
 	 *
 	 * @param clazz      class
 	 * @param fieldsName 字段名
@@ -104,10 +107,9 @@ public class ReflectionUtils {
 		Field[] fields = clazz.getDeclaredFields();
 		for (Field field : fields) {
 			if (field.getType().isAssignableFrom(List.class)) {
-				Type fc = field.getGenericType(); // 关键的地方，如果是List类型，得到其Generic的类型
+				Type fc = field.getGenericType();
 				if (fc == null) continue;
-				if (fc instanceof ParameterizedType) // 【3】如果是泛型参数的类型
-				{
+				if (fc instanceof ParameterizedType) {
 					ParameterizedType pt = (ParameterizedType) fc;
 					return (Class) pt.getActualTypeArguments()[0];
 				}

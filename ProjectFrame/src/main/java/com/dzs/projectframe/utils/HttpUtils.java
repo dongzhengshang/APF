@@ -208,7 +208,7 @@ public class HttpUtils {
 				is = isHttps ? httpsURLConnection.getInputStream() : connection.getInputStream();
 				String resultString = FileUtils.input2String(is);
 				netEntity.setResultString(resultString);
-				netEntity.setResultMap(JsonUtils.getMap(resultString));
+				netEntity.setResultMap(JsonUtils.jsonToMap(resultString));
 				netEntity.setNetResultType(NetResultType.NET_CONNECT_SUCCESS);
 				if (TextUtils.isEmpty(netEntity.getCacheKey()) && !netEntity.isExpired()) {
 					DiskLruCacheHelpUtils.getInstance().putCatch(netEntity.getCacheKey(), netEntity);
