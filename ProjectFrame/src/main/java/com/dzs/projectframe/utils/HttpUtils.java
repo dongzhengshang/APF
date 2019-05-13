@@ -311,7 +311,7 @@ public class HttpUtils {
 						if (param.getKey().equals(key)) break;
 					}
 				}
-				getUrl.append(param.getKey()).append("=").append(URLEncoder.encode(param.getValue() == null ? "" : param.getValue().toString(), StandardCharsets.UTF_8.toString()));
+				getUrl.append(param.getKey()).append("=").append(URLEncoder.encode(param.getValue() == null ? "" : param.getValue().toString(), StandardCharsets.UTF_8.name()));
 				getUrl.append("&");
 			}
 			getUrl.deleteCharAt(getUrl.length() - 1);
