@@ -262,6 +262,7 @@ public class HttpUtils {
 						.append(file.getFormName()).append("\"; filename=\"")
 						.append(file.getFileName()).append("\"").append(lineEnd);
 				split.append("Content-Type:").append(file.getContentType()).append(lineEnd);
+				split.append(lineEnd);
 				output.writeBytes(split.toString());
 				output.write(file.getData(), 0, file.getData().length);
 				output.writeBytes(lineEnd);
@@ -281,6 +282,7 @@ public class HttpUtils {
 			for (Map.Entry<String, Object> param : params) {
 				sb.append(twoHyphens).append(BOUNDARY).append(lineEnd);
 				sb.append("Content-Disposition: form-data; name=\"").append(param.getKey()).append("\"").append(lineEnd);
+				sb.append(lineEnd);
 				sb.append(param.getValue()).append(lineEnd);
 			}
 			output.write(new String(sb.toString().getBytes(), StandardCharsets.UTF_8).getBytes());
@@ -297,6 +299,7 @@ public class HttpUtils {
 		StringBuilder sb = new StringBuilder();
 		sb.append(twoHyphens).append(BOUNDARY).append(lineEnd);
 		sb.append("Content-Disposition: form-data; name=\"params\"").append(lineEnd);
+		sb.append(lineEnd);
 		sb.append(JsonUtils.mapToJsonStr(params)).append(lineEnd);
 		output.write(new String(sb.toString().getBytes(), StandardCharsets.UTF_8).getBytes());
 	}
