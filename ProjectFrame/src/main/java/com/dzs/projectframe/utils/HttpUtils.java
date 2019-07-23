@@ -71,7 +71,7 @@ public class HttpUtils {
 	 * 请求方法
 	 */
 	public enum RequestType {
-		JSON, FORM,CUST
+		JSON, FORM
 	}
 	
 	/**
