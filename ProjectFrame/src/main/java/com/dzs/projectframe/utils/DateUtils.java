@@ -62,7 +62,7 @@ public class DateUtils {
      * @param format 固定格式
      */
     public static String getCurrentSystemTime(String format) {
-        if (StringUtils.isEmpty(format)) throw new IllegalArgumentException();
+        if (TextUtils.isEmpty(format)) throw new IllegalArgumentException();
         return new SimpleDateFormat(format).format(new Date());
     }
 
@@ -110,7 +110,7 @@ public class DateUtils {
      * @return String
      */
     public static String formatTime(String longTime, String dateFormat) {
-        if (StringUtils.isEmpty(longTime)) {
+        if (TextUtils.isEmpty(longTime)) {
             return "";
         }
         return formatTime(Long.parseLong(longTime.length() < 13 ? longTime + "000" : longTime), dateFormat);
@@ -123,7 +123,7 @@ public class DateUtils {
      * @return string
      */
     public static String formatDuring(String mss) {
-        if (StringUtils.isEmpty(mss)) {
+        if (TextUtils.isEmpty(mss)) {
             return "00:00:00";
         } else {
             return formatDuring(Long.parseLong(mss));

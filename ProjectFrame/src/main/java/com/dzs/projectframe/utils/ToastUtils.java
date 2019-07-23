@@ -2,6 +2,7 @@ package com.dzs.projectframe.utils;
 
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.dzs.projectframe.base.ProjectContext;
@@ -22,7 +23,7 @@ public class ToastUtils {
      * 多次触发只显示一次Toast
      */
     public static void showOneToast(Context context, String str) {
-        if (StringUtils.isEmpty(str)) return;
+        if (TextUtils.isEmpty(str)) return;
         if (toast == null) {
             toast = createToast(context, str);
             lastTime = System.currentTimeMillis();

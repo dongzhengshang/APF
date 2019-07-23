@@ -110,7 +110,7 @@ public class FileUtils {
      * @return String
      */
     public static String getFileName(String filePath) {
-        return StringUtils.isEmpty(filePath) ? "" : filePath.substring(filePath.lastIndexOf(File.separator) + 1);
+        return TextUtils.isEmpty(filePath) ? "" : filePath.substring(filePath.lastIndexOf(File.separator) + 1);
     }
 
     /**
@@ -120,7 +120,7 @@ public class FileUtils {
      * @return String
      */
     public static String getFileNameNoFormat(String filePath) {
-        return StringUtils.isEmpty(filePath) ? "" : filePath.substring(filePath.lastIndexOf(File.separator) + 1, filePath.lastIndexOf("."));
+        return TextUtils.isEmpty(filePath) ? "" : filePath.substring(filePath.lastIndexOf(File.separator) + 1, filePath.lastIndexOf("."));
     }
 
     /**
@@ -130,7 +130,7 @@ public class FileUtils {
      * @return String
      */
     public static String getPathName(String absoluteFilePath) {
-        return StringUtils.isEmpty(absoluteFilePath) ? "" : absoluteFilePath.substring(0, absoluteFilePath.lastIndexOf(File.separator));
+        return TextUtils.isEmpty(absoluteFilePath) ? "" : absoluteFilePath.substring(0, absoluteFilePath.lastIndexOf(File.separator));
     }
 
     /**

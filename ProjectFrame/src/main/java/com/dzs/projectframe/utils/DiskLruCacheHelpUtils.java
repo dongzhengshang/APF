@@ -1,5 +1,7 @@
 package com.dzs.projectframe.utils;
 
+import android.text.TextUtils;
+
 import com.dzs.projectframe.bean.NetEntity;
 import com.dzs.projectframe.base.ProjectContext;
 import com.dzs.projectframe.interf.Cache;
@@ -44,7 +46,7 @@ public class DiskLruCacheHelpUtils implements Cache<NetEntity> {
 
     /*初始化缓存*/
     private void initDiskCache(String cachePath, int cacheSize) {
-        if (StringUtils.isEmpty(cachePath) || cacheSize == 0) {
+        if (TextUtils.isEmpty(cachePath) || cacheSize == 0) {
             LogUtils.info("DiskCache-路径为空或者缓存大小为0");
             return;
         }
@@ -62,7 +64,7 @@ public class DiskLruCacheHelpUtils implements Cache<NetEntity> {
 
     @Override
     public void putCatch(String key, NetEntity data) {
-        if (StringUtils.isEmpty(key) || data == null) return;
+        if (TextUtils.isEmpty(key) || data == null) return;
         if (mDiskLruCache != null && !mDiskLruCache.isClosed()) {
             String cacheKey = EncryptionUtils.MD5encode(key);
             OutputStream out = null;
@@ -87,7 +89,7 @@ public class DiskLruCacheHelpUtils implements Cache<NetEntity> {
 
     @Override
     public NetEntity getCatch(String key) {
-        if (mDiskLruCache != null && !mDiskLruCache.isClosed() && !StringUtils.isEmpty(key)) {
+        if (mDiskLruCache != null && !mDiskLruCache.isClosed() && !TextUtils.isEmpty(key)) {
             String cacheKey = EncryptionUtils.MD5encode(key);
             InputStream inputStream = null;
             try {
@@ -122,7 +124,7 @@ public class DiskLruCacheHelpUtils implements Cache<NetEntity> {
 
     @Override
     public void remove(String key) {
-        if (mDiskLruCache != null && !mDiskLruCache.isClosed() && !StringUtils.isEmpty(key)) {
+        if (mDiskLruCache != null && !mDiskLruCache.isClosed() && !TextUtils.isEmpty(key)) {
             try {
                 mDiskLruCache.remove(EncryptionUtils.MD5encode(key));
                 LogUtils.info("Disk cache remove");

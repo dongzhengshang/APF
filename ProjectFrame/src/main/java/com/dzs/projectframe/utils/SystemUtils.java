@@ -68,7 +68,7 @@ public class SystemUtils {
      * @param cxt Context
      * @return String
      */
-    @SuppressLint("HardwareIds")
+    @SuppressLint({"HardwareIds", "MissingPermission"})
     public static String getPhoneIMEI(Context cxt) {
         TelephonyManager tm = (TelephonyManager) cxt.getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getDeviceId();
