@@ -5,7 +5,7 @@ import android.text.TextUtils;
 
 import com.dzs.projectframe.bean.NetEntity;
 import com.dzs.projectframe.bean.NetResultType;
-import com.dzs.projectframe.bean.Upload;
+import com.dzs.projectframe.bean.UploadFile;
 import com.dzs.projectframe.base.ProjectContext;
 
 import org.json.JSONException;
@@ -46,9 +46,10 @@ import javax.net.ssl.X509TrustManager;
  */
 public class HttpUtils {
 	private static final String HTTPS = "https";
+	private static final String TWO_HYPHENS = "--";
 	private static final String BOUNDARY = UUID.randomUUID().toString();
-	private static final String twoHyphens = "--";
-	private static final String lineEnd = System.getProperty("line.separator");
+	private static final String LINE_END = System.getProperty("line.separator");
+	private static final String KEY_CONTENT_DISPOSITION = "Content-Disposition:form-data; name=\"";
 	
 	/**
 	 * 请求方式
@@ -70,7 +71,7 @@ public class HttpUtils {
 	 * 请求方法
 	 */
 	public enum RequestType {
-		JSON, FORM, IMAGE;
+		JSON, FORM,CUST
 	}
 	
 	/**
@@ -118,10 +119,6 @@ public class HttpUtils {
 		connection.setUseCaches(false);
 		connection.setConnectTimeout(netEntity.getTIMEOUT_CONNECTION());
 		connection.setReadTimeout(netEntity.getTIMEOUT_READ());
-		connection.setRequestProperty("User-Agent", netEntity.getUserAgent().toString());
-		connection.setRequestProperty("Accept-Charset", StandardCharsets.UTF_8.toString());
-		connection.setRequestProperty("Connection", "Keep-Alive");
-		connection.setRequestProperty("Accept", "application/json");
 		@SuppressWarnings("unchecked")
 		Map<String, Object> head = netEntity.getRequestHead();
 		if (head != null && !head.isEmpty()) {
@@ -129,7 +126,6 @@ public class HttpUtils {
 				connection.setRequestProperty(entry.getKey(), entry.getValue() + "");
 			}
 		}
-		connection.setRequestProperty("Content-Type", "multipart/form-data" + "; boundary=" + BOUNDARY);
 	}
 	
 	/**
@@ -188,11 +184,14 @@ public class HttpUtils {
 					dataOutputStream = new DataOutputStream(isHttps ? httpsURLConnection.getOutputStream() : connection.getOutputStream());
 					if (netEntity.getRequestType() == RequestType.FORM) {
 						addFormField(params.entrySet(), dataOutputStream);
+						// 数据结束标志
+						dataOutputStream.writeBytes(TWO_HYPHENS + BOUNDARY + TWO_HYPHENS + LINE_END);
 					} else if (netEntity.getRequestType() == RequestType.JSON) {
 						addJsonField(params, dataOutputStream);
 					}
-					// 数据结束标志
-					dataOutputStream.writeBytes(twoHyphens + BOUNDARY + twoHyphens + lineEnd);
+					if (null != netEntity.getUploadFiles() && netEntity.getUploadFiles().length > 0) {
+						addFilesContent(netEntity.getUploadFiles(), dataOutputStream);
+					}
 					dataOutputStream.flush();
 				}
 				int statueCode = isHttps ? httpsURLConnection.getResponseCode() : connection.getResponseCode();
@@ -213,7 +212,7 @@ public class HttpUtils {
 				if (TextUtils.isEmpty(netEntity.getCacheKey()) && !netEntity.isExpired()) {
 					DiskLruCacheHelpUtils.getInstance().putCatch(netEntity.getCacheKey(), netEntity);
 				}
-				LogUtils.info("Network-URL(POST_FORMS)地址：" + mapToCatchUrl(url, params) + "\n返回状态值: " + statueCode + "\n返回值：" + resultString);
+				LogUtils.info("Network-URL请求：" + mapToCatchUrl(url, params) + "\n返回状态值: " + statueCode + "\n返回值：" + resultString);
 				break;
 			} catch (JSONException e) {
 				netEntity.setNetResultType(NetResultType.NET_PARSE_FAIL);
@@ -253,19 +252,18 @@ public class HttpUtils {
 	 * @param files  图片文件
 	 * @param output 数据流
 	 */
-	private static void addImageContent(Upload[] files, DataOutputStream output) throws IOException {
+	private static void addFilesContent(UploadFile[] files, DataOutputStream output) throws IOException {
 		if (files != null) {
-			for (Upload file : files) {
+			for (UploadFile file : files) {
 				StringBuilder split = new StringBuilder();
-				split.append(twoHyphens).append(BOUNDARY).append(lineEnd);
-				split.append("Content-Disposition:form-data; name=\"")
-						.append(file.getFormName()).append("\"; filename=\"")
-						.append(file.getFileName()).append("\"").append(lineEnd);
-				split.append("Content-Type:").append(file.getContentType()).append(lineEnd);
-				split.append(lineEnd);
+				split.append(TWO_HYPHENS).append(BOUNDARY).append(LINE_END);
+				split.append(KEY_CONTENT_DISPOSITION).append(file.getFormName()).append("\";")
+						.append("filename=\"").append(file.getFileName()).append("\"").append(LINE_END);
+				split.append("Content-Type:").append(file.getContentType()).append(LINE_END);
+				split.append(LINE_END);
 				output.writeBytes(split.toString());
 				output.write(file.getData(), 0, file.getData().length);
-				output.writeBytes(lineEnd);
+				output.writeBytes(LINE_END);
 			}
 		}
 	}
@@ -280,10 +278,10 @@ public class HttpUtils {
 		if (params != null) {
 			StringBuilder sb = new StringBuilder();
 			for (Map.Entry<String, Object> param : params) {
-				sb.append(twoHyphens).append(BOUNDARY).append(lineEnd);
-				sb.append("Content-Disposition: form-data; name=\"").append(param.getKey()).append("\"").append(lineEnd);
-				sb.append(lineEnd);
-				sb.append(param.getValue()).append(lineEnd);
+				sb.append(TWO_HYPHENS).append(BOUNDARY).append(LINE_END);
+				sb.append(KEY_CONTENT_DISPOSITION).append(param.getKey()).append("\"").append(LINE_END);
+				sb.append(LINE_END);
+				sb.append(param.getValue()).append(LINE_END);
 			}
 			output.write(new String(sb.toString().getBytes(), StandardCharsets.UTF_8).getBytes());
 		}
@@ -296,12 +294,7 @@ public class HttpUtils {
 	 * @param output 输入流
 	 */
 	private static void addJsonField(Map<String, Object> params, DataOutputStream output) throws Exception {
-		StringBuilder sb = new StringBuilder();
-		sb.append(twoHyphens).append(BOUNDARY).append(lineEnd);
-		sb.append("Content-Disposition: form-data; name=\"params\"").append(lineEnd);
-		sb.append(lineEnd);
-		sb.append(JsonUtils.mapToJsonStr(params)).append(lineEnd);
-		output.write(new String(sb.toString().getBytes(), StandardCharsets.UTF_8).getBytes());
+		output.write(new String(JsonUtils.mapToJsonStr(params).getBytes(), StandardCharsets.UTF_8).getBytes());
 	}
 	
 	public static String mapToCatchUrl(String url, Map<String, Object> parameters, String... variableKey) throws UnsupportedEncodingException {

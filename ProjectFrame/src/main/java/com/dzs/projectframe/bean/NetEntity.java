@@ -6,6 +6,8 @@ import com.dzs.projectframe.utils.HttpUtils;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,8 +28,9 @@ public class NetEntity<T> implements Serializable {
 	private String taskId;//任务ID
 	private String url;//网络URL
 	private InputStream sslStream;//ssl证书
-	private Map<String, Object> requestHead;//头部信息
+	private Map<String, Object> requestHead = new HashMap<>();//头部信息
 	private Map<String, Object> requestParameter;//传参
+	private UploadFile[] uploadFiles;
 	
 	private NetResultType netResultType;//请求结果
 	private String resultString;// 数据(json字符串格式)
@@ -38,7 +41,13 @@ public class NetEntity<T> implements Serializable {
 	private long shelfLife; // 有效期,System.currentTimeMillis()
 	private String cacheKey;//缓存KEY
 	private boolean isCacheData;//标记位，用于标识是否为缓存数据
-	private StringBuilder userAgent = new StringBuilder("DZSDevelop_Android");
+	
+	public NetEntity() {
+		requestHead.put("User-Agent", "DZSDevelop_Android");
+		requestHead.put("Accept-Charset", StandardCharsets.UTF_8.toString());
+		requestHead.put("Connection", "Keep-Alive");
+		requestHead.put("Accept", "application/json");
+	}
 	
 	/**
 	 * 判断是否过期
@@ -75,18 +84,6 @@ public class NetEntity<T> implements Serializable {
 	public boolean isSaveCache() {
 		return !TextUtils.isEmpty(cacheKey) && !isExpired();
 	}
-	
-	public StringBuilder getUserAgent() {
-		return userAgent;
-	}
-	
-	/**
-	 * 添加userAgent
-	 */
-	public void addUserAgent(String userAgent) {
-		this.userAgent.append(userAgent);
-	}
-	
 	
 	public int getACCESS_NUM() {
 		return ACCESS_NUM;
@@ -157,7 +154,9 @@ public class NetEntity<T> implements Serializable {
 	}
 	
 	public void setRequestHead(Map<String, Object> requestHead) {
-		this.requestHead = requestHead;
+		if (requestHead != null && !requestHead.isEmpty()) {
+			this.requestHead.putAll(requestHead);
+		}
 	}
 	
 	public Map<String, Object> getRequestParameter() {
@@ -166,6 +165,14 @@ public class NetEntity<T> implements Serializable {
 	
 	public void setRequestParameter(Map<String, Object> requestParameter) {
 		this.requestParameter = requestParameter;
+	}
+	
+	public UploadFile[] getUploadFiles() {
+		return uploadFiles;
+	}
+	
+	public void setUploadFiles(UploadFile[] uploadFiles) {
+		this.uploadFiles = uploadFiles;
 	}
 	
 	public NetResultType getNetResultType() {
