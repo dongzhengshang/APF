@@ -48,9 +48,15 @@ public class ReflectionUtils {
 		for (Field f : fields) {
 			SetValue b = f.getAnnotation(SetValue.class);
 			if (null != b) {
-				String value = clazz.toString() + b.value();
-				fieldPool.put(value, f);
-				if (value.equals(key)) return f;
+				String[] values = b.value();
+				if (values.length > 0) {
+					for (String s : values) {
+						fieldPool.put(clazz.toString() + s, f);
+					}
+					for (String temp : values) {
+						if ((clazz.toString() + temp).equals(key)) return f;
+					}
+				}
 			}
 		}
 		return null;
