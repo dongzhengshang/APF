@@ -47,6 +47,7 @@ public class NetEntity<T> implements Serializable {
 		requestHead.put("Accept-Charset", StandardCharsets.UTF_8.toString());
 		requestHead.put("Connection", "Keep-Alive");
 		requestHead.put("Accept", "application/json");
+		requestHead.put("Content-Type", HttpUtils.KEY_CONTENT_TYPE_FORM_DATA);
 	}
 	
 	/**

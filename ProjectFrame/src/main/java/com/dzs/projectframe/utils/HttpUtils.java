@@ -50,6 +50,7 @@ public class HttpUtils {
 	private static final String BOUNDARY = UUID.randomUUID().toString();
 	private static final String LINE_END = System.getProperty("line.separator");
 	private static final String KEY_CONTENT_DISPOSITION = "Content-Disposition:form-data; name=\"";
+	public static final String KEY_CONTENT_TYPE_FORM_DATA = "multipart/form-data;boundary="+BOUNDARY;
 	
 	/**
 	 * 请求方式
@@ -212,7 +213,7 @@ public class HttpUtils {
 				if (TextUtils.isEmpty(netEntity.getCacheKey()) && !netEntity.isExpired()) {
 					DiskLruCacheHelpUtils.getInstance().putCatch(netEntity.getCacheKey(), netEntity);
 				}
-				LogUtils.info("Network-URL请求：" + mapToCatchUrl(url, params) + "\n返回状态值: " + statueCode + "\n返回值：" + resultString);
+				LogUtils.info("Network-URL请求：" + mapToCatchUrl(netEntity.getUrl(), params) + "\n返回状态值: " + statueCode + "\n返回值：" + resultString);
 				break;
 			} catch (JSONException e) {
 				netEntity.setNetResultType(NetResultType.NET_PARSE_FAIL);
