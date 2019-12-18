@@ -1,6 +1,6 @@
 package com.dzs.projectframe.bean;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.dzs.projectframe.utils.FileUtils;
 

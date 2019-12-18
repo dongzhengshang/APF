@@ -3,10 +3,10 @@ package com.dzs.projectframe.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatRadioButton;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatRadioButton;
 
 import com.dzs.projectframe.R;
 

@@ -1,11 +1,9 @@
 package com.dzs.projectframe.utils;
 
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Map;
+import androidx.annotation.NonNull;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

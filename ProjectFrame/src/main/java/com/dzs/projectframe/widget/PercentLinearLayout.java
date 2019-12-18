@@ -2,9 +2,10 @@ package com.dzs.projectframe.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.percent.PercentLayoutHelper;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
+
+import androidx.percentlayout.widget.PercentLayoutHelper;
 
 public class PercentLinearLayout extends LinearLayout {
     private final PercentLayoutHelper mHelper = new PercentLayoutHelper(this);

@@ -21,7 +21,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.LocaleList;
 import android.os.Parcelable;
-import android.support.v4.content.FileProvider;
+import androidx.core.content.FileProvider;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.WindowManager;
@@ -150,7 +150,7 @@ public class SystemUtils {
      * @param context context
      * @return String
      */
-    @SuppressLint("HardwareIds")
+    @SuppressLint({"HardwareIds", "MissingPermission"})
     public static StringBuilder getPhoneInfo(Context context) {
         TelephonyManager Tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return new StringBuilder(String.format("设备id: %s", Tm.getDeviceId()))

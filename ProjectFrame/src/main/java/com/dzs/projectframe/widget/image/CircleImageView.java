@@ -15,6 +15,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.widget.ImageView;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 import com.dzs.projectframe.R;
 
@@ -22,9 +25,9 @@ import com.dzs.projectframe.R;
 /**
  * 圆角Image,处理圆角头像等
  */
-public class CircleImageView extends android.support.v7.widget.AppCompatImageView {
+public class CircleImageView extends AppCompatImageView {
 
-    private static final ScaleType SCALE_TYPE = ScaleType.CENTER_CROP;
+    private static final ImageView.ScaleType SCALE_TYPE = ImageView.ScaleType.CENTER_CROP;
 
     private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
     private static final int COLORDRAWABLE_DIMENSION = 1;

@@ -8,22 +8,23 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.WindowManager;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.dzs.projectframe.Cfg;
 import com.dzs.projectframe.R;
 import com.dzs.projectframe.adapter.ViewHolder;
 import com.dzs.projectframe.bean.NetEntity;
 import com.dzs.projectframe.broadcast.Receiver;
+import com.dzs.projectframe.utils.ActivityUtils;
 import com.dzs.projectframe.utils.AsyncTaskUtils;
 import com.dzs.projectframe.utils.DiskLruCacheHelpUtils;
 import com.dzs.projectframe.utils.FileUtils;
 import com.dzs.projectframe.utils.LogUtils;
 import com.dzs.projectframe.utils.SharedPreferUtils;
-import com.dzs.projectframe.utils.ActivityUtils;
 import com.dzs.projectframe.utils.SystemUtils;
 
 import java.io.File;
