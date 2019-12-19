@@ -11,92 +11,6 @@ import java.util.Map;
 
 
 public class ResultUtils {
-
-    /**
-     * 从结果中获取 Map对象
-     */
-    public static Map<?, ?> getMapFromResult(Map<?, ?> result, String key) {
-        Object object = getObject(result, key);
-        if (object instanceof Map) return (Map) object;
-        return new HashMap<>();
-    }
-
-    /**
-     * 从结果中获取ArrayList
-     */
-    public static ArrayList<?> getListFromResult(Map<?, ?> result, String key) {
-        Object object = getObject(result, key);
-        if (object instanceof List) return (ArrayList<?>) object;
-        return new ArrayList<>();
-    }
-
-    /**
-     * 从结果中获取字符串
-     */
-    public static String getStringFromResult(Map<?, ?> result, String key) {
-        return getStringFromResult(result, key, "");
-    }
-
-    /**
-     * 从结果中获取字符串
-     *
-     * @param result       map集合
-     * @param key          键值
-     * @param defaultValue 默认值
-     */
-    public static String getStringFromResult(Map<?, ?> result, String key, String defaultValue) {
-        Object object = getObject(result, key);
-        if (object != null) {
-            return object.toString();
-        }
-        return defaultValue;
-    }
-
-    /**
-     * 从结果中获取集合
-     *
-     * @param result map
-     * @param key    map 键
-     * @param clazz  类
-     * @param <T>    泛形
-     * @return ArrayList<T>
-     */
-    public static <T> ArrayList<T> getListBeanFromResult(Map<?, ?> result, String key, Class<T> clazz) {
-        ArrayList<T> ts = new ArrayList<>();
-        Object value = getObject(result, key);
-        if (value != null) {
-            for (Object map : (ArrayList) value) {
-                ts.add(clazz.cast(mapToBean((Map) map, clazz)));
-            }
-        }
-        return ts;
-    }
-
-    public static <T> ArrayList<T> getListStringBeanFromResult(Map<?, ?> result, String key, Class<T> clazz) {
-        ArrayList<T> ts = new ArrayList<>();
-        Object value = getObject(result, key);
-        if (value != null) {
-            for (Object map : (ArrayList) value) {
-                ts.add(clazz.cast(mapToStringBean((Map) map, clazz)));
-            }
-        }
-        return ts;
-    }
-
-    /**
-     * 从结果中获取数据Bean
-     *
-     * @return T
-     */
-    public static <T> T getBeanFromResult(Map<?, ?> result, String key, Class<T> clazz) {
-        Object object = getObject(result, key);
-        if (object != null) {
-            return mapToBean((Map) object, clazz);
-        }
-        return null;
-    }
-
-
     /**
      * 递归获取数据
      *
@@ -199,6 +113,96 @@ public class ResultUtils {
      */
     public static <T> T mapToBean(Map<?, ?> value, Class<T> clazz) {
         return mapToBean(value, clazz, false);
+    }
+
+    /**
+     * 从结果中获取 Map对象
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, V> Map<T, V> getMapFromResult(Map<?, ?> result, String key){
+        Object object = getObject(result, key);
+        if (object instanceof Map) {
+            return  (Map<T, V>) object;
+        }
+        return new HashMap<>();
+    }
+
+    /**
+     * 从结果中获取ArrayList
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> ArrayList<T> getListFromResult(Map<?, ?> result, String key) {
+        Object object = getObject(result, key);
+        if (object instanceof List) {
+            return (ArrayList<T>) object;
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * 从结果中获取字符串
+     */
+    public static String getStringFromResult(Map<?, ?> result, String key) {
+        return getStringFromResult(result, key, "");
+    }
+
+    /**
+     * 从结果中获取字符串
+     *
+     * @param result       map集合
+     * @param key          键值
+     * @param defaultValue 默认值
+     */
+    public static String getStringFromResult(Map<?, ?> result, String key, String defaultValue) {
+        Object object = getObject(result, key);
+        if (object != null) {
+            return object.toString();
+        }
+        return defaultValue;
+    }
+
+    /**
+     * 从结果中获取集合
+     *
+     * @param result map
+     * @param key    map 键
+     * @param clazz  类
+     * @param <T>    泛形
+     * @return ArrayList<T>
+     */
+    public static <T> ArrayList<T> getListBeanFromResult(Map<?, ?> result, String key, Class<T> clazz) {
+        ArrayList<T> ts = new ArrayList<>();
+        Object value = getObject(result, key);
+        if (value != null) {
+            for (Object map : (ArrayList) value) {
+                ts.add(clazz.cast(mapToBean((Map) map, clazz)));
+            }
+        }
+        return ts;
+    }
+
+    public static <T> ArrayList<T> getListStringBeanFromResult(Map<?, ?> result, String key, Class<T> clazz) {
+        ArrayList<T> ts = new ArrayList<>();
+        Object value = getObject(result, key);
+        if (value != null) {
+            for (Object map : (ArrayList) value) {
+                ts.add(clazz.cast(mapToStringBean((Map) map, clazz)));
+            }
+        }
+        return ts;
+    }
+
+    /**
+     * 从结果中获取数据Bean
+     *
+     * @return T
+     */
+    public static <T> T getBeanFromResult(Map<?, ?> result, String key, Class<T> clazz) {
+        Object object = getObject(result, key);
+        if (object != null) {
+            return mapToBean((Map) object, clazz);
+        }
+        return null;
     }
 
 }
