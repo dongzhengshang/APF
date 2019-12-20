@@ -119,6 +119,14 @@ public class ResultUtils {
      * 从结果中获取 Map对象
      */
     @SuppressWarnings("unchecked")
+    public static <T> T getDataFromResult(Map<?, ?> result, String key){
+        return (T) getObject(result,key);
+    }
+
+    /**
+     * 从结果中获取 Map对象
+     */
+    @SuppressWarnings("unchecked")
     public static <T, V> Map<T, V> getMapFromResult(Map<?, ?> result, String key){
         Object object = getObject(result, key);
         if (object instanceof Map) {
