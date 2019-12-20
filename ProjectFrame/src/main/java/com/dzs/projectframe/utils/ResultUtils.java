@@ -204,5 +204,16 @@ public class ResultUtils {
         }
         return null;
     }
-
+    /**
+     * 从结果中获取数据Bean(字段全部为String)
+     *
+     * @return T
+     */
+    public static <T> T getStringBeanFromResult(Map<?, ?> result, String key, Class<T> clazz) {
+        Object object = getObject(result, key);
+        if (object != null) {
+            return mapToStringBean((Map) object, clazz);
+        }
+        return null;
+    }
 }
