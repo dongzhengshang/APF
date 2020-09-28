@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.viewbinding.ViewBinding;
 
 import com.dzs.projectframe.adapter.ViewHolder;
 import com.dzs.projectframe.bean.NetEntity;
@@ -19,7 +20,11 @@ import com.dzs.projectframe.broadcast.Receiver;
  * @date 2015-6-17 下午3:47:45
  */
 public abstract class ProjectFragment extends Fragment implements Receiver.OnBroadcastReceiverListener {
-    protected abstract int setLayoutById();
+    protected int setLayoutById() {
+        return 0;
+    }
+
+    protected abstract ViewBinding setContentByViewBinding();
 
     protected View setLayoutByView() {
         return null;
@@ -29,10 +34,10 @@ public abstract class ProjectFragment extends Fragment implements Receiver.OnBro
 
     protected abstract void initData();
 
-    protected void layoutVisiable() {
+    protected void layoutVisible() {
     }
 
-    protected void layoutInVisiable() {
+    protected void layoutInVisible() {
     }
 
     protected boolean isVisible = false;
@@ -44,8 +49,8 @@ public abstract class ProjectFragment extends Fragment implements Receiver.OnBro
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         isVisible = isVisibleToUser;
-        if (isVisibleToUser) layoutVisiable();
-        else layoutInVisiable();
+        if (isVisibleToUser) layoutVisible();
+        else layoutInVisible();
     }
 
     @Override
@@ -53,8 +58,11 @@ public abstract class ProjectFragment extends Fragment implements Receiver.OnBro
         if (view == null) {
             int layoutId = setLayoutById();
             View layout = setLayoutByView();
-            if (layoutId <= 0 && layout == null) throw new NullPointerException("layout can not be null.");
-            viewUtils = layoutId > 0 ? ViewHolder.get(getContext(), layoutId) : ViewHolder.get(getContext(), layout);
+            ViewBinding viewBinding=setContentByViewBinding();
+            if (layoutId <= 0 && layout == null&&viewBinding==null)
+                throw new NullPointerException("layout can not be null.");
+
+            viewUtils = viewBinding!=null?ViewHolder.get(getContext(), viewBinding.getRoot()):layoutId > 0 ? ViewHolder.get(getContext(), layoutId) : ViewHolder.get(getContext(), view);
             view = viewUtils.getView();
         }
         // 缓存的View需要判断是否已经被加载过parent，如果有需要移除parent。否则会出现此View已经有parent的错误
@@ -65,7 +73,7 @@ public abstract class ProjectFragment extends Fragment implements Receiver.OnBro
         ProjectContext.appContext.addReceiver(this);
         initView();
         isPrepared = true;
-        layoutVisiable();
+        layoutVisible();
         initData();
         return view;
     }

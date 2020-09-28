@@ -13,16 +13,16 @@ import java.util.List;
  * @version V1.0
  * @date 2016/8/19.
  */
-public abstract class BaseMultiltemAdapter<T> extends BaseUniversalAdapter<T> {
+public abstract class BaseMultiItemAdapter<T> extends BaseUniversalAdapter<T> {
     protected MultiItemTypeSupport<T> mMultiItemTypeSupport;
 
-    public BaseMultiltemAdapter(Context context, MultiItemTypeSupport<T> multiItemTypeSupport) {
+    public BaseMultiItemAdapter(Context context, MultiItemTypeSupport<T> multiItemTypeSupport) {
         super(context, -1);
         if (mMultiItemTypeSupport == null) throw new IllegalArgumentException("the mMultiItemTypeSupport can not be null.");
         this.mMultiItemTypeSupport = multiItemTypeSupport;
     }
 
-    public BaseMultiltemAdapter(Context context, List<T> data, MultiItemTypeSupport<T> multiItemTypeSupport) {
+    public BaseMultiItemAdapter(Context context, List<T> data, MultiItemTypeSupport<T> multiItemTypeSupport) {
         super(context, -1, data);
         if (mMultiItemTypeSupport == null) throw new IllegalArgumentException("the mMultiItemTypeSupport can not be null.");
         this.mMultiItemTypeSupport = multiItemTypeSupport;

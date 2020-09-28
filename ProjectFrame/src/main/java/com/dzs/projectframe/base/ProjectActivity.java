@@ -13,6 +13,7 @@ import android.view.WindowManager;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.viewbinding.ViewBinding;
 
 import com.dzs.projectframe.Cfg;
 import com.dzs.projectframe.R;
@@ -40,7 +41,7 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     protected SharedPreferUtils sharedPreferUtils;
     protected PowerManager.WakeLock wakeLock;
 
-    protected abstract int setContentById();
+    protected abstract ViewBinding setContentByViewBinding();
 
     protected abstract void initView();
 
@@ -49,6 +50,10 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
     protected View setContentByView() {
         return null;
     }
+    protected  int setContentById(){
+        return 0;
+    }
+
 
     /*设置View之前做的一些操作*/
     protected void setContentViewBefore() {
@@ -69,9 +74,11 @@ public abstract class ProjectActivity extends FragmentActivity implements View.O
         setContentViewBefore();
         int layoutId = setContentById();
         View view = setContentByView();
-        if (layoutId <= 0 && view == null)
+        ViewBinding viewBinding = setContentByViewBinding();
+        if (layoutId <= 0 && view == null && viewBinding == null){
             throw new NullPointerException("layout can not be null.");
-        viewUtils = layoutId > 0 ? ViewHolder.get(this, layoutId) : ViewHolder.get(this, view);
+        }
+        viewUtils = viewBinding!=null?ViewHolder.get(this, viewBinding.getRoot()):layoutId > 0 ? ViewHolder.get(this, layoutId) : ViewHolder.get(this, view);
         setContentView(viewUtils.getView());
         setContentViewAfter();
         initView();
