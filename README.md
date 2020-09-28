@@ -14,6 +14,6 @@ Step 2. Add the dependency
 
 ```
 dependencies {
-  implementation 'com.github.DZSDevelop:APF:V1.0'
+  implementation 'com.github.DZSDevelop:APF:V1.1'
 }
   ```
