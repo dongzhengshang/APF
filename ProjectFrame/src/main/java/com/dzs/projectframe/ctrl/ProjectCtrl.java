@@ -43,14 +43,14 @@ public class ProjectCtrl {
 	/**
 	 * 网络访问获取数据
 	 */
-	private void getData(NetEntity netEntity, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
+	protected void getData(NetEntity netEntity, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
 		new AsyncTaskUtils(netReturnListeners).executeOnExecutor(THREAD_POOL_EXECUTOR, netEntity);
 	}
 	
 	/**
 	 * 网络访问获取数据
 	 */
-	private void getData(Executor executor, NetEntity netEntity, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
+	protected void getData(Executor executor, NetEntity netEntity, AsyncTaskUtils.OnNetReturnListener... netReturnListeners) {
 		new AsyncTaskUtils(netReturnListeners).executeOnExecutor(executor, netEntity);
 	}
 }
