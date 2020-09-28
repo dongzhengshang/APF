@@ -19,18 +19,19 @@ import com.dzs.projectframe.R;
  * @date 2017/3/25
  */
 public class GifView extends View {
-    private static final int DEFAULT_MOVIE_DURATION = 1000;//默认为1秒
-    private int mMovieResourceId;
-    private Movie mMovie;
-    private long mMovieStart;
-    private int mCurrentAnimationTime = 0;
-    private float mLeft;
-    private float mTop;
-    private float mScale;
-    private int mMeasuredMovieWidth;
-    private int mMeasuredMovieHeight;
-    private boolean mVisible = true;
-    private volatile boolean mPaused = false;
+    private static final int     DEFAULT_MOVIE_DURATION = 1000;//默认为1秒
+    private              int     mMovieResourceId;
+    private              Movie   mMovie;
+    private              long    mMovieStart;
+    private              int     mCurrentAnimationTime  = 0;
+    private              float   mLeft;
+    private              float   mTop;
+    private              float   mScale;
+    private              int     mMeasuredMovieWidth;
+    private              int     mMeasuredMovieHeight;
+    private              boolean mVisible               = true;
+    private volatile     boolean mPaused                = false;
+    private              boolean mCycle                 = true;
 
     public GifView(Context context) {
         this(context, null);
@@ -93,6 +94,10 @@ public class GifView extends View {
         return this.mPaused;
     }
 
+    public void setCycle(boolean cycle) {
+        this.mCycle = cycle;
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (mMovie != null) {
@@ -152,6 +157,14 @@ public class GifView extends View {
         if (dur == 0) {
             dur = DEFAULT_MOVIE_DURATION;
         }
+        if (!mCycle) {
+            //在最后一帧的时候结束
+            if (now - mMovieStart >= dur) {
+                this.mPaused = true;
+                return;
+            }
+        }
+
         // 算出需要显示第几帧
         mCurrentAnimationTime = (int) ((now - mMovieStart) % dur);
     }
@@ -186,6 +199,9 @@ public class GifView extends View {
         super.onWindowVisibilityChanged(visibility);
         mVisible = visibility == View.VISIBLE;
         invalidateView();
+    }
+    public int getMovieDur(){
+        return mMovie.duration();
     }
 
 }
