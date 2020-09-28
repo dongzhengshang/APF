@@ -31,7 +31,8 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
     protected boolean showLoadMore = false;
     protected MultiItemTypeSupport<T> multiItemTypeSupport;
 
-    protected abstract void convert(ViewHolder holder, T t,List<Object> payloads);
+    protected abstract void convert(ViewHolder holder, T t);
+    protected  void convert(ViewHolder holder, T t,List<Object> payloads){}
 
     public BaseUniversalAdapter(Context context, int layoutResId) {
         this(context, layoutResId, null);
@@ -52,8 +53,9 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
         this.multiItemTypeSupport = multiItemTypeSupport;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType != 0) {
             if (multiItemTypeSupport != null) {
                 layoutResId = multiItemTypeSupport.getLayoutId(viewType);
@@ -68,8 +70,15 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
     }
 
     @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.updatePosition(position);
+        if (getItemViewType(position) != 0) {
+            convert(holder, data.get(position));
+        }
+    }
+
+    @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
-        super.onBindViewHolder(holder, position, payloads);
         holder.updatePosition(position);
         if (getItemViewType(position) != 0) {
             convert(holder, data.get(position),payloads);
@@ -88,7 +97,7 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
     }
 
     @Override
-    public void onViewRecycled(ViewHolder holder) {
+    public void onViewRecycled(@NonNull ViewHolder holder) {
         super.onViewRecycled(holder);
     }
 
