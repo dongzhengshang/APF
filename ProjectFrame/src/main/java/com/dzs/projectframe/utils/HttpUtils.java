@@ -51,7 +51,7 @@ public class HttpUtils {
     private static final String LINE_END = System.getProperty("line.separator");
     private static final String KEY_CONTENT_DISPOSITION_HEAD = "Content-Disposition:form-data; name=\"";
     public static final String KEY_CONTENT_TYPE_UPLOAD_DATA = "multipart/form-data;boundary=" + BOUNDARY;
-    public static final String KEY_CONTENT_TYPE_X_WWW = "application/x-www-from-urlencoded";
+    public static final String KEY_CONTENT_TYPE_X_WWW = "application/x-www-form-urlencoded";
     public static final String KEY_CONTENT_TYPE_JSON = "application/json";
 
     /**
