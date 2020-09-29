@@ -79,11 +79,24 @@ public abstract class BaseUniversalAdapter<T> extends RecyclerView.Adapter<ViewH
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (payloads.isEmpty()){
+            onBindViewHolder(holder,position);
+            return;
+        }
         holder.updatePosition(position);
         if (getItemViewType(position) != 0) {
             convert(holder, data.get(position),payloads);
         }
+
     }
+//    @Override
+//    public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
+//        super.onBindViewHolder(holder,position);
+//        holder.updatePosition(position);
+//        if (getItemViewType(position) != 0) {
+//            convert(holder, data.get(position),payloads);
+//        }
+//    }
 
     @Override
     public int getItemCount() {
