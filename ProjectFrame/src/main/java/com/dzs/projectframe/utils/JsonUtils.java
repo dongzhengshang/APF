@@ -29,7 +29,7 @@ public class JsonUtils {
 	 */
 	public static String mapToJsonStr(Map<?, ?> params) throws Exception {
 		JSONObject jsonObject = mapToJsonOb(params);
-		return jsonObject == null ? "" : jsonObject.toString();
+		return jsonObject.toString();
 	}
 	
 	/**
@@ -40,15 +40,14 @@ public class JsonUtils {
 	 */
 	public static JSONObject mapToJsonOb(Map<?, ?> params) throws Exception {
 		JSONObject jsonObject = new JSONObject();
-		for (Object o : params.entrySet()) {
-			Map.Entry entry = (Map.Entry) o;
+		for (Map.Entry<?,?> entry : params.entrySet()) {
 			if (entry.getValue() instanceof Map) {
-				jsonObject.put((String) entry.getKey(), mapToJsonOb((Map) entry.getValue()));
+				jsonObject.put((String) entry.getKey(), mapToJsonOb((Map<?,?>) entry.getValue()));
 			} else if (entry.getValue() instanceof List) {
 				JSONArray jsonArray = new JSONArray();
-				List list = (List) entry.getValue();
+				List<?> list = (List<?>) entry.getValue();
 				for (int i = 0; i < list.size(); i++) {
-					if (((List) entry.getValue()).get(i) instanceof Map) {
+					if (((List<?>) entry.getValue()).get(i) instanceof Map) {
 						jsonArray.put(i, mapToJsonOb((Map<?, ?>) list.get(i)));
 					} else {
 						jsonArray.put(i, list.get(i));

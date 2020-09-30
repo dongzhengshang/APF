@@ -1,6 +1,7 @@
 package com.dzs.projectframe.utils;
 
 
+import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
 import com.dzs.projectframe.bean.NetEntity;
@@ -92,7 +93,7 @@ public class HttpUtils {
      * @param urlString url
      * @return HttpURLConnection
      */
-    private static HttpURLConnection getHttpUrlConnect(String urlString, NetEntity netEntity) throws IOException {
+    private static HttpURLConnection getHttpUrlConnect(String urlString, NetEntity<?> netEntity) throws IOException {
         HttpURLConnection connection;
         URL url = new URL(urlString);
         connection = (HttpURLConnection) url.openConnection();
@@ -108,7 +109,7 @@ public class HttpUtils {
      * @param urlString url
      * @return HttpURLConnection
      */
-    private static HttpsURLConnection getHttpsUrlConnect(String urlString, NetEntity netEntity) throws Exception {
+    private static HttpsURLConnection getHttpsUrlConnect(String urlString, NetEntity<?> netEntity) throws Exception {
         HttpsURLConnection connection;
         URL url = new URL(urlString);
         if (netEntity.getSslStream() == null) initSSLAll();
@@ -125,16 +126,15 @@ public class HttpUtils {
      *
      * @param connection URLConnection
      */
-    private static void setConnect(URLConnection connection, NetEntity netEntity) {
+    private static void setConnect(URLConnection connection, NetEntity<?> netEntity) {
         connection.setDoInput(true);
         connection.setDoOutput(netEntity.getRequestMethod() != HttpRequestMethod.GET);
         connection.setUseCaches(false);
         connection.setConnectTimeout(netEntity.getTIMEOUT_CONNECTION());
         connection.setReadTimeout(netEntity.getTIMEOUT_READ());
-        if (netEntity.getRequestMethod() != HttpRequestMethod.GET){
+        if (netEntity.getRequestMethod() != HttpRequestMethod.GET) {
             connection.setRequestProperty("Content-Type", netEntity.getRequestType().contentType);
         }
-        @SuppressWarnings("unchecked")
         Map<String, Object> head = netEntity.getRequestHead();
         if (head != null && !head.isEmpty()) {
             for (Map.Entry<String, Object> entry : head.entrySet()) {
@@ -150,11 +150,11 @@ public class HttpUtils {
      * @param isForce   为true时候无论是否过期都会返回数据
      * @return NetEntity
      */
-    public static NetEntity getCatch(NetEntity netEntity, boolean isForce) {
+    public static NetEntity<?> getCatch(NetEntity<?> netEntity, boolean isForce) {
         if (netEntity == null || TextUtils.isEmpty(netEntity.getCacheKey())) {
             return null;
         }
-        NetEntity cacheNetEntity = DiskLruCacheHelpUtils.getInstance().getCatch(netEntity.getCacheKey());
+        NetEntity<?> cacheNetEntity = DiskLruCacheHelpUtils.getInstance().getCatch(netEntity.getCacheKey());
         return cacheNetEntity == null ? null : isForce ? cacheNetEntity : (cacheNetEntity.isExpired() ? null : cacheNetEntity);
     }
 
@@ -164,10 +164,10 @@ public class HttpUtils {
      *
      * @return NetEntity
      */
-    public static NetEntity getData(NetEntity netEntity) {
+    public static NetEntity<?> getData(NetEntity<?> netEntity) {
         //网络未连接时候，读取缓存文件
         if (!SystemUtils.checkNetConttent(ProjectContext.appContext)) {
-            NetEntity tempCache = getCatch(netEntity, true);
+            NetEntity<?> tempCache = getCatch(netEntity, true);
             netEntity = tempCache != null ? tempCache : new NetEntity();
             netEntity.setCacheData(tempCache != null);
             netEntity.setNetResultType(NetResultType.NET_NOT_CONNECT);
@@ -177,7 +177,6 @@ public class HttpUtils {
         netEntity.setNetResultType(NetResultType.NET_CONNECT_FAIL);
         String url = netEntity.getUrl();
         HttpRequestMethod method = netEntity.getRequestMethod();
-        @SuppressWarnings("unchecked")
         Map<String, Object> params = netEntity.getRequestParameter();
         int accessNum = 0;
         InputStream is = null;
@@ -198,7 +197,7 @@ public class HttpUtils {
                 if (method != HttpRequestMethod.GET) {
                     dataOutputStream = new DataOutputStream(isHttps ? httpsURLConnection.getOutputStream() : connection.getOutputStream());
                     if (netEntity.getRequestType() == RequestType.FORM) {
-                        addFormField(params.entrySet(), dataOutputStream);
+                        addFormField(params, dataOutputStream);
                     } else if (netEntity.getRequestType() == RequestType.JSON) {
                         addJsonField(params, dataOutputStream);
                     } else if (netEntity.getRequestType() == RequestType.UPLOAD) {
@@ -250,7 +249,7 @@ public class HttpUtils {
             }
         } while (accessNum < netEntity.getACCESS_NUM());
         if (netEntity.getNetResultType() == NetResultType.NET_CONNECT_FAIL) {
-            NetEntity tempCache = getCatch(netEntity, true);
+            NetEntity<?> tempCache = getCatch(netEntity, true);
             netEntity = tempCache != null ? tempCache : new NetEntity();
             netEntity.setCacheData(tempCache != null);
             netEntity.setNetResultType(NetResultType.NET_CONNECT_FAIL);
@@ -287,16 +286,16 @@ public class HttpUtils {
      * @param params 参数列表
      * @param output 输出流
      */
-    private static void addFormField(Set<Map.Entry<String, Object>> params, DataOutputStream output) throws IOException {
-        if (params != null) {
-            StringBuilder sb = new StringBuilder();
-            for (Map.Entry<String, Object> param : params) {
+    private static void addFormField(Map<String, Object> params, DataOutputStream output) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        if (params != null && !params.isEmpty()) {
+            for (Map.Entry<String, Object> param : params.entrySet()) {
                 sb.append(param.getKey()).append("=").append(param.getValue() == null ? "" : URLEncoder.encode(param.getValue().toString(), StandardCharsets.UTF_8.name()));
                 sb.append("&");
             }
             sb.deleteCharAt(sb.length() - 1);
-            output.write(new String(sb.toString().getBytes(), StandardCharsets.UTF_8).getBytes());
         }
+        output.write(new String(sb.toString().getBytes(), StandardCharsets.UTF_8).getBytes());
     }
 
 
@@ -341,16 +340,16 @@ public class HttpUtils {
         context.init(null, tmf.getTrustManagers(), null);
         httpsURLConnection.setSSLSocketFactory(context.getSocketFactory());
     }
-
+    @SuppressLint("TrustAllX509TrustManager")
     private static void initSSLAll() throws Exception {
         SSLContext context = SSLContext.getInstance("TLS");
         context.init(null, new TrustManager[]{new X509TrustManager() {
             @Override
-            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {
             }
 
             @Override
-            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {
 
             }
 
@@ -361,6 +360,7 @@ public class HttpUtils {
         }}, null);
         HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
         HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+            @SuppressLint("BadHostnameVerifier")
             @Override
             public boolean verify(String arg0, SSLSession arg1) {
                 return true;
