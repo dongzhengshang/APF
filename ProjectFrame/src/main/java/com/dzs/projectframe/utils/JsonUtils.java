@@ -27,7 +27,7 @@ public class JsonUtils {
 	 * @param params map
 	 * @return json字符串
 	 */
-	public static String mapToJsonStr(Map<?, ?> params) throws Exception {
+	public static String mapToJsonStr(Map<?, ?> params) throws JSONException {
 		JSONObject jsonObject = mapToJsonOb(params);
 		return jsonObject.toString();
 	}
@@ -38,7 +38,7 @@ public class JsonUtils {
 	 * @param params map
 	 * @return JSONObject
 	 */
-	public static JSONObject mapToJsonOb(Map<?, ?> params) throws Exception {
+	public static JSONObject mapToJsonOb(Map<?, ?> params) throws JSONException {
 		JSONObject jsonObject = new JSONObject();
 		for (Map.Entry<?,?> entry : params.entrySet()) {
 			if (entry.getValue() instanceof Map) {
