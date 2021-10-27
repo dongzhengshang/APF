@@ -14,7 +14,7 @@ import com.dzs.projectframe.R;
 /**
  * Gif动画
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V1.0
  * @date 2017/3/25
  */

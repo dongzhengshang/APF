@@ -7,7 +7,7 @@ import com.dzs.projectframe.Cfg;
 /**
  * LOG 工具类
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V1.2
  * @date 2015年11月21日 下午5:37:28
  */

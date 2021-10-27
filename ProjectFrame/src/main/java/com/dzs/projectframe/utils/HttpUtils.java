@@ -41,7 +41,7 @@ import javax.net.ssl.X509TrustManager;
 /**
  * http工具类
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V2.0
  * @date 2015-12-23 上午9:55:16
  */

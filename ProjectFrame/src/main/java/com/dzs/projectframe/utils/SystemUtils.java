@@ -39,7 +39,7 @@ import java.util.UUID;
 /**
  * 系统工具类
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V1.0
  * @Date 2015-12-23 上午9:54:18
  */

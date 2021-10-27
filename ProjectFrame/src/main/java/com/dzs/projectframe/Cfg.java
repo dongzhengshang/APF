@@ -5,7 +5,7 @@ import com.dzs.projectframe.base.ProjectContext;
 /**
  * 配置文件
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V1.0
  * @date 2016/8/19.
  */

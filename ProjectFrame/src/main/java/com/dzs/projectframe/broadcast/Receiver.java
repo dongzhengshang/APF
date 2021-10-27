@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 广播接收者
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V1.0
  * @date 2017/3/23
  */

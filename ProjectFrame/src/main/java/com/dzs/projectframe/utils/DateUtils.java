@@ -15,7 +15,7 @@ import java.util.TimeZone;
 /**
  * 日期工具类
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V1.0
  * @date 2015-12-23 上午9:53:41
  */

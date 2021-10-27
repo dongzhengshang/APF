@@ -18,7 +18,7 @@ import java.io.OutputStream;
 /**
  * 缓存工具类
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V1.0
  * @date 2015-12-31 下午3:47:54
  */

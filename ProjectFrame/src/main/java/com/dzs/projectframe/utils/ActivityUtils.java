@@ -8,7 +8,7 @@ import java.util.Stack;
 /**
  * 当前应用程序Activity管理类
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version 1.1
  * @date 2015-1-24 下午4:12:13
  */

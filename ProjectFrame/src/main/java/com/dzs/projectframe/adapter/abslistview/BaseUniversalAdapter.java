@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * 通用适配器基类
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V1.0
  * @date 2016/7/9.
  */

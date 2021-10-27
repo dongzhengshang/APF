@@ -15,7 +15,7 @@ import com.dzs.projectframe.broadcast.Receiver;
 /**
  * Fragment 基类
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version 1.0
  * @date 2015-6-17 下午3:47:45
  */

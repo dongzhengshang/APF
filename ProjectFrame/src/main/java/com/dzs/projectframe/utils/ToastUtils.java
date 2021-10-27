@@ -10,7 +10,7 @@ import com.dzs.projectframe.base.ProjectContext;
 /**
  * Toast工具类
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V1.1
  * @date 2015-12-23 上午9:53:00
  */

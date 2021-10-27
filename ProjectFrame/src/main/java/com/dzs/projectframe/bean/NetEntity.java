@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * 网络实体类
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V1.0
  * @date 2015-12-23 上午9:47:02
  */

@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * ViewHolder 帮助类
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V1.0
  * @date 2016/6/8
  */

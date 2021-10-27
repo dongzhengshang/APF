@@ -15,7 +15,7 @@ import static android.provider.Contacts.SettingsColumns.KEY;
 /**
  * 加密解密工具类
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @date 2015-6-2 下午4:10:42
  */
 public class EncryptionUtils {

@@ -9,7 +9,7 @@ import com.dzs.projectframe.base.ProjectContext;
 /**
  * 自定义CountDownTimer类，用于验证码倒计时
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @date 2015-7-2 上午10:21:11
  */
 public class CustomCountDownTimer extends CountDownTimer {

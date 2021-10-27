@@ -13,7 +13,7 @@ import com.dzs.projectframe.utils.LogUtils;
 /**
  * 可以设置宽高比例的ImageView
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V1.0
  * @date 2017/3/25
  */

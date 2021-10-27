@@ -9,7 +9,7 @@ import com.dzs.projectframe.adapter.ViewHolder;
 import java.util.List;
 
 /**
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V1.0
  * @date 2016/8/19.
  */

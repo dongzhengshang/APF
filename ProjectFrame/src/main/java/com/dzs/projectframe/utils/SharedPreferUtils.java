@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * SharedPreferences工具类
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version 1.2
  * @date 2015-3-23 下午5:58:36
  */

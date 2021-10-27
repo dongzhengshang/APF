@@ -15,7 +15,7 @@ import java.lang.reflect.Field;
 /**
  * 屏幕显示工具类、包括dp-px转换、屏幕截图
  *
- * @author DZS dzsdevelop@163.com
+ * @author DZS dzsk@outlook.com
  * @version V1.0
  * @date 2015-12-23 上午10:22:46
  */
